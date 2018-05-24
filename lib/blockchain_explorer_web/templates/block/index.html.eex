@@ -1,0 +1,18 @@
+  <code><%= raw( @error ) %></code>
+
+  <div class="form-group">
+    <form id="number" name="number" method="post">
+      <input id="_csrf_token" name="_csrf_token"
+             type="hidden" value="<%= Plug.CSRFProtection.get_csrf_token() %>">
+      <%= label :blocks_label, :"enter number of blocks to view:" %>
+      <%= text_input :blocks, :num, value: "" %>
+      <%= submit "submit", id: "submit", class: "btn btn-primary" %>
+    </form>
+  </div>
+
+  <p><code style="flex: 1;"><b>Blocks:</b></code></p>
+
+  <% blocks_length = tuple_size( @blocks ) %>
+  <%= for num <- 0..blocks_length - 1 do %>
+    <code><%= elem( @blocks, num ) |> mark_up_block() |> raw() %></code><br/>
+  <%  end %>

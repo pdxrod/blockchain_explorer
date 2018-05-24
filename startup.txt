@@ -1,0 +1,21 @@
+https://askubuntu.com/questions/41001/how-do-i-install-bitcoin-in-ubuntu#75419
+apt-get install software-properties-common
+add-apt-repository ppa:bitcoin/bitcoin
+apt-get update
+apt-get install bitcoind
+mkdir ~/.bitcoin
+echo "rpcuser=USERNAME
+rpcpassword=PASSWORD
+gen=1
+rpcport=18332
+rpcconnect=127.0.0.1
+rpcallowip=127.0.0.1
+rpcallowip=192.168.1.1
+rpcallowip=192.168.1.2
+rpcallowip=192.168.1.3
+rpcallowip=192.168.1.4
+rpcallowip=192.168.1.5
+rpcallowip=192.168.1.6
+rpcallowip=192.168.1.7
+rpcallowip=192.168.1.8
+rpcallowip=192.168.1.9" > ~/.bitcoin/bitcoin.conf
