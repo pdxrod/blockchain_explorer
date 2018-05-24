@@ -22,10 +22,10 @@ defmodule BlockChainExplorer.TransactionTest do
       hash = block[ "previousblockhash" ]
       result = Blockchain.getblock( hash )
       [ hd | tl ] = Transaction.get_transactions( block )
-      transaction = 
-      decoded = Transaction.decode_transaction( block, hd )
+      tuple = Transaction.get_transaction( hd )
+      decoded = Transaction.decode_transaction( block, tuple )
       assert decoded.block == block[ "height" ]
-      assert decoded.value > 0.0
+      assert Transaction.total_value( decoded.vout ) > 0.0
       assert decoded.confirmations > 0
       assert decoded.relay_time
       assert length( decoded.inputs ) > 0
