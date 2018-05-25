@@ -29,7 +29,7 @@ defmodule BlockChainExplorer.HashStackTest do
         hash = elem( result, 1 )
         case Blockchain.getblock( hash ) do
           {:ok, block} ->
-            blocks = Blockchain.get_n_blocks( block, {block}, 2 )
+            blocks = Blockchain.get_n_blocks( block, 2 )
             err = try do
               HashStack.push blocks
               raise "We should not have reached this point - there should be an exception"
@@ -61,11 +61,11 @@ defmodule BlockChainExplorer.HashStackTest do
         hash = elem( result, 1 )
         case Blockchain.getblock( hash ) do
           {:ok, block} ->
-            first_blocks = Blockchain.get_n_blocks( block, {block}, 2 )
+            first_blocks = Blockchain.get_n_blocks( block, 2 )
             first_block = elem( first_blocks, 0 )
             HashStack.push( first_block )
             block = elem( first_blocks, 1 )
-            second_blocks = Blockchain.get_n_blocks( block, {block}, 2 )
+            second_blocks = Blockchain.get_n_blocks( block, 2 )
             assert first_blocks != second_blocks
             second_block = elem( second_blocks, 0 )
             HashStack.push( second_block )
@@ -89,7 +89,7 @@ defmodule BlockChainExplorer.HashStackTest do
         case Blockchain.getblock( hash ) do
           {:ok, block} ->
             HashStack.push block
-            blocks = Blockchain.get_n_blocks( block, {block}, 2 )
+            blocks = Blockchain.get_n_blocks( block, 2 )
             other_block = elem( blocks, 1 )
             HashStack.push other_block
             HashStack.pop_til_empty()

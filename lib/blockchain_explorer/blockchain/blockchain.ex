@@ -51,7 +51,7 @@ defmodule BlockChainExplorer.Blockchain do
     block
   end
 
-  def get_n_blocks( block, blocks, n, direction \\ :backward ) do
+  def get_n_blocks( block, n, direction \\ :backward, blocks \\ {} ) do
     if tuple_size( blocks ) < 1, do: blocks = {block}
     cond do
       n <= 1 ->
@@ -64,14 +64,15 @@ defmodule BlockChainExplorer.Blockchain do
             :forward -> Tuple.insert_at( blocks, 0, new_block )
             _ -> raise "direction should be forward or backward, not #{ direction }"
           end
-          get_n_blocks( new_block, blocks, n - 1, direction )
+          get_n_blocks( new_block, n - 1, direction, blocks )
         else
           blocks
         end
     end
   end
 
-  defp get_next_or_previous_n_blocks_empty( block, blocks, n, direction ) do
+  defp get_next_or_previous_n_blocks_empty( block, n, direction \\ :backward, blocks \\ {} ) do
+    if tuple_size( blocks ) < 1, do: blocks = {block}
     if n <= 1 do
       blocks
     else
@@ -82,21 +83,21 @@ defmodule BlockChainExplorer.Blockchain do
           :forward -> Tuple.insert_at( blocks, 0, new_block )
           _ -> raise "direction should be forward or backward, not #{ direction }"
         end
-        get_next_or_previous_n_blocks_empty( new_block, blocks, n - 1, direction )
+        get_next_or_previous_n_blocks_empty( new_block, n - 1, direction, blocks )
       else
         blocks
       end
     end
   end
 
-  def get_next_or_previous_n_blocks( block, blocks, n, direction ) do
+  def get_next_or_previous_n_blocks( block, n, direction \\ :backward, blocks \\ {} ) do
     size = tuple_size( blocks )
     if size == 0 do
-      get_next_or_previous_n_blocks_empty( block, {}, n, direction )
+      get_next_or_previous_n_blocks_empty( block, n, direction )
     else
       num = if direction == :backward, do: size - 1, else: 0
       new_block = elem( blocks, num )
-      get_next_or_previous_n_blocks_empty( new_block, {new_block}, n, direction )
+      get_next_or_previous_n_blocks_empty( new_block, n, direction, {new_block} )
     end
   end
 

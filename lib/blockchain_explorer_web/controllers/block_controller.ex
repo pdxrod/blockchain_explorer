@@ -20,7 +20,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp latest( block ) do
-    newer_blocks = Blockchain.get_n_blocks( block, {block}, 2, :forward )
+    newer_blocks = Blockchain.get_n_blocks( block, 2, :forward )
     tuple_size( newer_blocks ) < 2 # If you can't get 2 blocks, you're at the top of the blockchain
   end
 
@@ -28,11 +28,11 @@ defmodule BlockChainExplorerWeb.BlockController do
     case Blockchain.getblock( hash ) do
       {:ok, block} ->
         HashStack.push block
-        blocks = Blockchain.get_n_blocks( block, {block}, 50, :backward )
+        blocks = Blockchain.get_n_blocks( block, 50, :backward )
         if more do
           block = elem( blocks, 49 )
           HashStack.push block
-          blocks = Blockchain.get_n_blocks( block, {block}, 50, :backward )
+          blocks = Blockchain.get_n_blocks( block, 50, :backward )
           render( conn, "list.html", blocks: blocks, latest: false )
         else
           render( conn, "list.html", blocks: blocks, latest: latest( block ) )
@@ -71,7 +71,7 @@ defmodule BlockChainExplorerWeb.BlockController do
 
       direction == :forward ->
         block = HashStack.pop()
-        blocks = Blockchain.get_n_blocks( block, {block}, 50, :forward )
+        blocks = Blockchain.get_n_blocks( block, 50, :forward )
         latest = elem( blocks, 0 )
         render( conn, "list.html", blocks: blocks, latest: latest( latest ))
 
@@ -115,11 +115,12 @@ defmodule BlockChainExplorerWeb.BlockController do
   def index(conn, params) do
     num_blocks = get_num_from_params( params )
     conn = assign(conn, :error, "")
-    conn = assign(conn, :blocks, {%{}, %{}, %{}, %{}, %{}})
+    conn = assign(conn, :blocks, {%{}})
 
     case Blockchain.get_latest_block() do
       {:ok, block} ->
-        render( conn, "index.html", blocks: Blockchain.get_n_blocks( block, {block}, num_blocks, :backward ))
+        blocks = Blockchain.get_n_blocks( block, num_blocks, :backward )
+        render( conn, "index.html", blocks: blocks )
 
       other ->
         show_error(conn, "index.html", other)
