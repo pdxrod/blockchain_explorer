@@ -97,11 +97,11 @@ defmodule BlockChainExplorer.BlockchainTest do
       blocks = Blockchain.get_n_blocks(block, {block}, 9, :backward)
       assert tuple_size( blocks ) == 9
       blocks = Blockchain.get_n_blocks(block, {}, -1, :backward)
-      assert tuple_size( blocks ) == 0
+      assert tuple_size( blocks ) == 1
       blocks = Blockchain.get_n_blocks(block, {block}, 1, :backward)
       assert tuple_size( blocks ) == 1
       blocks = Blockchain.get_n_blocks(block, {}, 0, :backward)
-      assert tuple_size( blocks ) == 0
+      assert tuple_size( blocks ) == 1
     end
 
     test "get n blocks blows up given an inappropriate direction" do

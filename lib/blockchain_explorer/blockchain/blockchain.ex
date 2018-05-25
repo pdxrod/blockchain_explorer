@@ -52,6 +52,7 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   def get_n_blocks( block, blocks, n, direction \\ :backward ) do
+    if tuple_size( blocks ) < 1, do: blocks = {block}
     cond do
       n <= 1 ->
         blocks
