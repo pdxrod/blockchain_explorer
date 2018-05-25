@@ -19,6 +19,8 @@ defmodule BlockChainExplorer.TransactionTest do
     test "decode a transaction" do
       result = Blockchain.get_latest_block()
       block = elem( result, 1 )
+      blocks = Blockchain.get_n_blocks( block, {}, 3, :backward )
+      block = elem( blocks, 1 )
       [ hd | _ ] = Transaction.get_transactions( block )
       tuple = Transaction.get_transaction( hd )
       decoded = Transaction.decode_transaction( tuple )

@@ -56,7 +56,6 @@ defmodule BlockChainExplorer.Transaction do
     case elem( tuple, 0 ) do
       :ok ->
         transaction = elem( tuple, 1 )
-        vout = transaction[ "vout" ]
       _ ->
         transaction = %{ error: tuple }
     end

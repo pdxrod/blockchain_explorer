@@ -84,6 +84,8 @@ defmodule BlockChainExplorer.BlockchainTest do
     test "get n blocks backward works" do
       block = get_best_block()
       old_hash = block[ "hash" ]
+      blocks = Blockchain.get_n_blocks(block, {}, 3, :backward)
+      assert tuple_size( blocks ) == 3
       blocks = Blockchain.get_n_blocks(block, {block}, 2, :backward)
       assert tuple_size( blocks ) == 2
       block = elem( blocks, 0 )
