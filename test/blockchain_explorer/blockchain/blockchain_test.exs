@@ -94,8 +94,8 @@ defmodule BlockChainExplorer.BlockchainTest do
       block = elem( blocks, 1 )
       new_hash = block[ "hash" ]
       assert old_hash != new_hash
-      blocks = Blockchain.get_n_blocks(block, 9, :backward)
-      assert tuple_size( blocks ) == 9
+      blocks = Blockchain.get_n_blocks(block, 100, :backward)
+      assert tuple_size( blocks ) == 100
       blocks = Blockchain.get_n_blocks(block, -1, :backward)
       assert tuple_size( blocks ) == 1
       blocks = Blockchain.get_n_blocks(block, 1, :backward)
