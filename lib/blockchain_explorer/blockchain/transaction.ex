@@ -1,6 +1,18 @@
 defmodule BlockChainExplorer.Transaction do
   alias BlockChainExplorer.Blockchain
 
+  defmodule ScriptPubKey do
+    defstruct type: nil, reqsigs: 0, hex: nil, asm: nil, addresses: []
+  end
+
+  defmodule Outputs do
+    defstruct value: -1.0, scriptpubkey: %ScriptPubKey{}, n: -1
+  end
+
+  defmodule Inputs do
+    defstruct sequence: 0, coinbase: ""
+  end
+
   @transaction %{
     "vsize": 184,
     "vout": [
@@ -40,7 +52,7 @@ defmodule BlockChainExplorer.Transaction do
     "hash": "98e8e6534e0fb4a515f314ea7bd7f8d4b63803894feca243c8c9608e0aa8e679"
   }
 
-  defstruct vsize: 0, outputs: [], inputs: [], version: 0, txid: "", size: 0, hash: ""
+  defstruct vsize: 0, outputs: [], inputs: [], version: 0, txid: "", size: 0, locktime: 0, hash: ""
 
   def get_transactions( block ) do
     block[ "tx" ]

@@ -5,6 +5,16 @@ defmodule BlockChainExplorer.TransactionTest do
 
   describe "transaction" do
 
+    defp get_a_transaction do
+      result = Blockchain.get_latest_block()
+      block = elem( result, 1 )
+      blocks = Blockchain.get_n_blocks( block, 3, :backward, {} )
+      block = elem( blocks, 1 )
+      [ hd | _ ] = Transaction.get_transactions( block )
+      tuple = Transaction.get_transaction( hd )
+      Transaction.decode_transaction( tuple )
+    end
+
     test "get the transactions on a block" do
       result = Blockchain.get_latest_block()
       assert :ok == elem( result, 0 )
@@ -16,20 +26,38 @@ defmodule BlockChainExplorer.TransactionTest do
       assert length( transactions ) > 0
     end
 
-    test "decode a transaction" do
-      result = Blockchain.get_latest_block()
-      block = elem( result, 1 )
-      blocks = Blockchain.get_n_blocks( block, 3, :backward, {} )
-      block = elem( blocks, 1 )
-      [ hd | _ ] = Transaction.get_transactions( block )
-      tuple = Transaction.get_transaction( hd )
-      decoded = Transaction.decode_transaction( tuple )
+    test "check transaction" do
+      decoded = get_a_transaction()
       assert Transaction.total_value( decoded.outputs ) > 0.0
-      assert List.first( decoded.inputs )[ "sequence" ] > 0
       assert decoded.version > 0
       assert decoded.txid =~ ~r/[0-9a-f]+/
       assert decoded.size > 0
+      assert decoded.locktime == 0
       assert decoded.hash =~ ~r/[0-9a-f]+/
+    end
+
+    test "outputs" do
+      decoded = get_a_transaction()
+      for output <- decoded.outputs do
+        assert output.value >= 0.0
+        assert output.scriptpubkey.type != nil
+        assert output.scriptpubkey.reqsigs > 0
+        assert output.scriptpubkey.hex != nil
+        assert output.scriptpubkey.asm != nil
+        assert length( output.scriptpubkey.addresses ) > 0
+        for address <- output.scriptpubkey.addresses do
+          assert address =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ # alphanumeric, no 0 O I l
+        end
+        assert output.n > -1
+      end
+    end
+
+    test "inputs" do
+      decoded = get_a_transaction()
+      for input <- decoded.inputs do
+        assert input.sequence > 0
+        assert input.coinbase =~ ~r/[0-9a-f]+/
+      end
     end
 
   end
