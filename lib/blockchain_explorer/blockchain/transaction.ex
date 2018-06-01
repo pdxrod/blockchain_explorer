@@ -64,6 +64,27 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
+  defp decode_inputs( list_of_maps ) do
+    list = []
+    for map <- list_of_maps do
+      List.insert_at(list, 0, %Inputs{ sequence: map["sequence"], coinbase: map["coinbase"] })
+    end
+    list
+  end
+
+  defp decode_outputs( list_of_maps ) do
+    list = []
+    for map <- list_of_maps do
+      List.insert_at(list, 0, %Outputs{ value: map["value"], n: map["n"],
+       scriptpubkey: %ScriptPubKey{ type: map["scriptPubKey"]["type"],
+                                    hex: map["scriptPubKey"]["hex"],
+                                    asm: map["scriptPubKey"]["asm"],
+                                    reqsigs: map["scriptPubKey"]["reqSigs"],
+                                    addresses: map["scriptPubKey"]["addresses"]} })
+    end
+    list
+  end
+
   def decode_transaction( tuple ) do
     case elem( tuple, 0 ) do
       :ok ->
@@ -72,8 +93,10 @@ defmodule BlockChainExplorer.Transaction do
         transaction = %{ error: tuple }
     end
 
-    %BlockChainExplorer.Transaction{ outputs: transaction[ "vout" ],
-      inputs: transaction[ "vin" ], version: transaction[ "version" ],
+    %BlockChainExplorer.Transaction{
+      outputs: decode_inputs( transaction[ "vout" ] ),
+      inputs: decode_inputs( transaction[ "vin" ] ),
+      version: transaction[ "version" ],
       txid: transaction[ "txid" ], size: transaction[ "size" ],
       hash: transaction[ "hash" ], vsize: transaction[ "vsize" ] }
   end
