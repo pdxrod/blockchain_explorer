@@ -10,7 +10,8 @@ defmodule BlockChainExplorer.TransactionTest do
       block = elem( result, 1 )
       blocks = Blockchain.get_n_blocks( block, 100 )
       trans = Transaction.transaction_with_everything_in_it_from_tuple( blocks )
-      Transaction.decode_transaction( trans )
+      tuple = Transaction.get_transaction( trans )
+      Transaction.decode_transaction( tuple )
     end
 
     test "get the transactions on a block" do
