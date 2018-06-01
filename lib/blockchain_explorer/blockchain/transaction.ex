@@ -58,9 +58,9 @@ defmodule BlockChainExplorer.Transaction do
     block[ "tx" ]
   end
 
-  def total_value( outputs ) do
-    Enum.reduce outputs, 0.0, fn( tuple, acc ) ->
-      tuple[ "value" ] + acc
+  def outputs_total_value( decoded_transaction ) do
+    Enum.reduce decoded_transaction.outputs, 0.0, fn( output, acc ) ->
+      output.value + acc
     end
   end
 

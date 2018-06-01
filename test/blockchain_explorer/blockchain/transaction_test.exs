@@ -28,7 +28,7 @@ defmodule BlockChainExplorer.TransactionTest do
 
     test "check transaction" do
       decoded = get_a_transaction()
-      assert Transaction.total_value( decoded.outputs ) > 0.0
+      assert Transaction.outputs_total_value( decoded ) > 0.0
       assert decoded.version > 0
       assert decoded.txid =~ ~r/[0-9a-f]+/
       assert decoded.size > 0
@@ -46,11 +46,14 @@ defmodule BlockChainExplorer.TransactionTest do
         assert output.scriptpubkey.asm != nil
   #      assert length( output.scriptpubkey.addresses ) > 0
         for address <- output.scriptpubkey.addresses do
+  IO.puts address
           assert address =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ # alphanumeric, no 0 O I l
         end
         assert output.n > -1
       end
     end
+
+  # Get a transaction wich has addresses in at least one of its scriptpubkeys in at least one of its outputs
 
     test "inputs" do
       decoded = get_a_transaction()
