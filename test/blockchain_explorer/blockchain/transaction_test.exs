@@ -10,14 +10,7 @@ defmodule BlockChainExplorer.TransactionTest do
       block = elem( result, 1 )
       [ hd | _ ] = Transaction.get_transactions( block )
       tuple = Transaction.get_transaction( hd )
-
-IO.write "tuple in get_a_transaction: "
-IO.inspect tuple
-
-transaction =      Transaction.decode_transaction( tuple )
-IO.write "decoded transaction in get_a_transaction: "
-IO.inspect transaction
-       transaction
+      Transaction.decode_transaction( tuple )
     end
 
     test "get the transactions on a block" do
@@ -51,7 +44,6 @@ IO.inspect transaction
         assert output.scriptpubkey.asm != nil
   #      assert length( output.scriptpubkey.addresses ) > 0
         for address <- output.scriptpubkey.addresses do
-  IO.puts address
           assert address =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ # alphanumeric, no 0 O I l
         end
         assert output.n > -1

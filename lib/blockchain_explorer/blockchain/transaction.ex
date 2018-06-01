@@ -65,21 +65,18 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp decode_inputs( list_of_maps ) do
-
-Enum.into list_of_maps, [], &({ &1, %Inputs{ sequence: &1["sequence"], coinbase: &1["coinbase"] } })
-
+    Enum.map( list_of_maps, fn( x ) -> %Inputs{ sequence: x["sequence"],
+                                                coinbase: x["coinbase"] } end )
   end
 
   defp decode_outputs( list_of_maps ) do
-    list = []
-    Enum.reduce list_of_maps, list, fn( map, acc ) ->
-      list = List.insert_at(list, 0, %Outputs{ value: map["value"], n: map["n"],
+    Enum.map( list_of_maps, fn( map ) ->
+      %Outputs{ value: map["value"], n: map["n"],
        scriptpubkey: %ScriptPubKey{ type: map["scriptPubKey"]["type"],
                                     hex: map["scriptPubKey"]["hex"],
                                     asm: map["scriptPubKey"]["asm"],
                                     reqsigs: map["scriptPubKey"]["reqSigs"],
-                                    addresses: map["scriptPubKey"]["addresses"]} })
-    end
+                                    addresses: map["scriptPubKey"]["addresses"]} } end )
   end
 
   def decode_transaction( tuple ) do
