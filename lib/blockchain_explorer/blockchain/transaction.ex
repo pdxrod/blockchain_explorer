@@ -69,6 +69,25 @@ defmodule BlockChainExplorer.Transaction do
                                                 coinbase: x["coinbase"] } end )
   end
 
+  defp has_everything?( tuple ) do
+    if tuple == {:error, %{"code" => -3, "message" => "Expected type string, got null"}} do
+      false
+    else
+      true
+    end
+  end
+
+  def get_transaction_with_everything_in_it( blocks ) do
+    for num <- 0..tuple_size( blocks ) - 1 do
+      block = elem( blocks, num )
+      transactions = get_transactions( block )
+      for transaction <- transactions do
+        tuple = get_transaction( transaction )
+        if has_everything?( tuple ), do: decode_transaction( tuple )
+      end
+    end
+  end
+
   defp decode_outputs( list_of_maps ) do
     Enum.map( list_of_maps, fn( map ) ->
       %Outputs{ value: map["value"], n: map["n"],
