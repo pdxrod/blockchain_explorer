@@ -5,11 +5,11 @@ defmodule BlockChainExplorer.TransactionTest do
 
   describe "transaction" do
 
-    defp get_a_transaction do
+    defp get_a_useful_transaction do
       result = Blockchain.get_latest_block()
       block = elem( result, 1 )
-      blocks = Blockchain.get_n_blocks(block, 10)
-      Transaction.get_transaction_with_everything_in_it( blocks )
+      blocks = Blockchain.get_n_blocks( block, 100 )
+      Transaction.transaction_with_everything_in_it_from_tuple( blocks )
     end
 
     test "get the transactions on a block" do
@@ -24,7 +24,7 @@ defmodule BlockChainExplorer.TransactionTest do
     end
 
     test "check transaction" do
-      decoded = get_a_transaction()
+      decoded = get_a_useful_transaction()
       assert Transaction.outputs_total_value( decoded ) > 0.0
       assert decoded.version > 0
       assert decoded.txid =~ ~r/[0-9a-f]+/
@@ -34,27 +34,23 @@ defmodule BlockChainExplorer.TransactionTest do
     end
 
     test "outputs" do
-      decoded = get_a_transaction()
+      decoded = get_a_useful_transaction()
       for output <- decoded.outputs do
         assert output.value >= 0.0
         assert output.scriptpubkey.type != nil
   #      assert output.scriptpubkey.reqsigs > 0
         assert output.scriptpubkey.hex != nil
         assert output.scriptpubkey.asm != nil
-  #      assert length( output.scriptpubkey.addresses ) > 0
-        if output.scriptpubkey.addresses do
-          for address <- output.scriptpubkey.addresses do
-            assert address =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ # alphanumeric, no 0 O I l
-          end
+        assert length( output.scriptpubkey.addresses ) > 0
+        for address <- output.scriptpubkey.addresses do
+          assert address =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ # alphanumeric, no 0 O I l
         end
         assert output.n > -1
       end
     end
 
-  # Get a transaction wich has addresses in at least one of its scriptpubkeys in at least one of its outputs
-
     test "inputs" do
-      decoded = get_a_transaction()
+      decoded = get_a_useful_transaction()
       for input <- decoded.inputs do
         assert input.sequence > 0
         assert input.coinbase =~ ~r/[0-9a-f]+/

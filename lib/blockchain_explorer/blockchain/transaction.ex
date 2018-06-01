@@ -77,15 +77,39 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  def get_transaction_with_everything_in_it( blocks ) do
-    for num <- 0..tuple_size( blocks ) - 1 do
-      block = elem( blocks, num )
-      transactions = get_transactions( block )
-      for transaction <- transactions do
-        tuple = get_transaction( transaction )
-        if has_everything?( tuple ), do: decode_transaction( tuple )
-      end
+  defp transaction_with_everything_in_it_from_transactions( transactions ) do
+    case transactions do
+      [] -> nil
+      other ->
+        [hd | tl] = transactions
+        cond do
+          has_everything?( hd ) -> hd
+          true -> transaction_with_everything_in_it_from_transactions( tl )
+        end
     end
+  end
+
+  defp transaction_with_everything_in_it_from_block( block ) do
+    transactions = get_transactions( block )
+    transaction_with_everything_in_it_from_transactions( transactions )
+  end
+
+  defp transaction_with_everything_in_it_from_list( blocks ) do
+    case blocks do
+      [] -> nil
+      other ->
+        [hd | tl] = blocks
+        transaction = transaction_with_everything_in_it_from_block( hd )
+         case transaction do
+           nil -> transaction_with_everything_in_it_from_list( tl )
+           other -> transaction
+         end
+    end
+  end
+
+  def transaction_with_everything_in_it_from_tuple( blocks ) do
+    list = Tuple.to_list( blocks )
+    transaction_with_everything_in_it_from_list( list )
   end
 
   defp decode_outputs( list_of_maps ) do
