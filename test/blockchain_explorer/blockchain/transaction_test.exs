@@ -43,8 +43,10 @@ defmodule BlockChainExplorer.TransactionTest do
         assert output.scriptpubkey.hex != nil
         assert output.scriptpubkey.asm != nil
   #      assert length( output.scriptpubkey.addresses ) > 0
-        for address <- output.scriptpubkey.addresses do
-          assert address =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ # alphanumeric, no 0 O I l
+        if output.scriptpubkey.addresses do
+          for address <- output.scriptpubkey.addresses do
+            assert address =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ # alphanumeric, no 0 O I l
+          end
         end
         assert output.n > -1
       end
