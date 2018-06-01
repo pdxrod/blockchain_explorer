@@ -8,11 +8,16 @@ defmodule BlockChainExplorer.TransactionTest do
     defp get_a_transaction do
       result = Blockchain.get_latest_block()
       block = elem( result, 1 )
-      blocks = Blockchain.get_n_blocks( block, 3, :backward, {} )
-      block = elem( blocks, 1 )
       [ hd | _ ] = Transaction.get_transactions( block )
       tuple = Transaction.get_transaction( hd )
-      Transaction.decode_transaction( tuple )
+
+IO.write "tuple in get_a_transaction: "
+IO.inspect tuple
+
+transaction =      Transaction.decode_transaction( tuple )
+IO.write "decoded transaction in get_a_transaction: "
+IO.inspect transaction
+       transaction
     end
 
     test "get the transactions on a block" do
