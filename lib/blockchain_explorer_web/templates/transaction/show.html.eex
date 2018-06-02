@@ -14,24 +14,32 @@ Hash:    <%= decoded.hash %><br />
 
 <p>
 Outputs:<br />
+
+<%= length( decoded.outputs  ) %>
+
 <% for output <- decoded.outputs do %>
-Value: <%= output.value %><br />
-Addresses: <br />
-  <% if output.scriptpubkey.addresses do %>
-    <% for address <- output.scriptpubkey.addresses do %>
-        <%= address %><br />
+  N: <%= output.n %><br />
+  Addresses: <br />
+
+  <%= length( output.scriptpubkey.addresses  ) %>
+    <% if output.scriptpubkey.addresses do %>
+      <% for address <- output.scriptpubkey.addresses do %>
+          <%= address %><br />
+      <% end %>
     <% end %>
-  <% end %>
 <% end %>
 </p>
 
 <p>
 Inputs:<br />
+
+<%= length( decoded.inputs  ) %>
+
 <% for input <- decoded.inputs do %>
-Sequence: <%= input.sequence %><br />
-Txid:     <%= input.txid %><br />
-Scriptsig:<br />
-asm: <%= input.scriptsig["asm"] %><br />
-hex: <%= input.scriptsig["hex"] %><br />
+  Sequence: <%= input.sequence %><br />
+  Txid:     <%= input.txid %><br />
+  Scriptsig:<br />
+  asm: <%= input.scriptsig["asm"] %><br />
+  hex: <%= input.scriptsig["hex"] %><br />
 <% end %>
 </p>
