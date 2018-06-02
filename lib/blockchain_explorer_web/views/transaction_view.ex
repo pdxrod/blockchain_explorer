@@ -2,10 +2,12 @@ defmodule BlockChainExplorerWeb.TransactionView do
   use BlockChainExplorerWeb, :view
   alias BlockChainExplorer.Transaction
 
-  def mark_up_transaction( transaction ) do
-    result = Transaction.get_transaction_tuple( transaction )
+  def mark_up_transaction( transaction_str ) do
+    result = Transaction.get_transaction_tuple( transaction_str )
     case elem( result, 0 ) do
-      :ok -> Poison.encode!( elem( result, 1 ), pretty: true )
+      :ok ->
+        decoded_transaction = Transaction.decode_transaction( result )
+        Poison.encode!( decoded_transaction, pretty: true )
       :error -> Poison.encode!( String.downcase( elem( result, 1 )[ "message" ] ), pretty: true )
       _ -> Poison.encode!( "unknown error", pretty: true )
     end

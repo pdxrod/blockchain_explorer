@@ -190,12 +190,17 @@ defmodule BlockChainExplorer.Transaction do
       _ -> %{ error: tuple }
     end
 
-    %BlockChainExplorer.Transaction{
+    t = %BlockChainExplorer.Transaction{
       outputs: decode_outputs( transaction[ "vout" ] ),
       inputs: decode_inputs( transaction[ "vin" ] ),
       version: transaction[ "version" ],
       txid: transaction[ "txid" ], size: transaction[ "size" ],
       hash: transaction[ "hash" ], vsize: transaction[ "vsize" ] }
+
+IO.write "decode_transaction result "
+IO.inspect t
+t
+
   end
 
   defp get_hex( transaction_str ) do

@@ -2,4 +2,4 @@
 <code><%= raw(@error) %></code>
 
 <p><code style="flex: 1;"><b>Transaction:</b></code></p>
-<code><%= raw( mark_up_transaction( @transaction )) %></code>
+<code><%= mark_up_transaction( @transaction ) %></code>
