@@ -7,7 +7,7 @@ defmodule BlockChainExplorerWeb.TransactionView do
     case elem( result, 0 ) do
       :ok ->
         decoded_transaction = Transaction.decode_transaction( result )
-        Poison.encode!( decoded_transaction, pretty: true )
+        decoded_transaction
       :error -> Poison.encode!( String.downcase( elem( result, 1 )[ "message" ] ), pretty: true )
       _ -> Poison.encode!( "unknown error", pretty: true )
     end

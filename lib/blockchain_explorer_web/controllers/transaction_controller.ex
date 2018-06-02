@@ -3,7 +3,6 @@ defmodule BlockChainExplorerWeb.TransactionController do
 
   def show(conn, %{"id" => hash}) do
     conn = assign(conn, :error, "")
-
     render(conn, "show.html", transaction: hash)
   end
 
