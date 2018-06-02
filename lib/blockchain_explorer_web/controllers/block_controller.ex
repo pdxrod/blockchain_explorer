@@ -91,11 +91,6 @@ defmodule BlockChainExplorerWeb.BlockController do
     show_n_hashes( conn, direction )
   end
 
-  def tran( conn, _params ) do
-    conn = assign( conn, :error, "" )
-    render( conn, "tran.html" )
-  end
-
   defp get_num_from_params( params ) do
     try do
       num_param = params[ "blocks" ][ "num" ]

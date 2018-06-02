@@ -186,7 +186,7 @@ defmodule BlockChainExplorer.Transaction do
   def decode_transaction( tuple ) do
     transaction = case elem( tuple, 0 ) do
       :ok -> elem( tuple, 1 )
-      _ -> transaction = %{ error: tuple }
+      _ -> %{ error: tuple }
     end
 
     %BlockChainExplorer.Transaction{
@@ -201,7 +201,7 @@ defmodule BlockChainExplorer.Transaction do
     result = Blockchain.getrawtransaction transaction_str
     case result do
       {:ok, hex } -> hex
-      {:invalid, {:ok, hex }} -> nil
+      {:invalid, {:ok, _ }} -> nil
       {_, {:ok, hex }} -> hex
       _ -> nil
     end
