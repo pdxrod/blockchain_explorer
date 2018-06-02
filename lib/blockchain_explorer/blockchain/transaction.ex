@@ -2,14 +2,14 @@ defmodule BlockChainExplorer.Transaction do
   alias BlockChainExplorer.Blockchain
 
   defmodule ScriptPubKey do
-    defstruct type: nil, reqsigs: 0, hex: nil, asm: nil, addresses: []
+    defstruct type: nil, reqsigs: 0, hex: nil, asm: nil, addresses: nil
   end
 
-  defmodule Outputs do
+  defmodule Output do
     defstruct value: -1.0, scriptpubkey: %ScriptPubKey{}, n: -1
   end
 
-  defmodule Inputs do
+  defmodule Input do
     defstruct sequence: 0, scriptsig: %{}
   end
 
@@ -65,8 +65,33 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp decode_inputs( list_of_maps ) do
-    Enum.map( list_of_maps, fn( x ) -> %Inputs{ sequence: x["sequence"],
+    Enum.map( list_of_maps, fn( x ) -> %Input{ sequence: x["sequence"],
                                                scriptsig: x["scriptSig"] } end )
+  end
+
+  defp has_valid_addresses?( addresses ) do
+    if length( addresses ) < 1 do
+      false
+    else
+      [hd | tl] = addresses
+      cond do
+        hd =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ -> true # alphanumeric, no 0 O I l
+        true -> has_valid_addresses?( tl )
+      end
+    end
+  end
+
+  def has_output_addresses?( list_of_outputs ) do
+    if length( list_of_outputs ) < 1 do
+      false
+    else
+      [ output | more_outputs ] = list_of_outputs
+      cond do
+        output.scriptpubkey.addresses &&
+         has_valid_addresses?( output.scriptpubkey.addresses ) -> true
+        true -> has_output_addresses?( more_outputs )
+      end
+    end
   end
 
   defp outputs_has_everything?( outputs ) do
@@ -150,7 +175,7 @@ defmodule BlockChainExplorer.Transaction do
 
   defp decode_outputs( list_of_maps ) do
     Enum.map( list_of_maps, fn( map ) ->
-      %Outputs{ value: map["value"], n: map["n"],
+      %Output{ value: map["value"], n: map["n"],
        scriptpubkey: %ScriptPubKey{ type: map["scriptPubKey"]["type"],
                                     hex: map["scriptPubKey"]["hex"],
                                     asm: map["scriptPubKey"]["asm"],

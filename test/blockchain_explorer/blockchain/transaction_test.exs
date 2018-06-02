@@ -37,16 +37,13 @@ defmodule BlockChainExplorer.TransactionTest do
 
     test "outputs" do
       decoded = get_a_useful_transaction()
+      assert Transaction.has_output_addresses?( decoded.outputs )
       for output <- decoded.outputs do
         assert output.value >= 0.0
         assert output.scriptpubkey.type != nil
   #      assert output.scriptpubkey.reqsigs > 0
         assert output.scriptpubkey.hex != nil
         assert output.scriptpubkey.asm != nil
-        assert length( output.scriptpubkey.addresses ) > 0
-        for address <- output.scriptpubkey.addresses do
-          assert address =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ # alphanumeric, no 0 O I l
-        end
         assert output.n > -1
       end
     end
