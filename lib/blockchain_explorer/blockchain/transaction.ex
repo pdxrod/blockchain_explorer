@@ -54,8 +54,8 @@ defmodule BlockChainExplorer.Transaction do
 
   defstruct vsize: 0, outputs: [], inputs: [], version: 0, txid: "", size: 0, locktime: 0, hash: ""
 
-  def get_transactions( block ) do
-    block[ "tx" ]
+  def get_transaction_strs( block_map ) do
+    block_map[ "tx" ]
   end
 
   def outputs_total_value( decoded_transaction ) do
@@ -69,11 +69,11 @@ defmodule BlockChainExplorer.Transaction do
                       sequence: map["sequence"], scriptsig: map["scriptSig"] } end )
   end
 
-  defp has_valid_addresses?( addresses ) do
-    if length( addresses ) < 1 do
+  defp has_valid_addresses?( addresses_str_list ) do
+    if length( addresses_str_list ) < 1 do
       false
     else
-      [hd | tl] = addresses
+      [hd | tl] = addresses_str_list
       cond do
         hd =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ -> true # alphanumeric, no 0 O I l
         true -> has_valid_addresses?( tl )
@@ -81,11 +81,11 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  def has_output_addresses?( list_of_outputs ) do
-    if length( list_of_outputs ) < 1 do
+  def has_output_addresses?( list_of_output_modules ) do
+    if length( list_of_output_modules ) < 1 do
       false
     else
-      [ output | more_outputs ] = list_of_outputs
+      [ output | more_outputs ] = list_of_output_modules
       cond do
         output.scriptpubkey.addresses &&
          has_valid_addresses?( output.scriptpubkey.addresses ) -> true
@@ -94,11 +94,11 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  defp outputs_has_everything?( outputs ) do
-    if outputs == [] do
+  defp outputs_has_everything?( outputs_list_of_maps ) do
+    if outputs_list_of_maps == [] do
       false
     else
-      [hd | tl] = outputs
+      [hd | tl] = outputs_list_of_maps
       cond do
         hd["value"] > 0.0 && hd["scriptPubKey"] && hd["scriptPubKey"]["hex"] &&
          hd["scriptPubKey"]["asm"] && hd["scriptPubKey"]["addresses"] &&
@@ -108,11 +108,11 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  defp inputs_has_everything?( inputs ) do
-    if inputs == [] do
+  defp inputs_has_everything?( inputs_list_of_maps ) do
+    if inputs_list_of_maps == [] do
       false
     else
-      [hd | tl] = inputs
+      [hd | tl] = inputs_list_of_maps
       cond do
         hd["sequence"] > 0 && hd["scriptSig"] &&
          hd["scriptSig"]["asm"] && hd["scriptSig"]["hex"] -> true
@@ -122,9 +122,9 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp has_everything?( transaction_str ) do
-    tuple = get_transaction( transaction_str )
-    if elem( tuple, 0 ) == :ok do
-      trans = elem( tuple, 1 )
+    transaction_tuple = get_transaction_tuple( transaction_str )
+    if elem( transaction_tuple, 0 ) == :ok do
+      trans = elem( transaction_tuple, 1 )
       ok = trans["vsize"] > 0 && trans["outputs"] != [] && trans["inputs"] != []
        && trans["txid"] != "" && trans["hash"] != ""
       if ok do
@@ -138,11 +138,11 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  defp transaction_with_everything_in_it_from_transactions( transactions ) do
-    case transactions do
+  defp transaction_with_everything_in_it_from_transactions( list_of_transaction_strs ) do
+    case list_of_transaction_strs do
       [] -> nil
       _ ->
-        [hd | tl] = transactions
+        [hd | tl] = list_of_transaction_strs
         cond do
           has_everything?( hd ) -> hd
           true -> transaction_with_everything_in_it_from_transactions( tl )
@@ -150,16 +150,16 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  defp transaction_with_everything_in_it_from_block( block ) do
-    transactions = get_transactions( block )
-    transaction_with_everything_in_it_from_transactions( transactions )
+  defp transaction_with_everything_in_it_from_block( block_map ) do
+    list_of_transaction_strs = get_transaction_strs( block_map )
+    transaction_with_everything_in_it_from_transactions( list_of_transaction_strs )
   end
 
-  defp transaction_with_everything_in_it_from_list( blocks ) do
-    case blocks do
+  defp transaction_with_everything_in_it_from_list( blocks_list ) do
+    case blocks_list do
       [] -> nil
       _ ->
-        [hd | tl] = blocks
+        [hd | tl] = blocks_list
         transaction = transaction_with_everything_in_it_from_block( hd )
          case transaction do
            nil -> transaction_with_everything_in_it_from_list( tl )
@@ -168,9 +168,10 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  def transaction_with_everything_in_it_from_tuple( blocks ) do
-    list = Tuple.to_list( blocks )
-    transaction_with_everything_in_it_from_list( list )
+  # Find a transaction which has inputs, outputs, addresses, etc.
+  def transaction_with_everything_in_it_from_tuple( blocks_tuple ) do
+    blocks_list = Tuple.to_list( blocks_tuple )
+    transaction_with_everything_in_it_from_list( blocks_list )
   end
 
   defp decode_outputs( list_of_maps ) do
@@ -207,7 +208,7 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  def get_transaction( transaction_str ) do
+  def get_transaction_tuple( transaction_str ) do
     hex = get_hex transaction_str
     Blockchain.decoderawtransaction( hex )
   end

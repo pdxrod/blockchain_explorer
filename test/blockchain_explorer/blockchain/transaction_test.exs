@@ -10,7 +10,7 @@ defmodule BlockChainExplorer.TransactionTest do
       block = elem( result, 1 )
       blocks = Blockchain.get_n_blocks( block, 100 )
       trans = Transaction.transaction_with_everything_in_it_from_tuple( blocks )
-      tuple = Transaction.get_transaction( trans )
+      tuple = Transaction.get_transaction_tuple( trans )
       Transaction.decode_transaction( tuple )
     end
 
@@ -21,7 +21,7 @@ defmodule BlockChainExplorer.TransactionTest do
       hash = block[ "previousblockhash" ]
       result = Blockchain.getblock( hash )
       assert :ok == elem( result, 0 )
-      transactions = Transaction.get_transactions( block )
+      transactions = Transaction.get_transaction_strs( block )
       assert length( transactions ) > 0
     end
 
