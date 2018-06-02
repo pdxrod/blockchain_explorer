@@ -3,4 +3,35 @@
 
 <p><code style="flex: 1;"><b>Transaction:</b></code></p>
 <% decoded = mark_up_transaction( @transaction ) %>
-Vsize: <%= decoded.vsize %>
+
+<p>
+Vsize:   <%= decoded.vsize %><br />
+Version: <%= decoded.version %><br />
+Txid:    <%= decoded.txid %><br />
+Size:    <%= decoded.size %><br />
+Hash:    <%= decoded.hash %><br />
+</p>
+
+<p>
+Outputs:<br />
+<% for output <- decoded.outputs do %>
+Value: <%= output.value %><br />
+Addresses: <br />
+  <% if output.scriptpubkey.addresses do %>
+    <% for address <- output.scriptpubkey.addresses do %>
+        <%= address %><br />
+    <% end %>
+  <% end %>
+<% end %>
+</p>
+
+<p>
+Inputs:<br />
+<% for input <- decoded.inputs do %>
+Sequence: <%= input.sequence %><br />
+Txid:     <%= input.txid %><br />
+Scriptsig:<br />
+asm: <%= input.scriptsig["asm"] %><br />
+hex: <%= input.scriptsig["hex"] %><br />
+<% end %>
+</p>

@@ -125,7 +125,7 @@ defmodule BlockChainExplorer.Transaction do
     transaction_tuple = get_transaction_tuple( transaction_str )
     if elem( transaction_tuple, 0 ) == :ok do
       trans = elem( transaction_tuple, 1 )
-      ok = trans["vsize"] > 0 && trans["outputs"] != [] && trans["inputs"] != []
+      ok = trans["vsize"] > 0 && trans["vout"] != [] && trans["vin"] != []
        && trans["txid"] != "" && trans["hash"] != ""
       if ok do
         outputs_has_everything?( trans["vout"] ) &&
@@ -190,17 +190,12 @@ defmodule BlockChainExplorer.Transaction do
       _ -> %{ error: tuple }
     end
 
-    t = %BlockChainExplorer.Transaction{
+    %BlockChainExplorer.Transaction{
       outputs: decode_outputs( transaction[ "vout" ] ),
       inputs: decode_inputs( transaction[ "vin" ] ),
       version: transaction[ "version" ],
       txid: transaction[ "txid" ], size: transaction[ "size" ],
       hash: transaction[ "hash" ], vsize: transaction[ "vsize" ] }
-
-IO.write "decode_transaction result "
-IO.inspect t
-t
-
   end
 
   defp get_hex( transaction_str ) do
