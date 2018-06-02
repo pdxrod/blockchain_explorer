@@ -1,6 +1,10 @@
-# BlockchainExplorer
+# Why Yet Another Blockchain Explorer?
 
-Based on https://github.com/pcorey/hello_blockchain
+There are many already out there. I wrote this blockchain
+explorer to learn a. Elixir, b. Phoenix, and c. Blockchain.
+
+I couldn't have done it without https://github.com/pcorey/hello_blockchain
+to get me started
 
 You need to be running bitcoind (probably in test mode - see start-bitcoind.sh)
 
@@ -14,7 +18,7 @@ and the user name and password should be in config.exs
 
 See https://github.com/bitcoin/bitcoin
 
-See startup.txt for installation on Linux
+See `startup.txt` for installation on Linux
 
 To start Phoenix:
 
