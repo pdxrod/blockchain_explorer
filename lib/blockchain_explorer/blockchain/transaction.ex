@@ -10,7 +10,7 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defmodule Input do
-    defstruct sequence: 0, scriptsig: %{}
+    defstruct vout: nil, txid: nil, sequence: 0, scriptsig: %{}
   end
 
   @transaction %{
@@ -65,8 +65,8 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp decode_inputs( list_of_maps ) do
-    Enum.map( list_of_maps, fn( x ) -> %Input{ sequence: x["sequence"],
-                                               scriptsig: x["scriptSig"] } end )
+    Enum.map( list_of_maps, fn( x ) -> %Input{ vout: x["vout"], txid: x["txid"],
+                      sequence: x["sequence"], scriptsig: x["scriptSig"] } end )
   end
 
   defp has_valid_addresses?( addresses ) do
