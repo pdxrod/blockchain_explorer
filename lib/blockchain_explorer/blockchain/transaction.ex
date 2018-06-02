@@ -10,7 +10,7 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defmodule Inputs do
-    defstruct sequence: 0, coinbase: ""
+    defstruct sequence: 0, scriptsig: %{}
   end
 
   @transaction %{
@@ -66,14 +66,50 @@ defmodule BlockChainExplorer.Transaction do
 
   defp decode_inputs( list_of_maps ) do
     Enum.map( list_of_maps, fn( x ) -> %Inputs{ sequence: x["sequence"],
-                                                coinbase: x["coinbase"] } end )
+                                               scriptsig: x["scriptSig"] } end )
   end
 
-  defp has_everything?( tuple ) do
-    if tuple == {:error, %{"code" => -3, "message" => "Expected type string, got null"}} do
+  defp outputs_has_everything?( outputs ) do
+    if outputs == [] do
       false
     else
-      true
+      [hd | tl] = outputs
+      cond do
+        hd["value"] > 0.0 && hd["scriptPubKey"] && hd["scriptPubKey"]["hex"] &&
+         hd["scriptPubKey"]["asm"] && hd["scriptPubKey"]["addresses"] &&
+         length(hd["scriptPubKey"]["addresses"]) > 0 -> true
+        true -> outputs_has_everything?( tl )
+      end
+    end
+  end
+
+  defp inputs_has_everything?( inputs ) do
+    if inputs == [] do
+      false
+    else
+      [hd | tl] = inputs
+      cond do
+        hd["sequence"] > 0 && hd["scriptSig"] &&
+         hd["scriptSig"]["asm"] && hd["scriptSig"]["hex"] -> true
+        true -> inputs_has_everything?( tl )
+      end
+    end
+  end
+
+  defp has_everything?( transaction_str ) do
+    tuple = get_transaction( transaction_str )
+    if elem( tuple, 0 ) == :ok do
+      trans = elem( tuple, 1 )
+      ok = trans["vsize"] > 0 && trans["outputs"] != [] && trans["inputs"] != []
+       && trans["txid"] != "" && trans["hash"] != ""
+      if ok do
+        outputs_has_everything?( trans["vout"] ) &&
+         inputs_has_everything?( trans["vin"] )
+      else
+        false
+      end
+    else
+      false
     end
   end
 
@@ -138,8 +174,8 @@ defmodule BlockChainExplorer.Transaction do
       hash: transaction[ "hash" ], vsize: transaction[ "vsize" ] }
   end
 
-  defp get_hex( transaction ) do
-    result = Blockchain.getrawtransaction transaction
+  defp get_hex( transaction_str ) do
+    result = Blockchain.getrawtransaction transaction_str
     case result do
       {:ok, hex } -> hex
       {:invalid, {:ok, hex }} -> hex # Why it does this I don't know, but it did
@@ -148,8 +184,8 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  def get_transaction( transaction ) do
-    hex = get_hex transaction
+  def get_transaction( transaction_str ) do
+    hex = get_hex transaction_str
     Blockchain.decoderawtransaction( hex )
   end
 

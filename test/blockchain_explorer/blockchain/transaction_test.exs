@@ -55,7 +55,7 @@ defmodule BlockChainExplorer.TransactionTest do
       decoded = get_a_useful_transaction()
       for input <- decoded.inputs do
         assert input.sequence > 0
-        assert input.coinbase =~ ~r/[0-9a-f]+/
+        assert input.scriptsig["asm"] && input.scriptsig["hex"]
       end
     end
 
