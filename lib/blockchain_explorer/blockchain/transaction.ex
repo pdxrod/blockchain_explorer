@@ -141,7 +141,7 @@ defmodule BlockChainExplorer.Transaction do
   defp transaction_with_everything_in_it_from_transactions( transactions ) do
     case transactions do
       [] -> nil
-      other ->
+      _ ->
         [hd | tl] = transactions
         cond do
           has_everything?( hd ) -> hd
@@ -158,12 +158,12 @@ defmodule BlockChainExplorer.Transaction do
   defp transaction_with_everything_in_it_from_list( blocks ) do
     case blocks do
       [] -> nil
-      other ->
+      _ ->
         [hd | tl] = blocks
         transaction = transaction_with_everything_in_it_from_block( hd )
          case transaction do
            nil -> transaction_with_everything_in_it_from_list( tl )
-           other -> transaction
+           _ -> transaction
          end
     end
   end
@@ -184,11 +184,9 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   def decode_transaction( tuple ) do
-    case elem( tuple, 0 ) do
-      :ok ->
-        transaction = elem( tuple, 1 )
-      _ ->
-        transaction = %{ error: tuple }
+    transaction = case elem( tuple, 0 ) do
+      :ok -> elem( tuple, 1 )
+      _ -> transaction = %{ error: tuple }
     end
 
     %BlockChainExplorer.Transaction{
@@ -203,7 +201,7 @@ defmodule BlockChainExplorer.Transaction do
     result = Blockchain.getrawtransaction transaction_str
     case result do
       {:ok, hex } -> hex
-      {:invalid, {:ok, hex }} -> hex # Why it does this I don't know, but it did
+      {:invalid, {:ok, hex }} -> nil
       {_, {:ok, hex }} -> hex
       _ -> nil
     end
