@@ -13,30 +13,10 @@ Hash:    <%= @transaction.hash %><br />
 
 <p>
 Outputs:<br />
-
-<% outputs = List.to_tuple( @transaction.outputs ) %>
-
-<% outputs_length = tuple_size( outputs ) %>
-<%= raw( "#{outputs_length}" ) %>
-<% if outputs_length > 0 do %>
-  <% for num <- 0..outputs_length - 1 do %>
-    <% output = elem( outputs, num ) %>
-    N: <%= output.n %><br />
-    Addresses: <br />
-      <% if output.scriptpubkey.addresses do %>
-        <% addresses = List.to_tuple( output.scriptpubkey.addresses ) %>
-        <% addresses_length = tuple_size( addresses ) %>
-        <% for num <- 0..addresses_length - 1 do %>
-            <%= elem( addresses, num ) %><br />
-        <% end %>
-      <% end %>
-  <% end %>
-<% end %>
+<%= @transaction.outputs |> mark_up_outputs() |> raw() %>
 </p>
 
 <p>
 Inputs:<br />
-
 <%= @transaction.inputs |> mark_up_inputs() |> raw() %>
-
 </p>
