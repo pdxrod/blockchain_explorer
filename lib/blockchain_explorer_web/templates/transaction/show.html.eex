@@ -2,44 +2,41 @@
 <code><%= raw(@error) %></code>
 
 <p><code style="flex: 1;"><b>Transaction:</b></code></p>
-<% decoded = mark_up_transaction( @transaction ) %>
 
 <p>
-Vsize:   <%= decoded.vsize %><br />
-Version: <%= decoded.version %><br />
-Txid:    <%= decoded.txid %><br />
-Size:    <%= decoded.size %><br />
-Hash:    <%= decoded.hash %><br />
+Vsize:   <%= @transaction.vsize %><br />
+Version: <%= @transaction.version %><br />
+Txid:    <%= @transaction.txid %><br />
+Size:    <%= @transaction.size %><br />
+Hash:    <%= @transaction.hash %><br />
 </p>
 
 <p>
 Outputs:<br />
 
-<%= length( decoded.outputs  ) %>
+<% outputs = List.to_tuple( @transaction.outputs ) %>
 
-<% for output <- decoded.outputs do %>
-  N: <%= output.n %><br />
-  Addresses: <br />
-
-  <%= length( output.scriptpubkey.addresses  ) %>
-    <% if output.scriptpubkey.addresses do %>
-      <% for address <- output.scriptpubkey.addresses do %>
-          <%= address %><br />
+<% outputs_length = tuple_size( outputs ) %>
+<%= raw( "#{outputs_length}" ) %>
+<% if outputs_length > 0 do %>
+  <% for num <- 0..outputs_length - 1 do %>
+    <% output = elem( outputs, num ) %>
+    N: <%= output.n %><br />
+    Addresses: <br />
+      <% if output.scriptpubkey.addresses do %>
+        <% addresses = List.to_tuple( output.scriptpubkey.addresses ) %>
+        <% addresses_length = tuple_size( addresses ) %>
+        <% for num <- 0..addresses_length - 1 do %>
+            <%= elem( addresses, num ) %><br />
+        <% end %>
       <% end %>
-    <% end %>
+  <% end %>
 <% end %>
 </p>
 
 <p>
 Inputs:<br />
 
-<%= length( decoded.inputs  ) %>
+<%= @transaction.inputs |> mark_up_inputs() |> raw() %>
 
-<% for input <- decoded.inputs do %>
-  Sequence: <%= input.sequence %><br />
-  Txid:     <%= input.txid %><br />
-  Scriptsig:<br />
-  asm: <%= input.scriptsig["asm"] %><br />
-  hex: <%= input.scriptsig["hex"] %><br />
-<% end %>
 </p>

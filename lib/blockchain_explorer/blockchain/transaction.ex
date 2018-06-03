@@ -65,8 +65,12 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp decode_inputs( list_of_maps ) do
-    Enum.map( list_of_maps, fn( map ) -> %Input{ vout: map["vout"], txid: map["txid"],
-                      sequence: map["sequence"], scriptsig: map["scriptSig"] } end )
+    if list_of_maps do
+      Enum.map( list_of_maps, fn( map ) -> %Input{ vout: map["vout"], txid: map["txid"],
+                          sequence: map["sequence"], scriptsig: map["scriptSig"] } end )
+    else
+      []
+    end
   end
 
   defp has_valid_addresses?( addresses_str_list ) do
@@ -168,20 +172,24 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  # Find a transaction which has inputs, outputs, addresses, etc.
+# Find a transaction which has inputs, outputs, addresses, etc.
   def transaction_with_everything_in_it_from_tuple( blocks_tuple ) do
     blocks_list = Tuple.to_list( blocks_tuple )
     transaction_with_everything_in_it_from_list( blocks_list )
   end
 
   defp decode_outputs( list_of_maps ) do
-    Enum.map( list_of_maps, fn( map ) ->
-      %Output{ value: map["value"], n: map["n"],
-       scriptpubkey: %ScriptPubKey{ type: map["scriptPubKey"]["type"],
-                                    hex: map["scriptPubKey"]["hex"],
-                                    asm: map["scriptPubKey"]["asm"],
-                                    reqsigs: map["scriptPubKey"]["reqSigs"],
-                                    addresses: map["scriptPubKey"]["addresses"]} } end )
+    if list_of_maps do
+      Enum.map( list_of_maps, fn( map ) ->
+        %Output{ value: map["value"], n: map["n"],
+         scriptpubkey: %ScriptPubKey{ type: map["scriptPubKey"]["type"],
+                                      hex: map["scriptPubKey"]["hex"],
+                                      asm: map["scriptPubKey"]["asm"],
+                                      reqsigs: map["scriptPubKey"]["reqSigs"],
+                                      addresses: map["scriptPubKey"]["addresses"]} } end )
+    else
+      []
+    end
   end
 
   def decode_transaction( tuple ) do
@@ -210,7 +218,7 @@ defmodule BlockChainExplorer.Transaction do
 
   def get_transaction_tuple( transaction_str ) do
     hex = get_hex transaction_str
-    Blockchain.decoderawtransaction( hex )
+    Blockchain.decoderawtransaction hex
   end
 
 end

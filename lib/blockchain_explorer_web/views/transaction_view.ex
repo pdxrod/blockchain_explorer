@@ -1,16 +1,24 @@
 defmodule BlockChainExplorerWeb.TransactionView do
   use BlockChainExplorerWeb, :view
-  alias BlockChainExplorer.Transaction
 
-  def mark_up_transaction( transaction_str ) do
-    result = Transaction.get_transaction_tuple( transaction_str )
-    case elem( result, 0 ) do
-      :ok    -> t = Transaction.decode_transaction( result )
-      IO.inspect t
-      t
-      :error -> Poison.encode!( String.downcase( elem( result, 1 )[ "message" ] ), pretty: true )
-      _      -> Poison.encode!( "unknown error", pretty: true )
+  def mark_up_inputs( inputs_list ) do
+    if length( inputs_list ) > 0 do
+      case inputs_list do
+        [ head | tail ] -> Enum.join( [mark_input( head )], mark_up_inputs( tail )) 
+        _ -> []
+      end
+    else
+      ""
     end
   end
 
+  defp mark_input( input ) do
+    """
+    Sequence: #{ input.sequence }   <br />
+    Txid:     #{ input.txid     }   <br />
+    Scriptsig:                      <br />
+    asm: #{ input.scriptsig["asm"] }<br />
+    hex: #{ input.scriptsig["hex"] }<br />
+    """
+  end
 end
