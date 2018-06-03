@@ -4,11 +4,7 @@
 <p><code style="flex: 1;"><b>Transaction:</b></code></p>
 
 <p>
-Vsize:   <%= @transaction.vsize %><br />
-Version: <%= @transaction.version %><br />
-Txid:    <%= @transaction.txid %><br />
-Size:    <%= @transaction.size %><br />
-Hash:    <%= @transaction.hash %><br />
+<%= @transaction |> mark_up_transaction() |> raw() %>
 </p>
 
 <p>
