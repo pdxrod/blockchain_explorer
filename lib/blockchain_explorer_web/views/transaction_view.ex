@@ -27,15 +27,15 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   defp mark_output( output ) do
     """
+        #{ output.n }<br />\n
         Value: #{ output.value }<br />\n
-        N: #{ output.n }<br />\n
         Addresses: <br />\n
     """ <> mark_up_addresses( output.scriptpubkey.addresses )
   end
 
   defp mark_up_addresses( addresses_list ) do
     case addresses_list do
-      [ head | tail ] -> "#{ head }<br />\n" <> mark_up_addresses( tail )
+      [ head | tail ] -> "&nbsp;&nbsp;#{ head }<br />\n" <> mark_up_addresses( tail )
       _ -> "<br />\n"
     end
   end
@@ -45,8 +45,8 @@ defmodule BlockChainExplorerWeb.TransactionView do
     Sequence: #{ input.sequence }   <br />
     Txid:     #{ input.txid     }   <br />\n
     Scriptsig:                      <br />
-    asm: #{ input.scriptsig["asm"] }<br />\n
-    hex: #{ input.scriptsig["hex"] }<br />\n<br />\n
+    &nbsp;&nbsp;asm: #{ input.scriptsig["asm"] }<br />\n
+    &nbsp;&nbsp;hex: #{ input.scriptsig["hex"] }<br />\n<br />\n
     """
   end
 end

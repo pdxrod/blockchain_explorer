@@ -3,6 +3,7 @@
 
 <p><code style="flex: 1;"><b>Transaction:</b></code></p>
 
+<ul>
 <p>
 <%= @transaction |> mark_up_transaction() |> raw() %>
 </p>
@@ -16,3 +17,4 @@ Outputs:<br />
 Inputs:<br />
 <%= @transaction.inputs |> mark_up_inputs() |> raw() %>
 </p>
+</ul>
