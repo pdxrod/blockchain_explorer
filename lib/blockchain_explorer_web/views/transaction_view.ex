@@ -4,7 +4,7 @@ defmodule BlockChainExplorerWeb.TransactionView do
   def mark_up_inputs( inputs_list ) do
     if length( inputs_list ) > 0 do
       case inputs_list do
-        [ head | tail ] -> Enum.join( [mark_input( head )], mark_up_inputs( tail )) 
+        [ head | tail ] -> mark_input( head ) <> mark_up_inputs( tail ) 
         _ -> []
       end
     else
