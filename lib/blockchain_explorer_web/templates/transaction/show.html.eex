@@ -9,12 +9,12 @@
 </p>
 
 <p>
-Outputs:<br />
+<b>Outputs:</b><br />
 <%= @transaction.outputs |> mark_up_outputs() |> raw() %>
 </p>
 
 <p>
-Inputs:<br />
+<b>Inputs:</b><br />
 <%= @transaction.inputs |> mark_up_inputs() |> raw() %>
 </p>
 </ul>

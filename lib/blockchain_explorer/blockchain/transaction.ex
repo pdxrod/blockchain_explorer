@@ -13,7 +13,7 @@ defmodule BlockChainExplorer.Transaction do
     defstruct vout: nil, txid: nil, sequence: 0, scriptsig: %{}
   end
 
-  @transaction %{
+  @a_transaction %{
     "vsize": 184,
     "vout": [
       %{
