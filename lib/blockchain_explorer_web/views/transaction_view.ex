@@ -3,11 +3,11 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   def mark_up_transaction( transaction ) do
     """
-    Vsize:   #{ transaction.vsize }<br />\n
-    Version: #{ transaction.version }<br />\n
-    Txid:    #{ transaction.txid }<br />\n
-    Size:    #{ transaction.size }<br />\n
-    Hash:    #{ transaction.hash }<br />\n<br />\n
+    Vsize:   #{ transaction.vsize }<br />
+    Version: #{ transaction.version }<br />
+    Txid:    #{ transaction.txid }<br />
+    Size:    #{ transaction.size }<br />
+    Hash:    #{ transaction.hash }<br /> <br />
     """
   end
 
@@ -27,26 +27,26 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   defp mark_output( output ) do
     """
-        #{ output.n }<br />\n
-        Value: #{ output.value }<br />\n
-        Addresses: <br />\n
+        #{ output.n }<br />
+        Value: #{ output.value }<br />
+        Addresses: <br />
     """ <> mark_up_addresses( output.scriptpubkey.addresses )
   end
 
   defp mark_up_addresses( addresses_list ) do
     case addresses_list do
-      [ head | tail ] -> "&nbsp;&nbsp;#{ head }<br />\n" <> mark_up_addresses( tail )
-      _ -> "<br />\n"
+      [ head | tail ] -> "&nbsp;&nbsp;#{ head }<br /> " <> mark_up_addresses( tail )
+      _ -> "<br /> "
     end
   end
 
   defp mark_input( input ) do
     """
     Sequence: #{ input.sequence }   <br />
-    Txid:     #{ input.txid     }   <br />\n
+    Txid:     #{ input.txid     }   <br />
     Scriptsig:                      <br />
-    &nbsp;&nbsp;asm: #{ input.scriptsig["asm"] }<br />\n
-    &nbsp;&nbsp;hex: #{ input.scriptsig["hex"] }<br />\n<br />\n
+    &nbsp;&nbsp;asm: #{ input.scriptsig["asm"] }<br />
+    &nbsp;&nbsp;hex: #{ input.scriptsig["hex"] }<br /> <br />
     """
   end
 end
