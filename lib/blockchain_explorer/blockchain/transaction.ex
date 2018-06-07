@@ -73,24 +73,14 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  defp has_valid_addresses?( addresses_str_list ) do
-    case addresses_str_list do
-      [] -> false
-      [ hd | tl ] ->
-        cond do
-          hd =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ -> true # alphanumeric, no 0 O I l
-          true -> has_valid_addresses?( tl )
-        end
-    end
-  end
-
   def has_output_addresses?( list_of_output_modules ) do
     case list_of_output_modules do
       [] -> false
       [ output | more_outputs ] ->
         cond do
-          output.scriptpubkey.addresses &&
-           has_valid_addresses?( output.scriptpubkey.addresses ) -> true
+          output.scriptpubkey &&
+           output.scriptpubkey.addresses &&
+            length( output.scriptpubkey.addresses ) > 0 -> true
           true -> has_output_addresses?( more_outputs )
         end
     end

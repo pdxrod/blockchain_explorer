@@ -14,6 +14,17 @@ defmodule BlockChainExplorer.TransactionTest do
       Transaction.decode_transaction( tuple )
     end
 
+    defp has_valid_addresses?( addresses_str_list ) do
+      case addresses_str_list do
+        [] -> false
+        [ hd | tl ] ->
+          cond do
+            hd =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ -> true # alphanumeric, no 0 O I l
+            true -> has_valid_addresses?( tl )
+          end
+      end
+    end
+
     test "get the transactions on a block" do
       result = Blockchain.get_latest_block()
       assert :ok == elem( result, 0 )
@@ -39,6 +50,7 @@ defmodule BlockChainExplorer.TransactionTest do
       decoded = get_a_useful_transaction()
       assert Transaction.has_output_addresses?( decoded.outputs )
       for output <- decoded.outputs do
+        assert has_valid_addresses?( output.scriptpubkey.addresses )
         assert output.value >= 0.0
         assert output.scriptpubkey.type != nil
   #      assert output.scriptpubkey.reqsigs > 0
