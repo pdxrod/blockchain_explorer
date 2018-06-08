@@ -5,4 +5,15 @@ defmodule BlockChainExplorer.Utils do
     def typeof(x) when unquote(:"is_#{type}")(x), do: unquote(type)
   end
 
+  def recurse( fail, succeed, collection, fun ) do
+    case collection do
+      [] -> fail
+      [head | tail] ->
+        cond do
+          fun( head ) -> succeed
+          true -> recurse( fail, succeed, condition, tail, fun )
+        end
+    end
+  end
+
 end
