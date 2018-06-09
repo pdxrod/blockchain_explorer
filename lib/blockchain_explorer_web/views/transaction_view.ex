@@ -1,6 +1,12 @@
 defmodule BlockChainExplorerWeb.TransactionView do
   use BlockChainExplorerWeb, :view
 
+# IF transaction vin has coinbase, it's the first transaction in this block
+# "vin": [  %{
+#  "sequence": 4294967295,
+#  "coinbase": "03190b14042126065b726567696f6e312f50726f6a65637420425443506f6f6c2f020df278d618000000000000"}
+# ]
+
   def mark_up_transaction( transaction ) do
     """
     Vsize:   #{ transaction.vsize }<br />

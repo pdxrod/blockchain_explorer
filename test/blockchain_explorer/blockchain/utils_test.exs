@@ -5,30 +5,29 @@ defmodule BlockChainExplorer.UtilsTest do
 
   describe "utils" do
 
-    defp a_recursive_method( a_list ) do
-      case a_list do
-        [] -> false
-        [hd | tl] ->
-          cond do
-            hd[ "foo" ] && hd[ "foo" ] > 0 -> true
-            true -> a_recursive_method( tl )
-          end
-      end
+    @empty_list []
+    @list_with_no_foo_map [ %{bar: 0}, %{hello: "world"} ]
+    @list_with_foo_map_not_0 [ %{bar: 0}, %{hello: "world", foo: 1} ]
+    @list_with_foo_map_set_to_0 [ %{}, %{hello: "world", foo: 0}, %{bar: 1} ]
+
+# Does this map have a key :foo with value zero?
+    defp a_condition( a_map ) do
+      a_map[ :foo ] == 0
     end
 
     test "recurse method with empty list which should fail" do
-      recurse( false, true, [], fn( list ) -> a_recursive_method( list ) end)
+      Utils.recurse( false, true, @empty_list, Enum.map( @empty_list, fn( map ) -> a_condition( map ) end))
     end
 
-    test "recurse method with list which should succeed" do
-
-    end
-
-    test "recurse method with list with foo but not > 0 so it should fail" do
+    test "recurse method with no foo map which should fail" do
 
     end
 
-    test "recurse method with list with foo and > 0 so it should succeed" do
+    test "recurse method with list with foo map but not 0 so it should fail" do
+
+    end
+
+    test "recurse method with list with foo map and foo is 0 so it should succeed" do
 
     end
 

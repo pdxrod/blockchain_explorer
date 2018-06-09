@@ -10,7 +10,7 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defmodule Input do
-    defstruct vout: nil, txid: nil, sequence: 0, scriptsig: %{}
+    defstruct vout: nil, txid: nil, sequence: 0, scriptsig: nil, coinbase: nil
   end
 
   @a_transaction %{
