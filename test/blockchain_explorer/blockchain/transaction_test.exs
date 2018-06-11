@@ -2,6 +2,7 @@ defmodule BlockChainExplorer.TransactionTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.Transaction
+  alias BlockChainExplorer.Transaction.Output
 
   describe "transaction" do
 
@@ -12,6 +13,46 @@ defmodule BlockChainExplorer.TransactionTest do
       trans = Transaction.transaction_with_everything_in_it_from_tuple( blocks )
       tuple = Transaction.get_transaction_tuple( trans )
       Transaction.decode_transaction( tuple )
+    end
+
+    defp has_valid_addresses?( addresses_str_list ) do
+      case addresses_str_list do
+        [] -> false
+        [ hd | tl ] ->
+          cond do
+            hd =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ -> true # alphanumeric, no 0 O I l
+            true -> has_valid_addresses?( tl )
+          end
+      end
+    end
+
+    test "has_output_addresses?" do
+      mt_list = []
+      assert false == Transaction.has_output_addresses?( mt_list )
+
+      output_modules_no_addresses = [ %Output{
+        value: 0.78152,
+        scriptpubkey: %{
+          hex: "a9141a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf87",
+          asm: "OP_HASH160 1a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf OP_EQUAL",
+          "addresses": []
+        },
+        n: 0
+      }]
+      assert false == Transaction.has_output_addresses?( output_modules_no_addresses )
+
+      list_with_valid_output_module = [ %Output{}, %Output{
+        value: 0.78152,
+        scriptpubkey: %{
+          hex: "a9141a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf87",
+          asm: "OP_HASH160 1a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf OP_EQUAL",
+          "addresses": [
+            "2MudhyEqJ7RzedMPXrReNXDcJ9Hch1AUqdv"
+          ]
+        },
+        n: 0
+      }]
+      assert true == Transaction.has_output_addresses?( list_with_valid_output_module )
     end
 
     test "get the transactions on a block" do
@@ -39,6 +80,7 @@ defmodule BlockChainExplorer.TransactionTest do
       decoded = get_a_useful_transaction()
       assert Transaction.has_output_addresses?( decoded.outputs )
       for output <- decoded.outputs do
+        assert has_valid_addresses?( output.scriptpubkey.addresses )
         assert output.value >= 0.0
         assert output.scriptpubkey.type != nil
   #      assert output.scriptpubkey.reqsigs > 0

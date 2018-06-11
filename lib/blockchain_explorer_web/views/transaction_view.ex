@@ -1,13 +1,19 @@
 defmodule BlockChainExplorerWeb.TransactionView do
   use BlockChainExplorerWeb, :view
 
+# IF transaction vin has coinbase, it's the first transaction in this block
+# "vin": [  %{
+#  "sequence": 4294967295,
+#  "coinbase": "03190b14042126065b726567696f6e312f50726f6a65637420425443506f6f6c2f020df278d618000000000000"}
+# ]
+
   def mark_up_transaction( transaction ) do
     """
-    Vsize:   #{ transaction.vsize }<br />\n
-    Version: #{ transaction.version }<br />\n
-    Txid:    #{ transaction.txid }<br />\n
-    Size:    #{ transaction.size }<br />\n
-    Hash:    #{ transaction.hash }<br />\n<br />\n
+    Vsize:   #{ transaction.vsize }<br />
+    Version: #{ transaction.version }<br />
+    Txid:    #{ transaction.txid }<br />
+    Size:    #{ transaction.size }<br />
+    Hash:    #{ transaction.hash }<br /> <br />
     """
   end
 
@@ -27,26 +33,26 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   defp mark_output( output ) do
     """
-        Value: #{ output.value }<br />\n
-        N: #{ output.n }<br />\n
-        Addresses: <br />\n
+        #{ output.n }<br />
+        Value: #{ output.value }<br />
+        Addresses: <br />
     """ <> mark_up_addresses( output.scriptpubkey.addresses )
   end
 
   defp mark_up_addresses( addresses_list ) do
     case addresses_list do
-      [ head | tail ] -> "#{ head }<br />\n" <> mark_up_addresses( tail )
-      _ -> "<br />\n"
+      [ head | tail ] -> "&nbsp;&nbsp;#{ head }<br />\n" <> mark_up_addresses( tail )
+      _ -> "<br />\n "
     end
   end
 
   defp mark_input( input ) do
     """
     Sequence: #{ input.sequence }   <br />
-    Txid:     #{ input.txid     }   <br />\n
+    Txid:     #{ input.txid     }   <br />
     Scriptsig:                      <br />
-    asm: #{ input.scriptsig["asm"] }<br />\n
-    hex: #{ input.scriptsig["hex"] }<br />\n<br />\n
+    &nbsp;&nbsp;asm: #{ input.scriptsig["asm"] }<br />
+    &nbsp;&nbsp;hex: #{ input.scriptsig["hex"] }<br /> <br />
     """
   end
 end
