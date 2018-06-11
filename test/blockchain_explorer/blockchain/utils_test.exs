@@ -16,19 +16,19 @@ defmodule BlockChainExplorer.UtilsTest do
     end
 
     test "recurse method with empty list which should fail" do
-      assert ! Utils.recurse( false, true, @empty_list, &a_condition/1 )
+      assert false == Utils.recurse( false, true, @empty_list, &a_condition/1 )
     end
 
     test "recurse method with no foo map which should fail" do
-      assert ! Utils.recurse( false, true, @list_with_no_foo_map, &a_condition/1 )
+      assert false == Utils.recurse( false, true, @list_with_no_foo_map, &a_condition/1 )
     end
 
     test "recurse method with list with foo map but not 0 so it should fail" do
-
+      assert false == Utils.recurse( false, true, @list_with_foo_map_not_0, &a_condition/1 )
     end
 
     test "recurse method with list with foo map and foo is 0 so it should succeed" do
-
+      assert true == Utils.recurse( false, true, @list_with_no_foo_map, &a_condition/1 )
     end
 
   end
