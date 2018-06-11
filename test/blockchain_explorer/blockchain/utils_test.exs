@@ -1,6 +1,5 @@
 defmodule BlockChainExplorer.UtilsTest do
   use BlockChainExplorerWeb.ConnCase
-  alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.Utils
 
   describe "utils" do
