@@ -1,5 +1,6 @@
 defmodule BlockChainExplorer.Transaction do
   alias BlockChainExplorer.Blockchain
+  alias BlockChainExplorer.Utils
 
   defmodule ScriptPubKey do
     defstruct type: nil, reqsigs: 0, hex: nil, asm: nil, addresses: nil
@@ -73,17 +74,14 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
+  defp output_has_addresses?( output ) do
+    output.scriptpubkey &&
+     output.scriptpubkey.addresses &&
+      length( output.scriptpubkey.addresses ) > 0
+  end
+
   def has_output_addresses?( list_of_output_modules ) do
-    case list_of_output_modules do
-      [] -> false
-      [ output | more_outputs ] ->
-        cond do
-          output.scriptpubkey &&
-           output.scriptpubkey.addresses &&
-            length( output.scriptpubkey.addresses ) > 0 -> true
-          true -> has_output_addresses?( more_outputs )
-        end
-    end
+    Utils.recurse( false, true, list_of_output_modules, &output_has_addresses?/1 )
   end
 
   defp outputs_has_everything?( outputs_list_of_maps ) do
