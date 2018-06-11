@@ -27,8 +27,16 @@ defmodule BlockChainExplorer.UtilsTest do
       assert false == Utils.recurse( false, true, @list_with_foo_map_not_0, &a_condition/1 )
     end
 
+    test "recurse method with list with foo map not 0 and [] as its first parameter" do
+      assert [] == Utils.recurse( [], true, @list_with_foo_map_not_0, &a_condition/1 )
+    end
+
     test "recurse method with list with foo map and foo is 0 so it should succeed" do
-      assert true == Utils.recurse( false, true, @list_with_no_foo_map, &a_condition/1 )
+      assert true == Utils.recurse( false, true, @list_with_foo_map_set_to_0, &a_condition/1 )
+    end
+
+    test "recurse method with list with foo 0 - should return the list if it succeeds" do
+      assert @list_with_foo_map_set_to_0 == Utils.recurse( [], @list_with_foo_map_set_to_0, @list_with_foo_map_set_to_0, &a_condition/1 )
     end
 
   end
