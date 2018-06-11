@@ -41,7 +41,7 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   defp mark_up_addresses( addresses_list ) do
     case addresses_list do
-      [ head | tail ] -> "&nbsp;&nbsp;#{ head }<br />\n " <> mark_up_addresses( tail )
+      [ head | tail ] -> "&nbsp;&nbsp;#{ head }<br />\n" <> mark_up_addresses( tail )
       _ -> "<br />\n "
     end
   end
