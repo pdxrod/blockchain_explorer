@@ -15,8 +15,8 @@ defmodule BlockChainExplorerWeb.TransactionControllerTest do
   describe "show" do
     test "shows a transaction", %{conn: conn} do
       transaction = get_a_useful_transaction()
-      conn = get conn, block_path(conn, :show, transaction.txid)
-      assert html_response(conn, 200) =~ "Txid: #{ transaction.txid }"
+      conn = get conn, transaction_path(conn, :show, transaction.txid)
+      assert html_response(conn, 200) =~ "Txid:    #{ transaction.txid }"
     end
   end
 
