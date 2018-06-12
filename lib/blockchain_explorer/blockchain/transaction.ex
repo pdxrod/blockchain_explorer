@@ -85,28 +85,15 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp outputs_has_everything?( outputs_list_of_maps ) do
-    case outputs_list_of_maps do
-      [] -> false
-      [hd | tl] ->
-        cond do
-          hd["value"] > 0.0 && hd["scriptPubKey"] && hd["scriptPubKey"]["hex"] &&
-           hd["scriptPubKey"]["asm"] && hd["scriptPubKey"]["addresses"] &&
-           length(hd["scriptPubKey"]["addresses"]) > 0 -> true
-          true -> outputs_has_everything?( tl )
-        end
-    end
+    Utils.recurse( false, true, outputs_list_of_maps, fn(output) ->
+                   output["value"] > 0.0 && output["scriptPubKey"] && output["scriptPubKey"]["hex"] &&
+                   output["scriptPubKey"]["asm"] && output["scriptPubKey"]["addresses"] &&
+                   length(output["scriptPubKey"]["addresses"]) > 0 end )
   end
 
   defp inputs_has_everything?( inputs_list_of_maps ) do
-    case inputs_list_of_maps do
-      [] -> false
-      [hd | tl] ->
-        cond do
-          hd["sequence"] > 0 && hd["scriptSig"] &&
-           hd["scriptSig"]["asm"] && hd["scriptSig"]["hex"] -> true
-          true -> inputs_has_everything?( tl )
-        end
-    end
+    Utils.recurse( false, true, inputs_list_of_maps, fn(input) -> input["sequence"] > 0 &&
+                   input["scriptSig"] && input["scriptSig"]["asm"] && input["scriptSig"]["hex"] end)
   end
 
   defp has_everything?( transaction_str ) do
