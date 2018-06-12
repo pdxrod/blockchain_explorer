@@ -38,5 +38,9 @@ defmodule BlockChainExplorer.UtilsTest do
       assert @list_with_foo_map_set_to_0 == Utils.recurse( [], @list_with_foo_map_set_to_0, @list_with_foo_map_set_to_0, &a_condition/1 )
     end
 
+    test "recurse method with list with foo 0 and anonymous function" do
+      assert :bar == Utils.recurse( :foo, :bar, @list_with_foo_map_set_to_0, fn(map) -> map[ :foo ] == 0 end)
+    end
+
   end
 end
