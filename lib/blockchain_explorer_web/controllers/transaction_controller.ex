@@ -4,9 +4,9 @@ defmodule BlockChainExplorerWeb.TransactionController do
 
   def show(conn, %{"id" => hash}) do
     conn = assign(conn, :error, "")
-    tuple = Transaction.get_transaction_tuple hash
-    decoded = Transaction.decode_transaction tuple
-    render(conn, "show.html", transaction: decoded)
+    render( conn, "show.html", transaction:
+     hash |> Transaction.get_transaction_tuple
+          |> Transaction.decode_transaction )
   end
 
 end
