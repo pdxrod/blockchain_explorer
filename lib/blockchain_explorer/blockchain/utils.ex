@@ -16,4 +16,8 @@ defmodule BlockChainExplorer.Utils do
     end
   end
 
+  def notmt?( thing ) do
+    thing != nil && thing != ""
+  end
+
 end
