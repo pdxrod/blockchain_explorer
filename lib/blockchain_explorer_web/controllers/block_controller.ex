@@ -5,6 +5,11 @@ defmodule BlockChainExplorerWeb.BlockController do
   alias BlockChainExplorer.HashStack
 
   defp show_error( conn, page, error ) do
+
+IO.puts "Error"
+IO.inspect error
+IO.puts ""
+
     case error do
       {:error, :invalid, 0} ->
         render(conn, page, error: "invalid request")
@@ -16,7 +21,12 @@ defmodule BlockChainExplorerWeb.BlockController do
         render(conn, page, error: "bitcoind starting")
       {:error, %{"code" => -5, "message" => "Block not found"}} ->
         render(conn, page, error: "block not found")
-      _ -> render(conn, page, error: "unknown error")
+      {:error, %{"code" => -1, "message" => "JSON integer out of range"}} ->
+        render(conn, page, error: "no such block")
+      {:error, %{"code" => -8, "message" => "Block height out of range"}} ->
+        render(conn, page, error: "no such block")
+      _ ->
+        render(conn, page, error: "unknown error")
     end
   end
 
@@ -104,9 +114,14 @@ defmodule BlockChainExplorerWeb.BlockController do
 
   defp show_block_by_height( conn, height ) do
     tuple = Blockchain.get_block_by_height height
-    block = elem( tuple, 1 )
-    decoded = Block.decode_block( block )
-    render( conn, "index.html", blocks: [decoded] )
+    case tuple do
+      {:ok, block} ->
+        decoded = Block.decode_block( block )
+        render( conn, "index.html", blocks: [decoded] )
+
+      other ->
+        show_error(conn, "index.html", other)
+    end
   end
 
   defp show_n_blocks( conn, block ) do
@@ -126,6 +141,7 @@ defmodule BlockChainExplorerWeb.BlockController do
           nil -> show_n_blocks conn, block
           other -> show_block_by_height conn, other
         end
+
       other ->
         show_error(conn, "index.html", other)
     end
@@ -143,4 +159,5 @@ defmodule BlockChainExplorerWeb.BlockController do
         show_error(conn, "show.html", other)
     end
   end
+
 end

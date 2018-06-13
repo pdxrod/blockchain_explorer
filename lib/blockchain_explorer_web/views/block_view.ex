@@ -26,6 +26,7 @@ defmodule BlockChainExplorerWeb.BlockView do
     Confirmations:  #{ block.confirmations }
     Chainwork:      #{ block.chainwork }
     Bits:           #{ block.bits }<br />
+    <hr />
     """ ]
   end
 
