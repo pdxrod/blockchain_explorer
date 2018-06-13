@@ -1,8 +1,6 @@
 
 <code><%= raw(@error) %></code>
 
-<p><code style="flex: 1;"><b>Transaction:</b></code></p>
-
 <ul>
 <p>
 <%= @transaction |> mark_up_transaction() |> raw() %>

@@ -5,11 +5,6 @@ defmodule BlockChainExplorerWeb.BlockController do
   alias BlockChainExplorer.HashStack
 
   defp show_error( conn, page, error ) do
-
-IO.puts "Error"
-IO.inspect error
-IO.puts ""
-
     case error do
       {:error, :invalid, 0} ->
         render(conn, page, error: "invalid request")
@@ -117,40 +112,41 @@ IO.puts ""
     case tuple do
       {:ok, block} ->
         decoded = Block.decode_block( block )
-        render( conn, "index.html", blocks: [decoded] )
+        render( conn, "show.html", block: decoded )
 
       other ->
-        show_error(conn, "index.html", other)
+        show_error(conn, "show.html", other)
     end
   end
 
-  defp show_n_blocks( conn, block ) do
-    blocks = Tuple.to_list Blockchain.get_n_blocks( block, 10, :backward )
-    decoded = Enum.map( blocks, fn( block ) -> Block.decode_block( block ) end)
-    render( conn, "index.html", blocks: decoded )
-  end
-
-  def index(conn, params) do
-    height = get_height_from_params( params )
-    conn = assign(conn, :error, "")
-    conn = assign(conn, :blocks, {%{}})
-
-    case Blockchain.get_latest_block() do
+  defp show_block_by_hash( conn, hash ) do
+    case Blockchain.getblock(hash) do
       {:ok, block} ->
-        case height do
-          nil -> show_n_blocks conn, block
-          other -> show_block_by_height conn, other
-        end
+        decoded = Block.decode_block block
+        render(conn, "show.html", block: decoded)
 
       other ->
-        show_error(conn, "index.html", other)
+        show_error(conn, "show.html", other)
     end
   end
 
-  def show(conn, %{"id" => hash}) do
+  def show(conn, params) do
+    height = get_height_from_params( params )
+    hash = params[ "id" ]
     conn = assign(conn, :error, "")
     conn = assign(conn, :block, %{})
-    case Blockchain.getblock(hash) do
+    case hash do
+      nil ->
+        show_block_by_height( conn, height )
+      _ ->
+        show_block_by_hash( conn, hash )
+    end
+  end
+
+  def index( conn, _params ) do
+    conn = assign(conn, :error, "")
+
+    case Blockchain.get_latest_block() do
       {:ok, block} ->
         decoded = Block.decode_block block
         render(conn, "show.html", block: decoded)

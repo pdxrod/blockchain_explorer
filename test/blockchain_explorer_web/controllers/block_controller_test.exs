@@ -2,13 +2,6 @@ defmodule BlockChainExplorerWeb.BlockControllerTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Blockchain
 
-  describe "index" do
-    test "lists some blocks", %{conn: conn} do
-      conn = get conn, block_path(conn, :index)
-      assert html_response(conn, 200) =~ ~r/Blocks:.+[0-9a-f]+/
-    end
-  end
-
   describe "show" do
     test "shows a block", %{conn: conn} do
       result = Blockchain.get_latest_block()
@@ -16,7 +9,7 @@ defmodule BlockChainExplorerWeb.BlockControllerTest do
       blocks = Blockchain.get_n_blocks( block, 2 )
       block = elem( blocks, 1 )
       conn = get conn, block_path(conn, :show, block[ "hash" ] )
-      assert html_response(conn, 200) =~ ~r/Block:/
+      assert html_response(conn, 200) =~ ~r/Height:.*[0-9]+/
     end
   end
 

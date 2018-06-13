@@ -13,8 +13,6 @@
   </form>
 </div>
 
-<p><code style="flex: 1;"><b>Hashes:</b></code></p>
-
 <% blocks_length = tuple_size( @blocks ) %>
 <%= for num <- 0..blocks_length - 1 do %>
   <code><%= elem( @blocks, num ) |> mark_up_hash() |> raw() %></code>
