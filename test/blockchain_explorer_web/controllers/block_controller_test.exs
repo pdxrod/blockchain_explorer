@@ -2,13 +2,6 @@ defmodule BlockChainExplorerWeb.BlockControllerTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Blockchain
 
-  @create_attrs %{id: "df3fbbad4f73b73654518c7b53c82d8fe23f02416554a5bc244fd0266ff9442d"}
-
-  def fixture(:block) do
-    {:ok, block} = Blockchain.create_block(@create_attrs)
-    block
-  end
-
   describe "index" do
     test "lists some blocks", %{conn: conn} do
       conn = get conn, block_path(conn, :index)
@@ -18,7 +11,11 @@ defmodule BlockChainExplorerWeb.BlockControllerTest do
 
   describe "show" do
     test "shows a block", %{conn: conn} do
-      conn = get conn, block_path(conn, :show, @create_attrs[ :id ])
+      result = Blockchain.get_latest_block()
+      block = elem( result, 1 )
+      blocks = Blockchain.get_n_blocks( block, 2 )
+      block = elem( blocks, 1 )
+      conn = get conn, block_path(conn, :show, block[ "hash" ] )
       assert html_response(conn, 200) =~ ~r/Block:/
     end
   end

@@ -14,7 +14,8 @@ defmodule BlockChainExplorerWeb.BlockView do
     Weight:         #{ block.weight }
     Versionhex:     #{ block.versionhex }
     Version:        #{ block.version }
-    Transactions:<br />#{ mark_transactions( block.tx ) }
+    Transactions:
+                    #{ mark_transactions( block.tx ) }
     Time:           #{ block.time }
     Stripped size:  #{ block.strippedsize }
     Size:           #{ block.size }
@@ -43,7 +44,7 @@ defmodule BlockChainExplorerWeb.BlockView do
   end
 
   def mark_up_hash( block ) do
-    block_link( block["hash"] )
+    block_link( block[ "hash" ] )
   end
 
 end
