@@ -4,9 +4,7 @@
     <form id="number" name="number" method="post">
       <input id="_csrf_token" name="_csrf_token"
              type="hidden" value="<%= Plug.CSRFProtection.get_csrf_token() %>">
-      <%= label :blocks_label, :"enter number of blocks to view:" %>
-      <%= text_input :blocks, :num, value: "" %>
-      <%= submit "submit", id: "submit", class: "btn btn-primary" %>
+      <code><%= label :blocks_label, :"enter block height:" %> <%= text_input :blocks, :num, value: "" %> <%= submit "submit", id: "submit", class: "btn btn-primary" %></code>
     </form>
   </div>
 

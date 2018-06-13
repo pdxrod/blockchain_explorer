@@ -20,7 +20,7 @@ defmodule BlockChainExplorerWeb.BlockController do
     end
   end
 
-  defp latest( block ) do
+  defp latest?( block ) do
     newer_blocks = Blockchain.get_n_blocks( block, 2, :forward )
     tuple_size( newer_blocks ) < 2 # If you can't get 2 blocks, you're at the top of the blockchain
   end
@@ -36,7 +36,7 @@ defmodule BlockChainExplorerWeb.BlockController do
           blocks = Blockchain.get_n_blocks( block, 50, :backward )
           render( conn, "list.html", blocks: blocks, latest: false )
         else
-          render( conn, "list.html", blocks: blocks, latest: latest( block ) )
+          render( conn, "list.html", blocks: blocks, latest: latest?( block ) )
         end
 
       other ->
@@ -58,7 +58,7 @@ defmodule BlockChainExplorerWeb.BlockController do
 
       direction == :backward ->
         block = HashStack.pop()
-        if latest( block ) do
+        if latest?( block ) do
           case Blockchain.getbestblockhash() do
             {:ok, hash} ->
               show_list_page( conn, hash, true )
@@ -74,7 +74,7 @@ defmodule BlockChainExplorerWeb.BlockController do
         block = HashStack.pop()
         blocks = Blockchain.get_n_blocks( block, 50, :forward )
         latest = elem( blocks, 0 )
-        render( conn, "list.html", blocks: blocks, latest: latest( latest ))
+        render( conn, "list.html", blocks: blocks, latest: latest?( latest ))
 
       true -> raise "This should never happen - direction is #{ direction }"
     end
@@ -92,33 +92,40 @@ defmodule BlockChainExplorerWeb.BlockController do
     show_n_hashes( conn, direction )
   end
 
-  defp get_num_from_params( params ) do
+  defp get_height_from_params( params ) do
     try do
       num_param = params[ "blocks" ][ "num" ]
-      num_blocks = String.to_integer( num_param )
-      num_blocks = cond do
-        num_blocks < 1 -> 1
-        num_blocks > 100 -> 100
-        true -> num_blocks
-      end
-      num_blocks
+      String.to_integer( num_param )
     rescue
-      e in ArgumentError -> e # If user entered something really daft
-      5
+      e in ArgumentError -> e # If there is no parameter, or if user entered an invalid number
+      nil
     end
   end
 
+  defp show_block_by_height( conn, height ) do
+    tuple = Blockchain.get_block_by_height height
+    block = elem( tuple, 1 )
+    decoded = Block.decode_block( block )
+    render( conn, "index.html", blocks: [decoded] )
+  end
+
+  defp show_n_blocks( conn, block ) do
+    blocks = Tuple.to_list Blockchain.get_n_blocks( block, 10, :backward )
+    decoded = Enum.map( blocks, fn( block ) -> Block.decode_block( block ) end)
+    render( conn, "index.html", blocks: decoded )
+  end
+
   def index(conn, params) do
-    num_blocks = get_num_from_params( params )
+    height = get_height_from_params( params )
     conn = assign(conn, :error, "")
     conn = assign(conn, :blocks, {%{}})
 
     case Blockchain.get_latest_block() do
       {:ok, block} ->
-        blocks = Tuple.to_list Blockchain.get_n_blocks( block, num_blocks, :backward )
-        decoded = Enum.map( blocks, fn( block ) -> Block.decode_block( block ) end)
-        render( conn, "index.html", blocks: decoded )
-
+        case height do
+          nil -> show_n_blocks conn, block
+          other -> show_block_by_height conn, other
+        end
       other ->
         show_error(conn, "index.html", other)
     end

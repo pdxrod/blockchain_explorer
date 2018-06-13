@@ -33,6 +33,13 @@ defmodule BlockChainExplorer.Blockchain do
     end
   end
 
+  def get_block_by_height( height ) do
+    case getblockhash( height ) do
+      {:ok, hash} -> getblock( hash )
+      other -> other
+    end
+  end
+
   def get_next_or_previous_block( block, direction ) do
     which_way = cond do
       direction == :backward -> "previousblockhash"
