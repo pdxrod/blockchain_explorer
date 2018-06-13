@@ -130,7 +130,7 @@ defmodule BlockChainExplorerWeb.BlockController do
     end
   end
 
-  def show(conn, params) do
+  def show( conn, params ) do
     height = get_height_from_params( params )
     hash = params[ "id" ]
     conn = assign(conn, :error, "")
@@ -143,16 +143,23 @@ defmodule BlockChainExplorerWeb.BlockController do
     end
   end
 
-  def index( conn, _params ) do
-    conn = assign(conn, :error, "")
+  def index( conn, params ) do
+    height = get_height_from_params( params )
+    conn = assign( conn, :error, "" )
 
-    case Blockchain.get_latest_block() do
-      {:ok, block} ->
-        decoded = Block.decode_block block
-        render(conn, "show.html", block: decoded)
+    case height do
+      nil ->
+        case Blockchain.get_latest_block() do
+          {:ok, block} ->
+            decoded = Block.decode_block block
+            render( conn, "show.html", block: decoded )
 
-      other ->
-        show_error(conn, "show.html", other)
+          other ->
+            show_error( conn, "show.html", other )
+        end
+
+      _ ->
+        show_block_by_height( conn, height )
     end
   end
 

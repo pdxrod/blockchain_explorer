@@ -8,9 +8,10 @@
                   @latest -> "disabled=\"disabled\""
                   true -> ""
                 end       %>>&lt;&lt; next</button>
-     <button class="btn btn-primary" data-csrf="<%= Plug.CSRFProtection.get_csrf_token() %>"
+                <button class="btn btn-primary" data-csrf="<%= Plug.CSRFProtection.get_csrf_token() %>"
             data-method="post" data-to="/list?n=t" id="previous_top">previous &gt;&gt;</button>
   </form>
+  <br />
 </div>
 
 <% blocks_length = tuple_size( @blocks ) %>
@@ -19,6 +20,7 @@
 <%  end %>
 
 <div class="form-group">
+  <br />
   <form id="navigate" name="navigate" method="post">
     <button class="btn btn-primary" data-csrf="<%= Plug.CSRFProtection.get_csrf_token() %>"
              data-method="post" data-to="/list?p=t" id="next_bottom"
@@ -26,7 +28,7 @@
                   @latest -> "disabled=\"disabled\""
                   true -> ""
                 end       %>>&lt;&lt; next</button>
-    <button class="btn btn-primary" data-csrf="<%= Plug.CSRFProtection.get_csrf_token() %>"
+                <button class="btn btn-primary" data-csrf="<%= Plug.CSRFProtection.get_csrf_token() %>"
       data-method="post" data-to="/list?n=t" id="previous_bottom">previous &gt;&gt;</button>
   </form>
 </div>
