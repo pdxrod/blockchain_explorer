@@ -20,6 +20,8 @@ defmodule BlockChainExplorerWeb.BlockController do
         render(conn, page, error: "no such block")
       {:error, %{"code" => -8, "message" => "Block height out of range"}} ->
         render(conn, page, error: "no such block")
+      %{} ->
+        render(conn, page, error: "no such block")
       _ ->
         render(conn, page, error: "unknown error")
     end
@@ -109,18 +111,8 @@ defmodule BlockChainExplorerWeb.BlockController do
 
   defp show_block_by_height( conn, height ) do
     tuple = Blockchain.get_block_by_height height
+
     case tuple do
-      {:ok, block} ->
-        decoded = Block.decode_block( block )
-        render( conn, "show.html", block: decoded )
-
-      other ->
-        show_error(conn, "show.html", other)
-    end
-  end
-
-  defp show_block_by_hash( conn, hash ) do
-    case Blockchain.getblock(hash) do
       {:ok, block} ->
         decoded = Block.decode_block block
         render(conn, "show.html", block: decoded)
@@ -130,26 +122,43 @@ defmodule BlockChainExplorerWeb.BlockController do
     end
   end
 
-  def show( conn, params ) do
-    height = get_height_from_params( params )
-    hash = params[ "id" ]
-    conn = assign(conn, :error, "")
-    conn = assign(conn, :block, %{})
-    case hash do
-      nil ->
-        show_block_by_height( conn, height )
-      _ ->
-        show_block_by_hash( conn, hash )
+  defp show_block_by_hash( conn, hash ) do
+    tuple = Blockchain.getblock hash
+
+    case tuple do
+      {:ok, block} ->
+        decoded = Block.decode_block block
+        render(conn, "show.html", block: decoded)
+
+      other ->
+        show_error(conn, "show.html", other)
     end
   end
 
-  def index( conn, params ) do
-    height = get_height_from_params( params )
-    conn = assign( conn, :error, "" )
+  defp analyse_params( params ) do
+    height = get_height_from_params params
+    hash = params[ "id" ]
+    status = :first_block
+    if height != nil, do: status = :height
+    if hash != nil && height == nil, do: status = :hash
+    status
+  end
 
-    case height do
-      nil ->
-        case Blockchain.get_latest_block() do
+  def show( conn, params ) do
+    height = get_height_from_params( params )
+    hash = params[ "id" ]
+    status = analyse_params params
+    conn = assign(conn, :error, "")
+    conn = assign(conn, :block, %{})
+
+    case status do
+      :height ->
+        show_block_by_height( conn, height )
+      :hash ->
+        show_block_by_hash( conn, hash )
+      _ ->
+        tuple = Blockchain.get_latest_block()
+        case tuple do
           {:ok, block} ->
             decoded = Block.decode_block block
             render( conn, "show.html", block: decoded )
@@ -157,9 +166,6 @@ defmodule BlockChainExplorerWeb.BlockController do
           other ->
             show_error( conn, "show.html", other )
         end
-
-      _ ->
-        show_block_by_height( conn, height )
     end
   end
 

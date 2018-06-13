@@ -1,5 +1,5 @@
 
-<code><%= raw(@error) %></code>
+<code><%= raw(@error) %></code><br />
 
 <div class="form-group">
   <form id="number" name="number" method="post">

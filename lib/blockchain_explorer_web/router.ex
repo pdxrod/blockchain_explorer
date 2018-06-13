@@ -15,9 +15,11 @@ defmodule BlockChainExplorerWeb.Router do
 
   scope "/", BlockChainExplorerWeb do
     pipe_through :browser
-    resources "/", PageController, only: [:index]
-    resources "/blocks", BlockController, only: [:index, :show]
-    post "/blocks", BlockController, :index
+    get "/", PageController, :index
+    post "/blocks", BlockController, :show
+    get "/blocks", BlockController, :show
+    post "/blocks/:id", BlockController, :show
+    get "/blocks/:id", BlockController, :show
     post "/list", BlockController, :list
     get "/list", BlockController, :list
     resources "/trans", TransactionController, only: [:show]
