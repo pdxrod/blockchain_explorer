@@ -12,7 +12,4 @@
 
   <p><code style="flex: 1;"><b>Blocks:</b></code></p>
 
-  <% blocks_length = tuple_size( @blocks ) %>
-  <%= for num <- 0..blocks_length - 1 do %>
-    <code><%= elem( @blocks, num ) |> mark_up_block() |> raw() %></code><br/>
-  <%  end %>
+  <code><%= mark_blocks( @blocks) |> raw() %></code>

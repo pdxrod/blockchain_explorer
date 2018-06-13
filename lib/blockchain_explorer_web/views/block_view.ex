@@ -3,18 +3,35 @@ defmodule BlockChainExplorerWeb.BlockView do
 
   defp block_link(hash), do: "<a href='/blocks/#{hash}'>#{hash}</a>"
 
-  defp trans_link( hash ), do: ["<a href='/trans/#{hash}'>#{hash}</a>"]
+  defp trans_link( hash ), do: ["<a href='/trans/#{hash}'>#{hash}</a><br />"]
 
   def mark_up_block(block) do
-    if map_size( block ) > 0 do
-      block
-      |> Map.put( "previousblockhash", block_link( block["previousblockhash"] ))
-      |> Map.put( "nextblockhash", block_link( block["nextblockhash"] ))
-      |> Map.put( "hash", block_link( block["hash"] ))
-      |> mark_up_transactions()
-      |> Poison.encode!( pretty: true )
-    else
-      ""
+    [ """
+    Height:         #{ block.height }
+    Hash:           #{ block_link( block.hash ) }
+    Previous block: #{ block_link( block.previousblockhash ) }
+    Next block:     #{ block_link( block.nextblockhash ) }
+    Weight:         #{ block.weight }
+    Versionhex:     #{ block.versionhex }
+    Version:        #{ block.version }
+    Transactions:<br />#{ mark_transactions( block.tx ) }
+    Time:           #{ block.time }
+    Stripped size:  #{ block.strippedsize }
+    Size:           #{ block.size }
+    Nonce:          #{ block.nonce }
+    Merkle root:    #{ block.merkleroot }
+    Median time:    #{ block.mediantime }
+    Difficulty:     #{ block.difficulty }
+    Confirmations:  #{ block.confirmations }
+    Chainwork:      #{ block.chainwork }
+    Bits:           #{ block.bits }<br />
+    """ ]
+  end
+
+  def mark_blocks( blocks ) do
+    case blocks do
+      [ head | tail ] -> mark_up_block( head ) ++ mark_blocks( tail )
+      _ -> []
     end
   end
 
@@ -25,14 +42,8 @@ defmodule BlockChainExplorerWeb.BlockView do
     end
   end
 
-  defp mark_up_transactions( block ) do
-    list = block[ "tx" ]
-    list = mark_transactions( list )
-    Map.put( block, "tx", list )
-  end
-
   def mark_up_hash( block ) do
-    block_link( block[ "hash" ] )
+    block_link( block["hash"] )
   end
 
 end

@@ -13,7 +13,7 @@ defmodule BlockChainExplorerWeb.TransactionView do
     Version: #{ transaction.version }<br />
     Txid:    #{ transaction.txid }<br />
     Size:    #{ transaction.size }<br />
-    Hash:    #{ transaction.hash }<br /> <br />
+    Hash:    #{ transaction.hash }<br /><br />
     """
   end
 

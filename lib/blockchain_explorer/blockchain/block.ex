@@ -1,5 +1,4 @@
 defmodule BlockChainExplorer.Block do
-  alias BlockChainExplorer.Blockchain
 
   defstruct weight: "", versionhex: "", version: 0, tx: [],
 	    time: 0, strippedsize: 0, size: 0, previousblockhash: "",

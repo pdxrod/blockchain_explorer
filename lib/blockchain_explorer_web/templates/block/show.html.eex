@@ -2,4 +2,4 @@
 <code><%= raw(@error) %></code>
 
 <p><code style="flex: 1;"><b>Block:</b></code></p>
-<code><%= raw(mark_up_block(@block)) %></code>
+<code><%= raw( mark_up_block( @block )) %></code>

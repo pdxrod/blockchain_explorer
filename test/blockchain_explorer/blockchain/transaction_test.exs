@@ -1,6 +1,7 @@
 defmodule BlockChainExplorer.TransactionTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Blockchain
+  alias BlockChainExplorer.Utils
   alias BlockChainExplorer.Transaction
   alias BlockChainExplorer.Transaction.Output
 
@@ -82,10 +83,10 @@ defmodule BlockChainExplorer.TransactionTest do
       for output <- decoded.outputs do
         assert has_valid_addresses?( output.scriptpubkey.addresses )
         assert output.value >= 0.0
-        assert output.scriptpubkey.type != nil
+        assert Utils.notmt? output.scriptpubkey.type
   #      assert output.scriptpubkey.reqsigs > 0
-        assert output.scriptpubkey.hex != nil
-        assert output.scriptpubkey.asm != nil
+        assert Utils.notmt? output.scriptpubkey.hex
+        assert Utils.notmt? output.scriptpubkey.asm
         assert output.n > -1
       end
     end

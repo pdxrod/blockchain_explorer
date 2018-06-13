@@ -1,6 +1,7 @@
 defmodule BlockChainExplorerWeb.BlockController do
   use BlockChainExplorerWeb, :controller
   alias BlockChainExplorer.Blockchain
+  alias BlockChainExplorer.Block
   alias BlockChainExplorer.HashStack
 
   defp show_error( conn, page, error ) do
@@ -114,8 +115,9 @@ defmodule BlockChainExplorerWeb.BlockController do
 
     case Blockchain.get_latest_block() do
       {:ok, block} ->
-        blocks = Blockchain.get_n_blocks( block, num_blocks, :backward )
-        render( conn, "index.html", blocks: blocks )
+        blocks = Tuple.to_list Blockchain.get_n_blocks( block, num_blocks, :backward )
+        decoded = Enum.map( blocks, fn( block ) -> Block.decode_block( block ) end)
+        render( conn, "index.html", blocks: decoded )
 
       other ->
         show_error(conn, "index.html", other)
@@ -127,7 +129,8 @@ defmodule BlockChainExplorerWeb.BlockController do
     conn = assign(conn, :block, %{})
     case Blockchain.getblock(hash) do
       {:ok, block} ->
-        render(conn, "show.html", block: block)
+        decoded = Block.decode_block block
+        render(conn, "show.html", block: decoded)
 
       other ->
         show_error(conn, "show.html", other)
