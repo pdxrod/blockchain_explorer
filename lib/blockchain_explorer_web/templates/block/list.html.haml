@@ -5,9 +5,9 @@
     = Plug.CSRFProtection.get_csrf_token()
     "
     data-method="post" data-to="/list?p=t" id="next_top"
-    %code= cond do: @latest -> "disabled=\"disabled\"", true -> "" end  
+    = if @latest, do: "disabled=\"disabled\"", else: ""
     &gt; next
-  %button.btn.btn-primary{data-csrf: ""}
-  = Plug.CSRFProtection.get_csrf_token()
-  "
-  data-method="post" data-to="/list?n=t" id="previous_top"&gt;previous
+    %button.btn.btn-primary{data-csrf: ""}
+    = Plug.CSRFProtection.get_csrf_token()
+    "
+    data-method="post" data-to="/list?n=t" id="previous_top"&gt;previous
