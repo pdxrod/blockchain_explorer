@@ -1,0 +1,13 @@
+%code= raw( @error )
+.form-group
+  %form#navigate{:method => "post", :name => "navigate"}
+    %button.btn.btn-primary{data-csrf: ""}
+    = Plug.CSRFProtection.get_csrf_token()
+    "
+    data-method="post" data-to="/list?p=t" id="next_top"
+    %code= cond do: @latest -> "disabled=\"disabled\"", true -> "" end  
+    &gt; next
+  %button.btn.btn-primary{data-csrf: ""}
+  = Plug.CSRFProtection.get_csrf_token()
+  "
+  data-method="post" data-to="/list?n=t" id="previous_top"&gt;previous
