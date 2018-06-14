@@ -1,0 +1,12 @@
+%code= raw(@error)
+%ul
+  %p
+    = @transaction |> mark_up_transaction |> raw
+  %p
+    %b Outputs:
+    %br/
+    = @transaction.outputs |> mark_up_outputs |> raw
+  %p
+    %b Inputs:
+    %br/
+    = @transaction.inputs |> mark_up_inputs |> raw

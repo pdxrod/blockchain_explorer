@@ -37,7 +37,7 @@ config :blockchain_explorer, BlockChainExplorerWeb.Endpoint,
       ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
       ~r{priv/gettext/.*(po)$},
       ~r{lib/blockchain_explorer_web/views/.*(ex)$},
-      ~r{lib/blockchain_explorer_web/templates/.*(eex)$}
+      ~r{lib/blockchain_explorer_web/templates/.*(eex|haml)$}
     ]
   ]
 
