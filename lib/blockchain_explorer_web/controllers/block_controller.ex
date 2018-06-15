@@ -27,6 +27,18 @@ defmodule BlockChainExplorerWeb.BlockController do
     end
   end
 
+  defp next_button( latest ) do
+    if latest do
+      "<button disabled=\"disabled\" id=\"next_top\" class=\"btn btn-primary\" data-csrf=\"#{ Plug.CSRFProtection.get_csrf_token }\" data-method=\"post\" data-to=\"/list?p=t\">&lt; next</button>"
+    else
+      "<button                       id=\"next_top\" class=\"btn btn-primary\" data-csrf=\"#{ Plug.CSRFProtection.get_csrf_token }\" data-method=\"post\" data-to=\"/list?p=t\">&lt; next</button>"
+    end
+  end
+
+  defp previous_button() do
+    "<button id=\"previous_top\" class=\"btn btn-primary\" data-csrf=\"#{ Plug.CSRFProtection.get_csrf_token }\" data-method=\"post\" data-to=\"/list?n=t\">previous &gt;</button>"
+  end
+
   defp latest?( block ) do
     newer_blocks = Blockchain.get_n_blocks( block, 2, :forward )
     tuple_size( newer_blocks ) < 2 # If you can't get 2 blocks, you're at the top of the blockchain
@@ -41,9 +53,9 @@ defmodule BlockChainExplorerWeb.BlockController do
           block = elem( blocks, 49 )
           HashStack.push block
           blocks = Blockchain.get_n_blocks( block, 50, :backward )
-          render( conn, "list.html", blocks: blocks, latest: false )
+          render( conn, "list.html", blocks: blocks, next_button: next_button( false ), previous_button: previous_button())
         else
-          render( conn, "list.html", blocks: blocks, latest: latest?( block ) )
+          render( conn, "list.html", blocks: blocks, next_button: next_button( latest?( block )), previous_button: previous_button())
         end
 
       other ->
@@ -81,7 +93,7 @@ defmodule BlockChainExplorerWeb.BlockController do
         block = HashStack.pop()
         blocks = Blockchain.get_n_blocks( block, 50, :forward )
         latest = elem( blocks, 0 )
-        render( conn, "list.html", blocks: blocks, latest: latest?( latest ))
+        render( conn, "list.html", blocks: blocks, next_button: next_button( latest?( latest )), previous_button: previous_button())
 
       true -> raise "This should never happen - direction is #{ direction }"
     end
