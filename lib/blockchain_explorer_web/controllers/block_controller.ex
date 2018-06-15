@@ -28,11 +28,11 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp next_button( latest ) do
-    if latest do
-      "<button disabled=\"disabled\" id=\"next_top\" class=\"btn btn-primary\" data-csrf=\"#{ Plug.CSRFProtection.get_csrf_token }\" data-method=\"post\" data-to=\"/list?p=t\">&lt; next</button>"
-    else
-      "<button                       id=\"next_top\" class=\"btn btn-primary\" data-csrf=\"#{ Plug.CSRFProtection.get_csrf_token }\" data-method=\"post\" data-to=\"/list?p=t\">&lt; next</button>"
+    disabled = case latest do
+      true -> "disabled=\"disabled\""
+      _ -> ""
     end
+    "<button #{disabled} id=\"next_top\" class=\"btn btn-primary\" data-csrf=\"#{ Plug.CSRFProtection.get_csrf_token }\" data-method=\"post\" data-to=\"/list?p=t\">&lt; next</button>"
   end
 
   defp previous_button() do

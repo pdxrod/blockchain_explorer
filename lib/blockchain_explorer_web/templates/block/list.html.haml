@@ -3,6 +3,7 @@
   %form#navigate{:method => "post", :name => "navigate"}
     = @next_button |> raw
     = @previous_button |> raw
-    - for num <- 0..tuple_size( @blocks ) - 1 do 
-      - block = elem @blocks, num
-      %code= block |> mark_up_hash |> raw
+  %br
+  - for num <- 0..tuple_size( @blocks ) - 1 do
+    - block = elem @blocks, num
+    %code= block |> mark_up_hash |> raw
