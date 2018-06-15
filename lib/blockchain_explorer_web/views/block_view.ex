@@ -1,11 +1,11 @@
 defmodule BlockChainExplorerWeb.BlockView do
   use BlockChainExplorerWeb, :view
 
-  defp block_link(hash), do: "<a href='/blocks/#{hash}'>#{hash}</a>"
+  defp block_link( hash ), do: "<a href='/blocks/#{hash}'>#{hash}</a>"
 
   defp trans_link( hash ), do: ["<a href='/trans/#{hash}'>#{hash}</a><br />"]
 
-  def mark_up_block(block) do
+  def mark_up_block( block ) do
     if %{ } == block do
       [ "" ]
     else

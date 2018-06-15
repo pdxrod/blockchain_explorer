@@ -68,8 +68,8 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp show_n_hashes( conn, direction ) do
-    cond do
-      direction == :latest ->
+    case direction do
+      :latest ->
         result = Blockchain.getbestblockhash()
         ok = elem( result, 0 )
         cond do
@@ -79,7 +79,7 @@ defmodule BlockChainExplorerWeb.BlockController do
             show_error( conn, "list.html", result )
         end
 
-      direction == :backward ->
+      :backward ->
         block = HashStack.pop()
         if latest?( block ) do
           case Blockchain.getbestblockhash() do
@@ -93,13 +93,13 @@ defmodule BlockChainExplorerWeb.BlockController do
           show_list_page( conn, hash, true )
         end
 
-      direction == :forward ->
+      :forward ->
         block = HashStack.pop()
         blocks = Blockchain.get_n_blocks( block, 50, :forward )
         latest = elem( blocks, 0 )
         render_list_page( conn, blocks, latest?( latest ))
 
-      true -> raise "This should never happen - direction is #{ direction }"
+      _ -> raise "This should never happen - direction is #{ direction }"
     end
   end
 
