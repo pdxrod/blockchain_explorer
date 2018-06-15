@@ -44,6 +44,10 @@ defmodule BlockChainExplorerWeb.BlockController do
     tuple_size( newer_blocks ) < 2 # If you can't get 2 blocks, you're at the top of the blockchain
   end
 
+  defp render_list_page( conn, blocks, next ) do
+    render( conn, "list.html", blocks: blocks, next_button: next_button( next ), previous_button: previous_button())
+  end
+
   defp show_list_page( conn, hash, more \\ false ) do
     case Blockchain.getblock( hash ) do
       {:ok, block} ->
@@ -53,9 +57,9 @@ defmodule BlockChainExplorerWeb.BlockController do
           block = elem( blocks, 49 )
           HashStack.push block
           blocks = Blockchain.get_n_blocks( block, 50, :backward )
-          render( conn, "list.html", blocks: blocks, next_button: next_button( false ), previous_button: previous_button())
+          render_list_page( conn, blocks, false )
         else
-          render( conn, "list.html", blocks: blocks, next_button: next_button( latest?( block )), previous_button: previous_button())
+          render_list_page( conn, blocks, latest?( block ))
         end
 
       other ->
@@ -93,7 +97,7 @@ defmodule BlockChainExplorerWeb.BlockController do
         block = HashStack.pop()
         blocks = Blockchain.get_n_blocks( block, 50, :forward )
         latest = elem( blocks, 0 )
-        render( conn, "list.html", blocks: blocks, next_button: next_button( latest?( latest )), previous_button: previous_button())
+        render_list_page( conn, blocks, latest?( latest ))
 
       true -> raise "This should never happen - direction is #{ direction }"
     end

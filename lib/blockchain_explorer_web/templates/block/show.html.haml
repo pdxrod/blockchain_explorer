@@ -1,11 +1,11 @@
 %code= raw(@error)
-%br/
+%br
 .form-group
-  %form#number{:method => "post", :name => "number"}
-    %input#_csrf_token{:name => "_csrf_token", :type => "hidden", :value => "#{Plug.CSRFProtection.get_csrf_token()}"}/
+  %form#number{method: "post", name: "number"}
+    %input#_csrf_token{name: "_csrf_token", type: "hidden", value: "#{Plug.CSRFProtection.get_csrf_token()}"}/
     %code
       = label :blocks_label, :"enter block height:"
       = text_input :blocks, :num, value: ""
       = submit "submit", id: "submit", class: "btn btn-primary"
-    %br/
+    %br
 %code= @block |> mark_up_block |> raw

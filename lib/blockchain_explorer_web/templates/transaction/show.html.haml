@@ -4,9 +4,9 @@
     = @transaction |> mark_up_transaction |> raw
   %p
     %b Outputs:
-    %br/
+    %br
     = @transaction.outputs |> mark_up_outputs |> raw
   %p
     %b Inputs:
-    %br/
+    %br
     = @transaction.inputs |> mark_up_inputs |> raw
