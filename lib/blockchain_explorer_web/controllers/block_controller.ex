@@ -27,25 +27,13 @@ defmodule BlockChainExplorerWeb.BlockController do
     end
   end
 
-  defp next_button( latest ) do
-    disabled = case latest do
-      true -> "disabled=\"disabled\""
-      _ -> ""
-    end
-    "<button #{disabled} id=\"next_top\" class=\"btn btn-primary\" data-csrf=\"#{ Plug.CSRFProtection.get_csrf_token }\" data-method=\"post\" data-to=\"/list?p=t\">&lt; next</button>"
-  end
-
-  defp previous_button() do
-    "<button id=\"previous_top\" class=\"btn btn-primary\" data-csrf=\"#{ Plug.CSRFProtection.get_csrf_token }\" data-method=\"post\" data-to=\"/list?n=t\">previous &gt;</button>"
-  end
-
   defp latest?( block ) do
     newer_blocks = Blockchain.get_n_blocks( block, 2, :forward )
     tuple_size( newer_blocks ) < 2 # If you can't get 2 blocks, you're at the top of the blockchain
   end
 
-  defp render_list_page( conn, blocks, next ) do
-    render( conn, "list.html", blocks: blocks, next_button: next_button( next ), previous_button: previous_button())
+  defp render_list_page( conn, blocks, latest ) do
+    render( conn, "list.html", blocks: blocks, latest: latest )
   end
 
   defp show_list_page( conn, hash, more \\ false ) do

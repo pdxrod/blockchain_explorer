@@ -52,4 +52,16 @@ defmodule BlockChainExplorerWeb.BlockView do
     block_link( block[ "hash" ] )
   end
 
+  def next_button( latest ) do
+    disabled = case latest do
+      true -> "disabled=\"disabled\""
+      _ -> ""
+    end
+    "<button #{disabled} id=\"next_top\" class=\"btn btn-primary\" data-csrf=\"#{ Plug.CSRFProtection.get_csrf_token }\" data-method=\"post\" data-to=\"/list?p=t\">&lt; next</button>"
+  end
+
+  def previous_button() do
+    "<button id=\"previous_top\" class=\"btn btn-primary\" data-csrf=\"#{ Plug.CSRFProtection.get_csrf_token }\" data-method=\"post\" data-to=\"/list?n=t\">previous &gt;</button>"
+  end
+
 end
