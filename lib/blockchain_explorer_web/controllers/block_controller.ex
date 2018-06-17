@@ -28,15 +28,14 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp latest?( block ) do
-    newer_blocks = Blockchain.get_n_blocks( block, 2, :forward )
-    tuple_size( newer_blocks ) < 2 # If you can't get 2 blocks, you're at the top of the blockchain
+    block[ "nextblockhash" ] == nil
   end
 
-  defp render_list_page( conn, blocks, latest ) do
+  defp render_index_page( conn, blocks, latest ) do
     render( conn, "index.html", blocks: blocks, latest: latest )
   end
 
-  defp show_list_page( conn, hash, more \\ false ) do
+  defp show_index_page( conn, hash, more \\ false ) do
     case Blockchain.getblock( hash ) do
       {:ok, block} ->
         HashStack.push block
@@ -45,9 +44,9 @@ defmodule BlockChainExplorerWeb.BlockController do
           block = elem( blocks, 49 )
           HashStack.push block
           blocks = Blockchain.get_n_blocks( block, 50, :backward )
-          render_list_page( conn, blocks, false )
+          render_index_page( conn, blocks, false )
         else
-          render_list_page( conn, blocks, latest?( block ))
+          render_index_page( conn, blocks, latest?( block ))
         end
 
       other ->
@@ -62,7 +61,7 @@ defmodule BlockChainExplorerWeb.BlockController do
         ok = elem( result, 0 )
         cond do
           ok == :ok ->
-            show_list_page( conn, elem( result, 1 ))
+            show_index_page( conn, elem( result, 1 ))
           true ->
             show_error( conn, "index.html", result )
         end
@@ -72,20 +71,20 @@ defmodule BlockChainExplorerWeb.BlockController do
         if latest?( block ) do
           case Blockchain.getbestblockhash() do
             {:ok, hash} ->
-              show_list_page( conn, hash, true )
+              show_index_page( conn, hash, true )
             other ->
               show_error( conn, "index.html", other )
           end
         else
           hash = block[ "hash" ]
-          show_list_page( conn, hash, true )
+          show_index_page( conn, hash, true )
         end
 
       :forward ->
         block = HashStack.pop()
         blocks = Blockchain.get_n_blocks( block, 50, :forward )
         latest = elem( blocks, 0 )
-        render_list_page( conn, blocks, latest?( latest ))
+        render_index_page( conn, blocks, latest?( latest ))
 
       _ -> raise "This should never happen - direction is #{ direction }"
     end
@@ -139,6 +138,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   def index(conn, params) do
     last = HashStack.peek()
     direction = cond do # See index.html.eex for where params comes from
+      params == %{} -> :latest
       params[ "n" ] == "t" -> :backward
       last == nil -> :latest
       params[ "p" ] == nil -> :backward
@@ -149,7 +149,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   def show( conn, params ) do
-    height = get_height_from_params( params )
+    height = get_height_from_params params
     hash = params[ "id" ]
     status = analyse_params params
     conn = assign(conn, :error, "")

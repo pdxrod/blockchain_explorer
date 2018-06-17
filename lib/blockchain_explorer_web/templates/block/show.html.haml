@@ -4,7 +4,7 @@
   %form#number{method: "post", name: "number"}
     %input#_csrf_token{name: "_csrf_token", type: "hidden", value: "#{Plug.CSRFProtection.get_csrf_token()}"}
     %code
-      = label :blocks_label, :"enter block height:"
+      = label :blocks_label, :"enter a block height, e.g. 1325614, or part of a block hash, e.g. 5cac5:"
         = text_input :blocks, :num, value: ""
           = submit "submit", id: "submit", class: "btn btn-primary"
     %br
