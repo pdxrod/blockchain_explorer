@@ -33,7 +33,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp render_list_page( conn, blocks, latest ) do
-    render( conn, "list.html", blocks: blocks, latest: latest )
+    render( conn, "index.html", blocks: blocks, latest: latest )
   end
 
   defp show_list_page( conn, hash, more \\ false ) do
@@ -51,7 +51,7 @@ defmodule BlockChainExplorerWeb.BlockController do
         end
 
       other ->
-        show_error(conn, "list.html", other)
+        show_error(conn, "index.html", other)
     end
   end
 
@@ -64,7 +64,7 @@ defmodule BlockChainExplorerWeb.BlockController do
           ok == :ok ->
             show_list_page( conn, elem( result, 1 ))
           true ->
-            show_error( conn, "list.html", result )
+            show_error( conn, "index.html", result )
         end
 
       :backward ->
@@ -74,7 +74,7 @@ defmodule BlockChainExplorerWeb.BlockController do
             {:ok, hash} ->
               show_list_page( conn, hash, true )
             other ->
-              show_error( conn, "list.html", other )
+              show_error( conn, "index.html", other )
           end
         else
           hash = block[ "hash" ]
@@ -89,18 +89,6 @@ defmodule BlockChainExplorerWeb.BlockController do
 
       _ -> raise "This should never happen - direction is #{ direction }"
     end
-  end
-
-  def list(conn, params) do
-    last = HashStack.peek()
-    direction = cond do # See list.html.eex for where params comes from
-      params[ "n" ] == "t" -> :backward
-      last == nil -> :latest
-      params[ "p" ] == nil -> :backward
-      true -> :forward
-    end
-    conn = assign( conn, :error, "" )
-    show_n_hashes( conn, direction )
   end
 
   defp get_height_from_params( params ) do
@@ -146,6 +134,18 @@ defmodule BlockChainExplorerWeb.BlockController do
     if height != nil, do: status = :height
     if hash != nil && height == nil, do: status = :hash
     status
+  end
+
+  def index(conn, params) do
+    last = HashStack.peek()
+    direction = cond do # See index.html.eex for where params comes from
+      params[ "n" ] == "t" -> :backward
+      last == nil -> :latest
+      params[ "p" ] == nil -> :backward
+      true -> :forward
+    end
+    conn = assign( conn, :error, "" )
+    show_n_hashes( conn, direction )
   end
 
   def show( conn, params ) do

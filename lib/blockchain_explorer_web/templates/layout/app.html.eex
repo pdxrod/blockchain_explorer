@@ -21,7 +21,7 @@
     <div class="container">
       <p style="display: flex; flex-direction: row; margin: 0 0 3em 0;">
         <code style="display: inline-block !important;"><a href="/blocks">[home]</a></code>&nbsp;&nbsp;
-        <code style="display: inline-block !important;"><a href="/list">[blocks]</a></code>
+        <code style="display: inline-block !important;"><a href="/index">[blocks]</a></code>
       </p>
 
       <main role="main">

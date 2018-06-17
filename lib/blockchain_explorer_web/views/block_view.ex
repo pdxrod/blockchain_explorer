@@ -57,11 +57,11 @@ defmodule BlockChainExplorerWeb.BlockView do
       true -> "disabled=\"disabled\""
       _ -> ""
     end
-    "<button #{disabled} id=\"next_top\" class=\"btn btn-primary\" data-csrf=\"#{ Plug.CSRFProtection.get_csrf_token }\" data-method=\"post\" data-to=\"/list?p=t\">&lt; next</button>"
+    "<button #{disabled} id=\"next_top\" class=\"btn btn-primary\" data-csrf=\"#{ Plug.CSRFProtection.get_csrf_token }\" data-method=\"post\" data-to=\"/index?p=t\">&lt; next</button>"
   end
 
   def previous_button() do
-    "<button id=\"previous_top\" class=\"btn btn-primary\" data-csrf=\"#{ Plug.CSRFProtection.get_csrf_token }\" data-method=\"post\" data-to=\"/list?n=t\">previous &gt;</button>"
+    "<button id=\"previous_top\" class=\"btn btn-primary\" data-csrf=\"#{ Plug.CSRFProtection.get_csrf_token }\" data-method=\"post\" data-to=\"/index?n=t\">previous &gt;</button>"
   end
 
 end

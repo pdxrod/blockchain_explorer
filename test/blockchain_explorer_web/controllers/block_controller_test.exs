@@ -13,9 +13,9 @@ defmodule BlockChainExplorerWeb.BlockControllerTest do
     end
   end
 
-  describe "list" do
+  describe "index" do
     test "lists several block hashes", %{conn: conn} do
-      conn = get conn, block_path(conn, :list)
+      conn = get conn, block_path(conn, :index)
       assert html_response(conn, 200) =~ ~r/[0-9a-f]+[0-9a-f]+/
     end
   end
