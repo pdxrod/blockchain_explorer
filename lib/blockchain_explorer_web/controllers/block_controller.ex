@@ -90,16 +90,6 @@ defmodule BlockChainExplorerWeb.BlockController do
     end
   end
 
-  defp get_height_from_params( params ) do
-    try do
-      num_param = params[ "blocks" ][ "num" ]
-      String.to_integer( num_param )
-    rescue
-      e in ArgumentError -> e # If there is no parameter, or if user entered an invalid number
-      nil
-    end
-  end
-
   defp show_block_by_height( conn, height ) do
     tuple = Blockchain.get_block_by_height height
 
@@ -126,13 +116,21 @@ defmodule BlockChainExplorerWeb.BlockController do
     end
   end
 
+  def find_block_in_background( conn, val ) do
+    render(conn, "show.html", block: %Block{})
+  end
+
   defp analyse_params( params ) do
-    height = get_height_from_params params
-    hash = params[ "id" ]
-    status = :first_block
-    if height != nil, do: status = :height
-    if hash != nil && height == nil, do: status = :hash
-    status
+    user_input = params[ "blocks" ][ "num" ]
+    user_input = if user_input == nil, do: "", else: user_input
+    params_id = params[ "id" ]
+
+    cond do
+      user_input =~ ~r/[a-f]+/i -> {:hex, user_input}
+      user_input =~ ~r/^[0-9]+$/ -> {:height, String.to_integer( user_input )}
+      params_id != nil -> {:hash, params_id}
+      true -> {:first_block, nil}
+    end
   end
 
   def index(conn, params) do
@@ -149,17 +147,17 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   def show( conn, params ) do
-    height = get_height_from_params params
-    hash = params[ "id" ]
     status = analyse_params params
     conn = assign(conn, :error, "")
     conn = assign(conn, :block, %{})
 
-    case status do
+    case elem( status, 0 ) do
       :height ->
-        show_block_by_height( conn, height )
+        show_block_by_height( conn, elem( status, 1 ) )
       :hash ->
-        show_block_by_hash( conn, hash )
+        show_block_by_hash( conn, elem( status, 1 ) )
+      :hex ->
+        find_block_in_background( conn, elem( status, 1 ) )
       _ ->
         tuple = Blockchain.get_latest_block()
         case tuple do
