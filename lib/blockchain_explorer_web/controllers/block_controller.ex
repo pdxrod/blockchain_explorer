@@ -116,7 +116,7 @@ defmodule BlockChainExplorerWeb.BlockController do
     end
   end
 
-  def find_block_in_background( conn, val ) do
+  def find_transaction_in_background( conn, val ) do
     render(conn, "show.html", block: %Block{})
   end
 
@@ -124,10 +124,10 @@ defmodule BlockChainExplorerWeb.BlockController do
     user_input = params[ "blocks" ][ "num" ]
     user_input = if user_input == nil, do: "", else: user_input
     params_id = params[ "id" ]
-
+# This is all wrong. Regexes should exclude non-conformant strings.
     cond do
-      user_input =~ ~r/[a-f]+/i -> {:hex, user_input}
       user_input =~ ~r/^[0-9]+$/ -> {:height, String.to_integer( user_input )}
+      user_input =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ -> {:adr, user_input}
       params_id != nil -> {:hash, params_id}
       true -> {:first_block, nil}
     end
@@ -156,8 +156,8 @@ defmodule BlockChainExplorerWeb.BlockController do
         show_block_by_height( conn, elem( status, 1 ) )
       :hash ->
         show_block_by_hash( conn, elem( status, 1 ) )
-      :hex ->
-        find_block_in_background( conn, elem( status, 1 ) )
+      :adr ->
+        find_transaction_in_background( conn, elem( status, 1 ) )
       _ ->
         tuple = Blockchain.get_latest_block()
         case tuple do

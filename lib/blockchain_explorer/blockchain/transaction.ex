@@ -24,9 +24,7 @@ defmodule BlockChainExplorer.Transaction do
           "reqSigs": 1,
           "hex": "a9141a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf87",
           "asm": "OP_HASH160 1a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf OP_EQUAL",
-          "addresses": [
-            "2MudhyEqJ7RzedMPXrReNXDcJ9Hch1AUqdv"
-          ]
+          "addresses": [ "2MudhyEqJ7RzedMPXrReNXDcJ9Hch1AUqdv" ]
         },
         "n": 0
       },
