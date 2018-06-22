@@ -4,7 +4,7 @@ defmodule BlockChainExplorer.MyRegexesTest do
   describe "my regexes" do
     @base_58_address    "2MtiNuyRfvx8jHEpt3Zx5tCcEutJUh7gAmi"
     @base_58_invalid    "0OtiNuyRfvx8jHEpt3Zx5tCcEutJUh7gAmi"
-    @base_58_exclusions ~w{ 0 O I l }
+    @base_58_exclusions ~w{ O I } # Some valid addresses include 0 or l
     @base_16_hash       "1f0d81065545bba0d42886b6f0fbf67cf5c5000dcfe663448ef4a37d031f9dea"
     @base_16_invalid    "0d81065545bba0d42886b6f0fbf67cf5c5g500dcfe663448ef4a37d031f9deaz"
     @base_16_too_short  "1f0d81065545bba0d42886b6f0fbf67cf5c5000dcfe663448ef4a37d031f9de"

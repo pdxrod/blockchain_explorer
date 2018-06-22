@@ -124,10 +124,9 @@ defmodule BlockChainExplorerWeb.BlockController do
     user_input = params[ "blocks" ][ "num" ]
     user_input = if user_input == nil, do: "", else: user_input
     params_id = params[ "id" ]
-# This is all wrong. Regexes should exclude non-conformant strings.
     cond do
-      user_input =~ ~r/^[0-9]+$/ -> {:height, String.to_integer( user_input )}
-      user_input =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ -> {:adr, user_input}
+      user_input =~ Application.get_env(:blockchain_explorer, :base_10_integer_regex) -> {:height, String.to_integer( user_input )}
+      user_input =~ Application.get_env(:blockchain_explorer, :base_58_address_regex) -> {:adr, user_input}
       params_id != nil -> {:hash, params_id}
       true -> {:first_block, nil}
     end

@@ -10,7 +10,7 @@ config :blockchain_explorer, bitcoin_url: "http://USERNAME:PASSWORD@127.0.0.1:18
 config :blockchain_explorer, base_16_regex:         ~r/^([A-Fa-f0-9]+)$/
 config :blockchain_explorer, base_16_hash_regex:    ~r/^([A-Fa-f0-9]{64})$/
 config :blockchain_explorer, base_58_partial_regex: ~r/^([1-9a-km-zA-HJ-NP-Z]{5,})$/
-config :blockchain_explorer, base_58_address_regex: ~r/^([1-9a-km-zA-HJ-NP-Z]{12,})$/
+config :blockchain_explorer, base_58_address_regex: ~r/^([0-9a-zA-HJ-NP-Z]{10,})$/
 config :blockchain_explorer, base_10_integer_regex: ~r/^([0-9]+)$/
 
 # Configures the endpoint
