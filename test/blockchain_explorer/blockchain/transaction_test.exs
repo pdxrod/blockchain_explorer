@@ -20,8 +20,6 @@ defmodule BlockChainExplorer.TransactionTest do
       case addresses_str_list do
         [] -> false
         [ hd | tl ] ->
-
-          IO.puts "\nhas_valid_addresses? #{hd}"
           cond do
             hd =~ Application.get_env(:blockchain_explorer, :base_58_address_regex) -> true
             true -> has_valid_addresses?( tl )
