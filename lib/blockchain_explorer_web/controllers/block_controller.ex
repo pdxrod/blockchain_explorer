@@ -117,7 +117,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   def find_transaction_in_background( conn, val ) do
-    render(conn, "show.html", block: %Block{})
+    render(conn, "show.html", block: %Block{}) # TODO
   end
 
   defp analyse_params( params ) do
@@ -126,7 +126,7 @@ defmodule BlockChainExplorerWeb.BlockController do
     params_id = params[ "id" ]
     cond do
       user_input =~ Application.get_env(:blockchain_explorer, :base_10_integer_regex) -> {:height, String.to_integer( user_input )}
-      user_input =~ Application.get_env(:blockchain_explorer, :base_58_address_regex) -> {:adr, user_input}
+      user_input =~ Application.get_env(:blockchain_explorer, :base_58_partial_regex) -> {:adr, user_input}
       params_id != nil -> {:hash, params_id}
       true -> {:first_block, nil}
     end
