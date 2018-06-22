@@ -7,6 +7,9 @@ use Mix.Config
 
 # General application configuration
 config :blockchain_explorer, bitcoin_url: "http://USERNAME:PASSWORD@127.0.0.1:18332"
+config :blockchain_explorer, base_16_address_regex: ~r/^([A-Fa-f0-9]{64})$/
+config :blockchain_explorer, base_58_partial_regex: ~r/^([1-9a-km-zA-HJ-NP-Z])$/
+config :blockchain_explorer, base_58_address_regex: ~r/^([1-9a-km-zA-HJ-NP-Z]{35})/
 
 # Configures the endpoint
 config :blockchain_explorer, BlockChainExplorerWeb.Endpoint,
