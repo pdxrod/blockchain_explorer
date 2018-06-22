@@ -13,6 +13,14 @@ defmodule BlockChainExplorer.MyRegexesTest do
     @base_16_too_short  "1f0d81065545bba0d42886b6f0fbf67cf5c5000dcfe663448ef4a37d031f9de"
     @base_16_too_long   "1f0d81065545bba0d42886b6f0fbf67cf5c5000dcfe663448ef4a37d031f9deaa"
 
+    test "my base 10 regex is valid" do
+      base_10_integer_regex = Application.get_env(:blockchain_explorer, :base_10_integer_regex)
+      assert "9" =~ base_10_integer_regex
+      assert "90" =~ base_10_integer_regex
+      assert ! "7f" =~ base_10_integer_regex 
+      assert ! "" =~ base_10_integer_regex
+    end
+
     test "my base 58 regex is valid" do
       base_58_address_regex = Application.get_env(:blockchain_explorer, :base_58_address_regex)
       assert @base_58_address =~ base_58_address_regex

@@ -21,7 +21,7 @@ defmodule BlockChainExplorer.TransactionTest do
         [] -> false
         [ hd | tl ] ->
           cond do
-            hd =~ ~r/[1-9a-km-zA-HJ-NP-Z]+/ -> true # alphanumeric, no 0 O I l
+            hd =~ Application.get_env(:blockchain_explorer, :base_58_address_regex) -> true
             true -> has_valid_addresses?( tl )
           end
       end
