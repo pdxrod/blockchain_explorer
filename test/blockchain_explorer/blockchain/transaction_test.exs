@@ -71,10 +71,10 @@ defmodule BlockChainExplorer.TransactionTest do
       decoded = get_a_useful_transaction()
       assert Transaction.outputs_total_value( decoded ) > 0.0
       assert decoded.version > 0
-      assert decoded.txid =~ ~r/[0-9a-f]+/
+      assert decoded.txid =~ Utils.env( :base_16_hash_regex )
       assert decoded.size > 0
       assert decoded.locktime == 0
-      assert decoded.hash =~ ~r/[0-9a-f]+/
+      assert decoded.hash =~ Utils.env( :base_16_hash_regex )
     end
 
     test "outputs" do

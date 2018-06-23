@@ -85,8 +85,8 @@ defmodule BlockChainExplorer.Transaction do
   defp outputs_has_everything?( outputs_list_of_maps ) do
     Utils.recurse( false, true, outputs_list_of_maps, fn(output) ->
                    output["value"] > 0.0 && output["scriptPubKey"] && output["scriptPubKey"]["hex"] &&
-                   output["scriptPubKey"]["asm"] && output["scriptPubKey"]["addresses"] &&
-                   length(output["scriptPubKey"]["addresses"]) > 0 end )
+                   output["scriptPubKey"]["asm"] && String.contains?( output["scriptPubKey"]["asm"], "OP_" )
+                   && output["scriptPubKey"]["addresses"] && length(output["scriptPubKey"]["addresses"]) > 0 end )
   end
 
   defp inputs_has_everything?( inputs_list_of_maps ) do
