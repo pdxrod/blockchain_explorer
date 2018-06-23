@@ -117,7 +117,7 @@ defmodule BlockChainExplorerWeb.BlockController do
     end
   end
 
-  def find_transaction_in_background( conn, val ) do
+  def find_transactions_in_background( conn, val ) do
     render(conn, "show.html", block: %Block{}) # TODO
   end
 
@@ -157,7 +157,7 @@ defmodule BlockChainExplorerWeb.BlockController do
       :hash ->
         show_block_by_hash( conn, elem( status, 1 ) )
       :adr ->
-        find_transaction_in_background( conn, elem( status, 1 ) )
+        find_transactions_in_background( conn, elem( status, 1 ) )
       _ ->
         tuple = Blockchain.get_latest_block()
         case tuple do

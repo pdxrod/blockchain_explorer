@@ -7,6 +7,8 @@ defmodule BlockChainExplorerWeb.TransactionView do
 #  "coinbase": "03190b14042126065b726567696f6e312f50726f6a65637420425443506f6f6c2f020df278d618000000000000"}
 # ]
 
+  defp trans_link( hash ), do: ["<a href='/trans/#{hash}'>#{hash}</a><br />"]
+
   def mark_up_transaction( transaction ) do
     """
     Vsize:   #{ transaction.vsize }<br />
@@ -35,6 +37,8 @@ defmodule BlockChainExplorerWeb.TransactionView do
     """
         #{ output.n }<br />
         Value: #{ output.value }<br />
+        Asm: <br />
+        &nbsp;&nbsp;#{ output.scriptpubkey.asm }<br />
         Addresses: <br />
     """ <> mark_up_addresses( output.scriptpubkey.addresses )
   end
@@ -48,11 +52,12 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   defp mark_input( input ) do
     """
-    Sequence: #{ input.sequence }   <br />
-    Txid:     #{ input.txid     }   <br />
-    Scriptsig:                      <br />
-    &nbsp;&nbsp;asm: #{ input.scriptsig["asm"] }<br />
-    &nbsp;&nbsp;hex: #{ input.scriptsig["hex"] }<br /> <br />
+    Sequence: #{ input.sequence           }<br />
+    Txid:     #{ trans_link input.txid    }
+    Asm: <br />
+    &nbsp;&nbsp;#{ input.scriptsig["asm"] }<br />
+    Hex: <br />
+    &nbsp;&nbsp;#{ input.scriptsig["hex"] }<br /><br />
     """
   end
 end

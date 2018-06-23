@@ -87,6 +87,7 @@ defmodule BlockChainExplorer.TransactionTest do
   #      assert output.scriptpubkey.reqsigs > 0
         assert Utils.notmt? output.scriptpubkey.hex
         assert Utils.notmt? output.scriptpubkey.asm
+        assert String.contains?( output.scriptpubkey.asm, "OP_" )
         assert output.n > -1
       end
     end
