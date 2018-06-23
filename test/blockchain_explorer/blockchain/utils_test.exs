@@ -11,12 +11,13 @@ defmodule BlockChainExplorer.UtilsTest do
 
     test "typeof" do
       assert "binary" == Utils.typeof( "Hello" )
+      assert "list" == Utils.typeof( 'Hello' )
       assert "list" == Utils.typeof( [:a, :b] )
     end
 
     test "env" do
       assert Application.get_env( :blockchain_explorer, :bitcoin_url )
-      assert Application.get_env( :blockchain_explorer, :bitcoin_url ) == Utils.env( :bitcoin_url )
+      assert Utils.env( :bitcoin_url ) == Application.get_env( :blockchain_explorer, :bitcoin_url )
     end
 
 # Does this map have a key :foo with value zero?
