@@ -9,6 +9,16 @@ defmodule BlockChainExplorer.UtilsTest do
     @list_with_foo_map_not_0 [ %{bar: 0}, %{hello: "world", foo: 1} ]
     @list_with_foo_map_set_to_0 [ %{}, %{hello: "world", foo: 0}, %{bar: 1} ]
 
+    test "typeof" do
+      assert "binary" == Utils.typeof( "Hello" )
+      assert "list" == Utils.typeof( [:a, :b] )
+    end
+
+    test "env" do
+      assert Application.get_env( :blockchain_explorer, :bitcoin_url )
+      assert Application.get_env( :blockchain_explorer, :bitcoin_url ) == Utils.env( :bitcoin_url )
+    end
+
 # Does this map have a key :foo with value zero?
     defp a_condition( a_map ) do
       a_map[ :foo ] == 0

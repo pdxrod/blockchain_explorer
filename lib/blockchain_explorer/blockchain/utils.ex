@@ -20,4 +20,8 @@ defmodule BlockChainExplorer.Utils do
     thing != nil && thing != ""
   end
 
+  def env( atom ) do
+    Application.get_env( :blockchain_explorer, atom )
+  end
+
 end

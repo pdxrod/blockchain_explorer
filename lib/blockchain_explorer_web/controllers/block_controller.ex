@@ -3,6 +3,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.Block
   alias BlockChainExplorer.HashStack
+  alias BlockChainExplorer.Utils
 
   defp show_error( conn, page, error ) do
     case error do
@@ -125,8 +126,8 @@ defmodule BlockChainExplorerWeb.BlockController do
     user_input = if user_input == nil, do: "", else: user_input
     params_id = params[ "id" ]
     cond do
-      user_input =~ Application.get_env(:blockchain_explorer, :base_10_integer_regex) -> {:height, String.to_integer( user_input )}
-      user_input =~ Application.get_env(:blockchain_explorer, :base_58_partial_regex) -> {:adr, user_input}
+      user_input =~ Utils.env( :base_10_integer_regex ) -> {:height, String.to_integer( user_input )}
+      user_input =~ Utils.env( :base_58_partial_regex ) -> {:adr, user_input}
       params_id != nil -> {:hash, params_id}
       true -> {:first_block, nil}
     end

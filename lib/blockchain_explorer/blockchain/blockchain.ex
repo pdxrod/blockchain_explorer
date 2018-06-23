@@ -1,7 +1,8 @@
 defmodule BlockChainExplorer.Blockchain do
+  alias BlockChainExplorer.Utils
 
   def bitcoin_rpc(method, params \\ []) do
-    with url <- Application.get_env(:blockchain_explorer, :bitcoin_url),
+    with url <- Utils.env( :bitcoin_url),
          command <- %{jsonrpc: "1.0", method: method, params: params},
          {:ok, body} <- Poison.encode(command),
          {:ok, response} <- HTTPoison.post(url, body),
