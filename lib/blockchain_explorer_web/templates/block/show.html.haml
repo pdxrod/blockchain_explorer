@@ -4,7 +4,7 @@
   %form#number{method: "post", name: "number"}
     %input#_csrf_token{name: "_csrf_token", type: "hidden", value: "#{Plug.CSRFProtection.get_csrf_token()}"}
     %code
-      = label :blocks_label, :"enter a block height, e.g. 1325614, or part of a bitcoin address, e.g. mh2e7YH"
+      = label :blocks_label, :"enter a block height, e.g. 1325614, or the start of a bitcoin address, e.g. mh2e7YH"
         = text_input :blocks, :num, value: ""
           = submit "submit", id: "submit", class: "btn btn-primary"
     %br

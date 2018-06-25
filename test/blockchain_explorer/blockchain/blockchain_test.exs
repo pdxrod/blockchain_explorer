@@ -1,6 +1,7 @@
 defmodule BlockChainExplorer.BlockchainTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Blockchain
+  alias BlockChainExplorer.Utils
 
   describe "blocks" do
 
@@ -43,7 +44,7 @@ defmodule BlockChainExplorer.BlockchainTest do
     test "return block with a valid id" do
       block = get_best_block()
       hash = block[ "hash" ]
-      assert hash =~ ~r/[0-9a-f]+/
+      assert hash =~ Utils.env :base_16_hash_regex
     end
 
     test "next block works" do
@@ -52,13 +53,13 @@ defmodule BlockChainExplorer.BlockchainTest do
       assert nil == hash
       previous = Blockchain.get_next_or_previous_block( block, :backward )
       hash = previous[ "nextblockhash" ]
-      assert hash =~ ~r/[0-9a-f]+/
+      assert hash =~ Utils.env :base_16_hash_regex
     end
 
     test "previous block works" do
       block = get_best_block()
       hash = block[ "previousblockhash" ]
-      assert hash =~ ~r/[0-9a-f]+/
+      assert hash =~ Utils.env :base_16_hash_regex
     end
 
     test "hash works" do
@@ -67,7 +68,7 @@ defmodule BlockChainExplorer.BlockchainTest do
       result = Blockchain.getblock( hash )
       block = elem( result, 1 )
       new_hash = block[ "hash" ]
-      assert new_hash =~ ~r/[0-9a-f]+/
+      assert new_hash =~ Utils.env :base_16_hash_regex
       assert new_hash == hash
     end
 
