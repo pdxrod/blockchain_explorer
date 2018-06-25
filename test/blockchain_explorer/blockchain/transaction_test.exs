@@ -8,8 +8,7 @@ defmodule BlockChainExplorer.TransactionTest do
   describe "transaction" do
 
     defp get_a_useful_transaction do
-      result = Blockchain.get_latest_block()
-      block = elem( result, 1 )
+      block = Blockchain.get_best_block()
       blocks = Blockchain.get_n_blocks( block, 100 )
       trans = Transaction.transaction_with_everything_in_it_from_tuple( blocks )
       tuple = Transaction.get_transaction_tuple( trans )
@@ -57,9 +56,7 @@ defmodule BlockChainExplorer.TransactionTest do
     end
 
     test "get the transactions on a block" do
-      result = Blockchain.get_latest_block()
-      assert :ok == elem( result, 0 )
-      block = elem( result, 1 )
+      block = Blockchain.get_best_block()
       hash = block[ "previousblockhash" ]
       result = Blockchain.getblock( hash )
       assert :ok == elem( result, 0 )

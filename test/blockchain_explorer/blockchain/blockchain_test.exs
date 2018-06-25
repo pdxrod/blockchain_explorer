@@ -28,13 +28,6 @@ defmodule BlockChainExplorer.BlockchainTest do
       "bits" => "1a03039b"
     }
 
-    defp get_best_block do
-      result = Blockchain.getbestblockhash()
-      hash = elem( result, 1 )
-      result = Blockchain.getblock( hash )
-      elem( result, 1 )
-    end
-
     test "our block is a real one" do
       previous = Blockchain.get_next_or_previous_block( @our_block, :backward )
       hash = previous[ "nextblockhash" ]
@@ -42,13 +35,13 @@ defmodule BlockChainExplorer.BlockchainTest do
     end
 
     test "return block with a valid id" do
-      block = get_best_block()
+      block = Blockchain.get_best_block()
       hash = block[ "hash" ]
       assert hash =~ Utils.env :base_16_hash_regex
     end
 
     test "next block works" do
-      block = get_best_block()
+      block = Blockchain.get_best_block()
       hash = block[ "nextblockhash" ]
       assert nil == hash
       previous = Blockchain.get_next_or_previous_block( block, :backward )
@@ -57,13 +50,13 @@ defmodule BlockChainExplorer.BlockchainTest do
     end
 
     test "previous block works" do
-      block = get_best_block()
+      block = Blockchain.get_best_block()
       hash = block[ "previousblockhash" ]
       assert hash =~ Utils.env :base_16_hash_regex
     end
 
     test "hash works" do
-      block = get_best_block()
+      block = Blockchain.get_best_block()
       hash = block[ "hash" ]
       result = Blockchain.getblock( hash )
       block = elem( result, 1 )
@@ -83,7 +76,7 @@ defmodule BlockChainExplorer.BlockchainTest do
     end
 
     test "get n blocks backward works" do
-      block = get_best_block()
+      block = Blockchain.get_best_block()
       old_hash = block[ "hash" ]
       blocks = Blockchain.get_n_blocks(block, 3, :backward)
       assert tuple_size( blocks ) == 3
@@ -106,7 +99,7 @@ defmodule BlockChainExplorer.BlockchainTest do
     end
 
     test "get n blocks blows up given an inappropriate direction" do
-      block = get_best_block()
+      block = Blockchain.get_best_block()
       err = try do
         Blockchain.get_n_blocks(block, 2, :latest)
         raise "We should not have reached this line"
@@ -117,7 +110,7 @@ defmodule BlockChainExplorer.BlockchainTest do
     end
 
     test "get next n blocks backward works" do
-      block = get_best_block()
+      block = Blockchain.get_best_block()
       hash = block[ "hash" ]
       blocks = Blockchain.get_next_or_previous_n_blocks(block, 20, :backward)
       assert tuple_size( blocks ) == 20
@@ -133,8 +126,15 @@ defmodule BlockChainExplorer.BlockchainTest do
       assert last_hash == next_first_hash
     end
 
+    test "get next n blocks with a nil block works" do
+      one = Blockchain.get_n_blocks( nil, 4 )
+      block = Blockchain.get_best_block()
+      two = Blockchain.get_next_or_previous_n_blocks( block, 4 )
+      assert one == two
+    end
+
     test "get next n blocks forward works" do
-      original_block = get_best_block()
+      original_block = Blockchain.get_best_block()
       blocks = Blockchain.get_next_or_previous_n_blocks(original_block, 5, :backward, {original_block})
       first_block = elem( blocks, 4 )
       blocks = Blockchain.get_next_or_previous_n_blocks(first_block, 5, :backward, {first_block})
@@ -153,7 +153,7 @@ defmodule BlockChainExplorer.BlockchainTest do
     end
 
     test "get blocks functions don't need {block} as an argument" do
-      block = get_best_block()
+      block = Blockchain.get_best_block()
       one = Blockchain.get_n_blocks(block, 4, :backward, {block})
       two = Blockchain.get_n_blocks(block, 4, :backward, {})
       assert one == two

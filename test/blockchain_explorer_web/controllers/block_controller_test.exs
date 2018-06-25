@@ -4,8 +4,7 @@ defmodule BlockChainExplorerWeb.BlockControllerTest do
 
   describe "show" do
     test "shows a block", %{conn: conn} do
-      result = Blockchain.get_latest_block()
-      block = elem( result, 1 )
+      block = Blockchain.get_best_block()
       blocks = Blockchain.get_n_blocks( block, 2 )
       block = elem( blocks, 1 )
       conn = get conn, block_path(conn, :show, id: block[ "hash" ] )

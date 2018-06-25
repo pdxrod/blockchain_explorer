@@ -27,11 +27,11 @@ defmodule BlockChainExplorer.Blockchain do
 
   def decoderawtransaction( hex ), do: bitcoin_rpc( "decoderawtransaction", [hex] )
 
-  def get_latest_block do
-    case getbestblockhash() do
-      {:ok, hash} -> getblock( hash )
-      other -> other
-    end
+  def get_best_block do
+    result = getbestblockhash()
+    hash = elem( result, 1 )
+    result = getblock( hash )
+    elem( result, 1 )
   end
 
   def get_block_by_height( height ) do
@@ -60,6 +60,7 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   def get_n_blocks( block, n, direction \\ :backward, blocks \\ {} ) do
+    block = if block == nil, do: get_best_block(), else: block
     if tuple_size( blocks ) < 1, do: blocks = {block}
     cond do
       n <= 1 ->

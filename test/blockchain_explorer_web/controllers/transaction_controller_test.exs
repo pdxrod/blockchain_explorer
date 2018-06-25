@@ -4,8 +4,7 @@ defmodule BlockChainExplorerWeb.TransactionControllerTest do
   alias BlockChainExplorer.Transaction
 
   defp get_a_useful_transaction do
-    result = Blockchain.get_latest_block()
-    block = elem( result, 1 )
+    block = Blockchain.get_best_block()
     Blockchain.get_n_blocks( block, 100 ) |>
     Transaction.transaction_with_everything_in_it_from_tuple |>
     Transaction.get_transaction_tuple |>

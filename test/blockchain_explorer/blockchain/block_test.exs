@@ -7,8 +7,7 @@ defmodule BlockChainExplorer.BlockTest do
   describe "blocks" do
 
     test "decode_block works" do
-      result = Blockchain.get_latest_block()
-      block = elem( result, 1 )
+      block = Blockchain.get_best_block()
       blocks = Blockchain.get_n_blocks( block, 30 )
       for num <- 20..29 do
         tuple = elem( blocks, num )

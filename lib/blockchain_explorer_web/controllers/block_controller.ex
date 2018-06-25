@@ -159,15 +159,9 @@ defmodule BlockChainExplorerWeb.BlockController do
       :adr ->
         find_transactions_in_background( conn, elem( status, 1 ) )
       _ ->
-        tuple = Blockchain.get_latest_block()
-        case tuple do
-          {:ok, block} ->
-            decoded = Block.decode_block block
-            render( conn, "show.html", block: decoded )
-
-          other ->
-            show_error( conn, "show.html", other )
-        end
+        block = Blockchain.get_best_block()
+        decoded = Block.decode_block block
+        render( conn, "show.html", block: decoded )
     end
   end
 
