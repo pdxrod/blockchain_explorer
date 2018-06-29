@@ -61,12 +61,12 @@ defmodule BlockChainExplorer.Blockchain do
       n <= 1 ->
         blocks
       true ->
+        if direction != "previousblockhash" && direction != "nextblockhash", do: raise "direction should be previousblockhash or nextblockhash, not #{ direction }"
         new_block = get_next_or_previous_block( block, direction )
         if map_size( new_block ) > 0 do
           blocks = case direction do
             "previousblockhash" -> Tuple.append( blocks, new_block )
             "nextblockhash" -> Tuple.insert_at( blocks, 0, new_block )
-            _ -> raise "direction should be previousblockhash or nextblockhash, not #{ direction }"
           end
           get_n_blocks( new_block, n - 1, direction, blocks )
         else
