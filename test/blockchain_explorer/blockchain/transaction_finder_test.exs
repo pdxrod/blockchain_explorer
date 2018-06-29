@@ -9,7 +9,7 @@ defmodule BlockChainExplorer.TransactionFinderTest do
     test "find" do
       IO.puts "\ntransaction finder test"
       trans = TransactionFinder.find_transactions( "mh2e7YH" )
-      Utils.typeof trans
+      IO.inspect trans
     end
 
   end

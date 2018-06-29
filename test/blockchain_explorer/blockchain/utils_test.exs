@@ -15,6 +15,15 @@ defmodule BlockChainExplorer.UtilsTest do
       assert "list" == Utils.typeof( [:a, :b] )
     end
 
+    test "mt?" do
+      for thing <- [nil, "", %{}, [], {}] do
+        assert Utils.mt? thing
+        assert !(Utils.notmt? thing)
+      end
+      assert !(Utils.mt? "Hello")
+      assert Utils.notmt? "Hello"
+    end
+
     test "env" do
       assert Application.get_env( :blockchain_explorer, :bitcoin_url )
       assert Utils.env( :bitcoin_url ) == Application.get_env( :blockchain_explorer, :bitcoin_url )
