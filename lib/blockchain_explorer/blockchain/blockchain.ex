@@ -42,12 +42,7 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   def get_next_or_previous_block( block, direction ) do
-    which_way = cond do
-      direction == :backward -> "previousblockhash"
-      direction == :forward -> "nextblockhash"
-      true -> raise "direction should be forward or backward, not #{ direction }"
-    end
-    hash = block[ which_way ]
+    hash = block[ direction ]
     block = case getblock( hash ) do
       {:ok, map} ->
         map
@@ -59,7 +54,7 @@ defmodule BlockChainExplorer.Blockchain do
     block
   end
 
-  def get_n_blocks( block, n, direction \\ :backward, blocks \\ {} ) do
+  def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
     block = if block == nil, do: get_best_block(), else: block
     if tuple_size( blocks ) < 1, do: blocks = {block}
     cond do
@@ -69,9 +64,9 @@ defmodule BlockChainExplorer.Blockchain do
         new_block = get_next_or_previous_block( block, direction )
         if map_size( new_block ) > 0 do
           blocks = case direction do
-            :backward -> Tuple.append( blocks, new_block )
-            :forward -> Tuple.insert_at( blocks, 0, new_block )
-            _ -> raise "direction should be forward or backward, not #{ direction }"
+            "previousblockhash" -> Tuple.append( blocks, new_block )
+            "nextblockhash" -> Tuple.insert_at( blocks, 0, new_block )
+            _ -> raise "direction should be previousblockhash or nextblockhash, not #{ direction }"
           end
           get_n_blocks( new_block, n - 1, direction, blocks )
         else
@@ -80,7 +75,7 @@ defmodule BlockChainExplorer.Blockchain do
     end
   end
 
-  defp get_next_or_previous_n_blocks_empty( block, n, direction \\ :backward, blocks \\ {} ) do
+  defp get_next_or_previous_n_blocks_empty( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
     if tuple_size( blocks ) < 1, do: blocks = {block}
     if n <= 1 do
       blocks
@@ -88,9 +83,9 @@ defmodule BlockChainExplorer.Blockchain do
       new_block = get_next_or_previous_block( block, direction )
       if map_size( new_block ) > 0 do
         blocks = case direction do
-          :backward -> Tuple.append( blocks, new_block )
-          :forward -> Tuple.insert_at( blocks, 0, new_block )
-          _ -> raise "direction should be forward or backward, not #{ direction }"
+          "previousblockhash" -> Tuple.append( blocks, new_block )
+          "nextblockhash" -> Tuple.insert_at( blocks, 0, new_block )
+          _ -> raise "direction should be previousblockhash or nextblockhash, not #{ direction }"
         end
         get_next_or_previous_n_blocks_empty( new_block, n - 1, direction, blocks )
       else
@@ -99,12 +94,12 @@ defmodule BlockChainExplorer.Blockchain do
     end
   end
 
-  def get_next_or_previous_n_blocks( block, n, direction \\ :backward, blocks \\ {} ) do
+  def get_next_or_previous_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
     size = tuple_size( blocks )
     if size == 0 do
       get_next_or_previous_n_blocks_empty( block, n, direction )
     else
-      num = if direction == :backward, do: size - 1, else: 0
+      num = if direction == "previousblockhash", do: size - 1, else: 0
       new_block = elem( blocks, num )
       get_next_or_previous_n_blocks_empty( new_block, n, direction, {new_block} )
     end

@@ -29,7 +29,7 @@ defmodule BlockChainExplorer.BlockchainTest do
     }
 
     test "our block is a real one" do
-      previous = Blockchain.get_next_or_previous_block( @our_block, :backward )
+      previous = Blockchain.get_next_or_previous_block( @our_block, "previousblockhash" )
       hash = previous[ "nextblockhash" ]
       assert hash == @our_block[ "hash" ]
     end
@@ -44,7 +44,7 @@ defmodule BlockChainExplorer.BlockchainTest do
       block = Blockchain.get_best_block()
       hash = block[ "nextblockhash" ]
       assert nil == hash
-      previous = Blockchain.get_next_or_previous_block( block, :backward )
+      previous = Blockchain.get_next_or_previous_block( block, "previousblockhash" )
       hash = previous[ "nextblockhash" ]
       assert hash =~ Utils.env :base_16_hash_regex
     end
@@ -78,9 +78,9 @@ defmodule BlockChainExplorer.BlockchainTest do
     test "get n blocks backward works" do
       block = Blockchain.get_best_block()
       old_hash = block[ "hash" ]
-      blocks = Blockchain.get_n_blocks(block, 3, :backward)
+      blocks = Blockchain.get_n_blocks(block, 3, "previousblockhash")
       assert tuple_size( blocks ) == 3
-      blocks = Blockchain.get_n_blocks(block, 2, :backward)
+      blocks = Blockchain.get_n_blocks(block, 2, "previousblockhash")
       assert tuple_size( blocks ) == 2
       block = elem( blocks, 0 )
       new_hash = block[ "hash" ]
@@ -88,38 +88,38 @@ defmodule BlockChainExplorer.BlockchainTest do
       block = elem( blocks, 1 )
       new_hash = block[ "hash" ]
       assert old_hash != new_hash
-      blocks = Blockchain.get_n_blocks(block, 100, :backward)
+      blocks = Blockchain.get_n_blocks(block, 100, "previousblockhash")
       assert tuple_size( blocks ) == 100
-      blocks = Blockchain.get_n_blocks(block, -1, :backward)
+      blocks = Blockchain.get_n_blocks(block, -1, "previousblockhash")
       assert tuple_size( blocks ) == 1
-      blocks = Blockchain.get_n_blocks(block, 1, :backward)
+      blocks = Blockchain.get_n_blocks(block, 1, "previousblockhash")
       assert tuple_size( blocks ) == 1
-      blocks = Blockchain.get_n_blocks(block, 0, :backward)
+      blocks = Blockchain.get_n_blocks(block, 0, "previousblockhash")
       assert tuple_size( blocks ) == 1
     end
 
     test "get n blocks blows up given an inappropriate direction" do
       block = Blockchain.get_best_block()
       err = try do
-        Blockchain.get_n_blocks(block, 2, :latest)
+        Blockchain.get_n_blocks(block, 2, "foobar")
         raise "We should not have reached this line"
       rescue
         e in RuntimeError -> e
       end
-      assert err.message == "direction should be forward or backward, not latest"
+      assert err.message == "direction should be previousblockhash or nextblockhash, not foobar"
     end
 
     test "get next n blocks backward works" do
       block = Blockchain.get_best_block()
       hash = block[ "hash" ]
-      blocks = Blockchain.get_next_or_previous_n_blocks(block, 20, :backward)
+      blocks = Blockchain.get_next_or_previous_n_blocks(block, 20, "previousblockhash")
       assert tuple_size( blocks ) == 20
       block = elem( blocks, 0 )
       first_hash = block[ "hash" ]
       assert hash == first_hash
       block = elem( blocks, 19 )
       last_hash = block[ "hash" ]
-      blocks = Blockchain.get_next_or_previous_n_blocks(block, 40, :backward)
+      blocks = Blockchain.get_next_or_previous_n_blocks(block, 40, "previousblockhash")
       assert tuple_size( blocks ) == 40
       block = elem( blocks, 0 )
       next_first_hash = block[ "hash" ]
@@ -135,30 +135,30 @@ defmodule BlockChainExplorer.BlockchainTest do
 
     test "get next n blocks forward works" do
       original_block = Blockchain.get_best_block()
-      blocks = Blockchain.get_next_or_previous_n_blocks(original_block, 5, :backward, {original_block})
+      blocks = Blockchain.get_next_or_previous_n_blocks(original_block, 5, "previousblockhash", {original_block})
       first_block = elem( blocks, 4 )
-      blocks = Blockchain.get_next_or_previous_n_blocks(first_block, 5, :backward, {first_block})
+      blocks = Blockchain.get_next_or_previous_n_blocks(first_block, 5, "previousblockhash", {first_block})
       second_block = elem( blocks, 4 )
       assert second_block != first_block
-      blocks = Blockchain.get_next_or_previous_n_blocks( second_block, 5, :forward, {second_block} )
+      blocks = Blockchain.get_next_or_previous_n_blocks( second_block, 5, "nextblockhash", {second_block} )
       new_block = elem( blocks, 0 )
       assert new_block[ "hash" ] == first_block[ "hash" ]
-      blocks = Blockchain.get_next_or_previous_n_blocks( new_block, 5, :forward, {new_block} )
+      blocks = Blockchain.get_next_or_previous_n_blocks( new_block, 5, "nextblockhash", {new_block} )
       another_block = elem( blocks, 0 )
       assert another_block == original_block
-      blocks = Blockchain.get_next_or_previous_n_blocks( another_block, 5, :forward, {another_block} )
+      blocks = Blockchain.get_next_or_previous_n_blocks( another_block, 5, "nextblockhash", {another_block} )
       assert blocks == {another_block}
-      blocks = Blockchain.get_next_or_previous_n_blocks( another_block, 5, :forward )
+      blocks = Blockchain.get_next_or_previous_n_blocks( another_block, 5, "nextblockhash" )
       assert blocks == {another_block}
     end
 
     test "get blocks functions don't need {block} as an argument" do
       block = Blockchain.get_best_block()
-      one = Blockchain.get_n_blocks(block, 4, :backward, {block})
-      two = Blockchain.get_n_blocks(block, 4, :backward, {})
+      one = Blockchain.get_n_blocks(block, 4, "previousblockhash", {block})
+      two = Blockchain.get_n_blocks(block, 4, "previousblockhash", {})
       assert one == two
-      one = Blockchain.get_next_or_previous_n_blocks(block, 4, :backward, {block})
-      two = Blockchain.get_next_or_previous_n_blocks(block, 4, :backward, {})
+      one = Blockchain.get_next_or_previous_n_blocks(block, 4, "previousblockhash", {block})
+      two = Blockchain.get_next_or_previous_n_blocks(block, 4, "previousblockhash", {})
       assert one == two
     end
 

@@ -40,11 +40,11 @@ defmodule BlockChainExplorerWeb.BlockController do
     case Blockchain.getblock( hash ) do
       {:ok, block} ->
         HashStack.push block
-        blocks = Blockchain.get_n_blocks( block, 50, :backward )
+        blocks = Blockchain.get_n_blocks( block, 50, "previousblockhash" )
         if more do
           block = elem( blocks, 49 )
           HashStack.push block
-          blocks = Blockchain.get_n_blocks( block, 50, :backward )
+          blocks = Blockchain.get_n_blocks( block, 50, "previousblockhash" )
           render_index_page( conn, blocks, false )
         else
           render_index_page( conn, blocks, latest?( block ))
@@ -67,7 +67,7 @@ defmodule BlockChainExplorerWeb.BlockController do
             show_error( conn, "index.html", result )
         end
 
-      :backward ->
+      "previousblockhash" ->
         block = HashStack.pop()
         if latest?( block ) do
           case Blockchain.getbestblockhash() do
@@ -81,9 +81,9 @@ defmodule BlockChainExplorerWeb.BlockController do
           show_index_page( conn, hash, true )
         end
 
-      :forward ->
+      "nextblockhash" ->
         block = HashStack.pop()
-        blocks = Blockchain.get_n_blocks( block, 50, :forward )
+        blocks = Blockchain.get_n_blocks( block, 50, "nextblockhash" )
         latest = elem( blocks, 0 )
         render_index_page( conn, blocks, latest?( latest ))
 
@@ -137,10 +137,10 @@ defmodule BlockChainExplorerWeb.BlockController do
     last = HashStack.peek()
     direction = cond do # See index.html.eex for where params comes from
       params == %{} -> :latest
-      params[ "n" ] == "t" -> :backward
+      params[ "n" ] == "t" -> "previousblockhash"
       last == nil -> :latest
-      params[ "p" ] == nil -> :backward
-      true -> :forward
+      params[ "p" ] == nil -> "previousblockhash"
+      true -> "nextblockhash"
     end
     conn = assign( conn, :error, "" )
     show_n_hashes( conn, direction )
