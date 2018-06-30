@@ -7,8 +7,8 @@ defmodule BlockChainExplorer.TransactionFinderTest do
   describe "transaction finder test" do
 
     test "find" do
-      trans = TransactionFinder.find_transactions( "mh2e7YH" )
-    #  IO.inspect Stream.take( trans, 1 )
+      trans = TransactionFinder.find_transactions( "2Mz84" )
+      Stream.take( trans, 10 )
     end
 
   end

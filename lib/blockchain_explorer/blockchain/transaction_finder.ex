@@ -8,10 +8,16 @@ defmodule BlockChainExplorer.TransactionFinder do
   end
 
   defp is_in_transaction_addresses?( addresses_str_list, address_str ) do
+
+#IO.puts "\nis_in_transaction_addresses?"
+
     if Utils.mt? addresses_str_list do
       false
     else
       [ hd | tl ] = addresses_str_list
+
+#IO.puts "address #{hd}, str #{address_str}"
+
       cond do
         String.starts_with?( hd, address_str ) -> true
         true -> is_in_transaction_addresses?( tl, address_str )
@@ -54,9 +60,9 @@ defmodule BlockChainExplorer.TransactionFinder do
   end
 
   def find_transactions( address_str ) do
-    tuple = Blockchain.get_n_blocks nil, 100
+    tuple = Blockchain.get_n_blocks nil, 10
     list = Tuple.to_list tuple
-    Stream.map( list, &is_in_block?( &1, address_str ) )
+    Enum.map( list, &is_in_block?( &1, address_str ) )
   end
 
 end
