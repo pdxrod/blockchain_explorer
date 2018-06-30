@@ -37,32 +37,37 @@ defmodule BlockChainExplorer.TransactionFinder do
     end
   end
 
-  defp is_in_transaction?( transaction_address_str, address_str ) do
+  defp transaction_containing_address( transaction_address_str, address_str ) do
     transaction_tuple = Transaction.get_transaction_tuple transaction_address_str
     transaction = elem transaction_tuple, 1
-    is_in_transaction_outputs? transaction[ "vout" ], address_str
+    if is_in_transaction_outputs? transaction[ "vout" ], address_str do
+      transaction
+    else
+      nil
+    end
   end
 
-  defp is_in_transactions?( transactions_addresses, address_str ) do
+  defp transactions_contain_address( transactions_addresses, address_str ) do
     if Utils.mt? transactions_addresses do
-      false
+      nil
     else
       [ hd | tl ] = transactions_addresses
+      transaction = transaction_containing_address( hd, address_str )
       cond do
-        is_in_transaction?( hd, address_str ) -> true
-        true -> is_in_transactions?( tl, address_str )
+        transaction -> transaction
+        true -> transactions_contain_address( tl, address_str )
       end
     end
   end
 
-  defp is_in_block?( block_json, address_str ) do
-    is_in_transactions? block_json[ "tx" ], address_str
+  defp block_contains_address( block_json, address_str ) do
+    transactions_contain_address block_json[ "tx" ], address_str
   end
 
   def find_transactions( address_str ) do
-    tuple = Blockchain.get_n_blocks nil, 10
+    tuple = Blockchain.get_n_blocks nil, 100
     list = Tuple.to_list tuple
-    Enum.map( list, &is_in_block?( &1, address_str ) )
+    Stream.map( list, &block_contains_address( &1, address_str ) )
   end
 
 end
