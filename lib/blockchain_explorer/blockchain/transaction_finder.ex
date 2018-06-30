@@ -65,7 +65,7 @@ defmodule BlockChainExplorer.TransactionFinder do
   end
 
   def find_transactions( address_str ) do
-    Blockchain.get_n_blocks( nil, 1000 ) |> Tuple.to_list() |> Stream.map( &block_contains_address( &1, address_str ) )
+    Blockchain.get_n_blocks( nil, 1_000_000 ) |> Tuple.to_list() |> Stream.map( &block_contains_address( &1, address_str ) )
   end
 
 end
