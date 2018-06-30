@@ -75,6 +75,10 @@ defmodule BlockChainExplorer.Blockchain do
     end
   end
 
+  def stream_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
+    blocks |> Tuple.to_list() |> Stream.map( &get_n_blocks( block, n, direction, &1 ))
+  end
+
   defp get_next_or_previous_n_blocks_empty( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
     if tuple_size( blocks ) < 1, do: blocks = {block}
     if n <= 1 do
