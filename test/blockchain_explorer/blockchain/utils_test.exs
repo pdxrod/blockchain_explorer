@@ -16,7 +16,7 @@ defmodule BlockChainExplorer.UtilsTest do
     end
 
     test "mt?" do
-      for thing <- [nil, "", %{}, [], {}] do
+      for thing <- [nil, "", '', %{}, [], {}] do
         assert Utils.mt? thing
         assert !(Utils.notmt? thing)
       end

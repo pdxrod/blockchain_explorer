@@ -56,10 +56,7 @@ defmodule BlockChainExplorer.TransactionFinder do
   def find_transactions( address_str ) do
     tuple = Blockchain.get_n_blocks nil, 100
     list = Tuple.to_list tuple
-    # Stream.map
-    Enum.map( list, &is_in_block?( &1, address_str ) )
-    #    block = List.first list
-    #    is_in_block? block, address_str
+    Stream.map( list, &is_in_block?( &1, address_str ) )
   end
 
 end

@@ -15,13 +15,28 @@ defmodule BlockChainExplorer.TransactionTest do
       Transaction.decode_transaction( tuple )
     end
 
-    defp has_valid_addresses?( addresses_str_list ) do
+    defp has_a_valid_address?( addresses_str_list ) do
       case addresses_str_list do
+        nil -> false
         [] -> false
         [ hd | tl ] ->
           cond do
             hd =~ Utils.env( :base_58_address_regex ) -> true
-            true -> has_valid_addresses?( tl )
+            true -> has_a_valid_address?( tl )
+          end
+      end
+    end
+
+    defp at_least_one_output_has_a_valid_address?( outputs ) do
+      case outputs do
+        nil -> false
+        [] -> false
+        [ output | more_outputs ] ->
+          cond do
+            Utils.mt?( output.scriptpubkey ) -> false
+            Utils.mt?( output.scriptpubkey.addresses ) -> false
+            has_a_valid_address?( output.scriptpubkey.addresses ) -> true
+            true -> at_least_one_output_has_a_valid_address?( more_outputs )
           end
       end
     end
@@ -77,11 +92,11 @@ defmodule BlockChainExplorer.TransactionTest do
     test "outputs" do
       decoded = get_a_useful_transaction()
       assert Transaction.has_output_addresses?( decoded.outputs )
+      assert at_least_one_output_has_a_valid_address?( decoded.outputs )
       for output <- decoded.outputs do
-        assert has_valid_addresses?( output.scriptpubkey.addresses )
+  #      assert has_a_valid_address?( output.scriptpubkey.addresses )
         assert output.value >= 0.0
         assert Utils.notmt? output.scriptpubkey.type
-  #      assert output.scriptpubkey.reqsigs > 0
         assert Utils.notmt? output.scriptpubkey.hex
         assert Utils.notmt? output.scriptpubkey.asm
         assert String.contains?( output.scriptpubkey.asm, "OP_" )

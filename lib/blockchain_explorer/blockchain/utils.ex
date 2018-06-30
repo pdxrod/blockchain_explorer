@@ -16,13 +16,13 @@ defmodule BlockChainExplorer.Utils do
     end
   end
 
-  def notmt?( thing ) do
-    thing != nil && thing != "" && thing != %{} && thing != [] && thing != {}
+  def mt?( thing ) do
+    thing == nil || thing == "" || thing == '' || thing == %{} || thing == [] || thing == {}
   end
 
-  def mt?( thing ) do
-    ! notmt?( thing )
-  end  
+  def notmt?( thing ) do
+    ! mt?( thing )
+  end
 
   def env( atom ) do
     Application.get_env( :blockchain_explorer, atom )
