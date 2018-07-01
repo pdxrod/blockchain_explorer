@@ -28,10 +28,10 @@ defmodule BlockChainExplorer.Blockchain do
   def decoderawtransaction( hex ), do: bitcoin_rpc( "decoderawtransaction", [hex] )
 
   def get_best_block do
-    result = getbestblockhash()
-    hash = elem( result, 1 )
-    result = getblock( hash )
-    elem( result, 1 )
+    getbestblockhash()
+    |> elem( 1 )
+    |> getblock()
+    |> elem( 1 )
   end
 
   def get_block_by_height( height ) do
@@ -73,10 +73,6 @@ defmodule BlockChainExplorer.Blockchain do
           blocks
         end
     end
-  end
-
-  def stream_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
-    blocks |> Tuple.to_list() |> Stream.map( &get_n_blocks( block, n, direction, &1 ))
   end
 
   defp get_next_or_previous_n_blocks_empty( block, n, direction \\ "previousblockhash", blocks \\ {} ) do

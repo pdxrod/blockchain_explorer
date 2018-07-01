@@ -9,14 +9,14 @@ defmodule BlockChainExplorer.TransactionFinder do
 
   defp is_in_transaction_addresses?( addresses_str_list, address_str ) do
 
-#IO.puts "\nis_in_transaction_addresses?"
+IO.puts "\nis_in_transaction_addresses?"
 
     if Utils.mt? addresses_str_list do
       false
     else
       [ hd | tl ] = addresses_str_list
 
-#IO.puts "address #{hd}, str #{address_str}"
+IO.puts "address #{hd}, str #{address_str}"
 
       cond do
         String.starts_with?( hd, address_str ) -> true
@@ -64,8 +64,15 @@ defmodule BlockChainExplorer.TransactionFinder do
     transactions_contain_address block_json[ "tx" ], address_str
   end
 
+  defp find_blocks( address_str ) do
+    Blockchain.get_n_blocks( nil, 100 )
+    |> Tuple.to_list()
+    |> Enum.map( &block_contains_address( &1, address_str ) )
+  end
+
   def find_transactions( address_str ) do
-    Blockchain.stream_n_blocks( nil, 1_000_000 ) |> Stream.map( &block_contains_address( &1, address_str ) )
+    task = Task.async( fn() -> find_blocks( address_str ) end)
+    Task.await( task )
   end
 
 end

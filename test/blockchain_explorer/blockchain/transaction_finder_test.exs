@@ -7,8 +7,7 @@ defmodule BlockChainExplorer.TransactionFinderTest do
   describe "transaction finder test" do
 
     test "find" do
-      trans = TransactionFinder.find_transactions( "2Mz84" )
-      IO.inspect Enum.take( trans, 5 )
+      TransactionFinder.find_transactions( "mke3" )
     end
 
   end
