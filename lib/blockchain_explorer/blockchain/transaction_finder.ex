@@ -7,28 +7,28 @@ defmodule BlockChainExplorer.TransactionFinder do
     Agent.start_link(fn -> [] end, name: __MODULE__ )
   end
 
-  defp is_in_transaction_addresses?( addresses_str_list, address_str ) do
+  defp is_in_transaction_addresses?( transaction, addresses_str_list, address_str ) do
     if Utils.mt? addresses_str_list do
       false
     else
       [ hd | tl ] = addresses_str_list
       cond do
         String.starts_with?( hd, address_str ) ->
-          IO.puts "\nis_in_transaction_addresses? address #{hd}, str #{address_str} FOUND"
+          IO.puts "\nis_in_transaction_addresses? transaction #{transaction["txid"]}, address #{hd}, str #{address_str} - FOUND"
           true
-        true -> is_in_transaction_addresses?( tl, address_str )
+        true -> is_in_transaction_addresses?( transaction, tl, address_str )
       end
     end
   end
 
-  defp is_in_transaction_outputs?( transaction_outputs, address_str ) do
-    if Utils.mt? transaction_outputs do
+  defp is_in_transaction_outputs?( transaction, outputs, address_str ) do
+    if Utils.mt? outputs do
       false
     else
-      [ hd | tl ] = transaction_outputs
+      [ hd | tl ] = outputs
       cond do
-        hd[ "scriptPubKey" ] && hd[ "scriptPubKey" ][ "addresses" ] && is_in_transaction_addresses?( hd[ "scriptPubKey" ][ "addresses" ], address_str ) -> true
-        true -> is_in_transaction_outputs?( tl, address_str )
+        hd[ "scriptPubKey" ] && hd[ "scriptPubKey" ][ "addresses" ] && is_in_transaction_addresses?( transaction, hd[ "scriptPubKey" ][ "addresses" ], address_str ) -> true
+        true -> is_in_transaction_outputs?( transaction, tl, address_str )
       end
     end
   end
@@ -36,7 +36,7 @@ defmodule BlockChainExplorer.TransactionFinder do
   defp transaction_containing_address( transaction_address_str, address_str ) do
     transaction_tuple = Transaction.get_transaction_tuple transaction_address_str
     transaction = elem transaction_tuple, 1
-    if is_in_transaction_outputs? transaction[ "vout" ], address_str do
+    if is_in_transaction_outputs? transaction, transaction[ "vout"], address_str do
       transaction
     else
       nil
@@ -50,8 +50,7 @@ defmodule BlockChainExplorer.TransactionFinder do
       [ hd | tl ] = transactions_addresses
       transaction = transaction_containing_address( hd, address_str )
       cond do
-        transaction ->
-          transaction
+        transaction != nil -> transaction
         true -> transactions_contain_address( tl, address_str )
       end
     end

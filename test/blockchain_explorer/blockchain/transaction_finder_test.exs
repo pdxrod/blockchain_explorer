@@ -29,11 +29,10 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       address_str = get_an_address trans.outputs
       address_str = String.slice address_str, 0..5
       task = TransactionFinder.find_transactions address_str
-      err = try do
+      try do
         Task.await task
-      rescue e in RuntimeError -> e
+      catch :exit, _ -> ""
       end
-      IO.inspect err
     end
 
   end
