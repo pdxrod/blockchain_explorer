@@ -26,8 +26,7 @@ defmodule BlockChainExplorer.TransactionFinderTest do
 
     test "find" do
       trans = get_a_useful_transaction()
-      outputs = trans.outputs
-      address_str = get_an_address outputs
+      address_str = get_an_address trans.outputs
       address_str = String.slice address_str, 0..5
       TransactionFinder.find_transactions address_str
     end

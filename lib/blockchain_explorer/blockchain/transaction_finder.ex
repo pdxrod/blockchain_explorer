@@ -50,7 +50,8 @@ defmodule BlockChainExplorer.TransactionFinder do
       [ hd | tl ] = transactions_addresses
       transaction = transaction_containing_address( hd, address_str )
       cond do
-        transaction -> transaction
+        transaction ->
+          transaction
         true -> transactions_contain_address( tl, address_str )
       end
     end
