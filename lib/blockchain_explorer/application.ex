@@ -7,9 +7,8 @@ defmodule BlockChainExplorer.Application do
     import Supervisor.Spec
 
     children = [
-      supervisor(BlockChainExplorerWeb.Endpoint, []),
-      worker(BlockChainExplorer.HashStack, []),
-      worker(BlockChainExplorer.TransactionFinder, [])
+      supervisor( BlockChainExplorerWeb.Endpoint, [] ),
+      worker( BlockChainExplorer.HashStack, [] ) 
     ]
 
     opts = [strategy: :one_for_one, name: BlockChainExplorer.Supervisor]
