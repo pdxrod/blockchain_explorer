@@ -11,7 +11,10 @@ defmodule BlockChainExplorerWeb.TransactionControllerTest do
     Transaction.decode_transaction
   end
 
-  describe "show" do
+  describe "transaction" do
+    test "shows transactions", %{conn: conn} do
+    end
+    
     test "shows a transaction", %{conn: conn} do
       transaction = get_a_useful_transaction()
       conn = get conn, transaction_path(conn, :show, transaction.txid)

@@ -136,7 +136,7 @@ defmodule BlockChainExplorerWeb.BlockController do
     TransactionFinder.find_transactions val
     IO.puts "after find_transactions"
 
-    redirect( conn, to: "/transactions", transactions: { %Transaction{} } )
+    redirect( conn, to: "/transactions" )
   end
 
   def index(conn, params) do
@@ -154,10 +154,6 @@ defmodule BlockChainExplorerWeb.BlockController do
     conn = assign(conn, :error, "")
     conn = assign(conn, :block, %{})
     conn = assign(conn, :transactions, {})
-
-IO.puts "show"
-IO.inspect status
-
     case elem( status, 0 ) do
       :height ->
         show_block_by_height( conn, elem( status, 1 ) )
