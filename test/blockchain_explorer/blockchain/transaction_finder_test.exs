@@ -8,10 +8,10 @@ defmodule BlockChainExplorer.TransactionFinderTest do
   describe "transaction finder test" do
 
     defp get_a_useful_transaction do
-      blocks = Blockchain.get_n_blocks( nil, 100 )
-      trans = Transaction.transaction_with_everything_in_it_from_tuple( blocks )
-      tuple = Transaction.get_transaction_tuple( trans )
-      Transaction.decode_transaction( tuple )
+      Blockchain.get_n_blocks( nil, 100 )
+      |> Transaction.transaction_with_everything_in_it_from_tuple()
+      |> Transaction.get_transaction_tuple()
+      |> Transaction.decode_transaction()
     end
 
     def get_an_address( outputs ) do
@@ -31,7 +31,7 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       task = TransactionFinder.find_transactions address_str
       try do
         Task.await task
-      catch :exit, _ -> ""
+      catch :exit, _ -> IO.puts "\nExit find"
       end
     end
 

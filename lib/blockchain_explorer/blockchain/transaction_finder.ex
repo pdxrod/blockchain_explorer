@@ -57,13 +57,15 @@ defmodule BlockChainExplorer.TransactionFinder do
   end
 
   defp block_contains_address( block_json, address_str ) do
-    transactions_contain_address block_json[ "tx" ], address_str
+    trans = transactions_contain_address block_json[ "tx" ], address_str
+    trans
   end
 
   defp find_blocks( address_str ) do
     Blockchain.get_n_blocks( nil, 100 )
     |> Tuple.to_list()
     |> Enum.map( &block_contains_address( &1, address_str ) )
+    |> IO.inspect 
   end
 
   def find_transactions( address_str ) do

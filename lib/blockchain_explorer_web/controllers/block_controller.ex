@@ -138,8 +138,6 @@ defmodule BlockChainExplorerWeb.BlockController do
     direction = cond do # See index.html.eex for where params comes from
       params == %{} -> :latest
       params[ "n" ] == "t" -> "previousblockhash"
-      last == nil -> :latest
-      params[ "p" ] == nil -> "previousblockhash"
       true -> "nextblockhash"
     end
     conn = assign( conn, :error, "" )
