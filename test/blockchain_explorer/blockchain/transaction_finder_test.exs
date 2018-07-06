@@ -11,7 +11,7 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       Blockchain.get_n_blocks( nil, 100 )
       |> Transaction.transaction_with_everything_in_it_from_tuple()
       |> Transaction.get_transaction_tuple()
-      |> Transaction.decode_transaction()
+      |> Transaction.decode_transaction_tuple()
     end
 
     def get_an_address( outputs ) do

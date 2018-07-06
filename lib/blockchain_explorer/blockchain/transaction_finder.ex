@@ -7,6 +7,10 @@ defmodule BlockChainExplorer.TransactionFinder do
     Agent.start_link(fn -> [] end, name: __MODULE__ )
   end
 
+  def get do
+    { %Transaction{}, %Transaction{} }
+  end
+
   defp is_in_transaction_addresses?( transaction, addresses_str_list, address_str ) do
     if Utils.mt? addresses_str_list do
       false

@@ -161,7 +161,7 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  def decode_transaction( tuple ) do
+  def decode_transaction_tuple( tuple ) do
     transaction = case elem( tuple, 0 ) do
       :ok -> elem( tuple, 1 )
       _ -> %{ error: tuple }

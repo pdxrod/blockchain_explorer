@@ -8,7 +8,7 @@ defmodule BlockChainExplorerWeb.TransactionControllerTest do
     Blockchain.get_n_blocks( block, 100 ) |>
     Transaction.transaction_with_everything_in_it_from_tuple |>
     Transaction.get_transaction_tuple |>
-    Transaction.decode_transaction
+    Transaction.decode_transaction_tuple
   end
 
   describe "transaction" do

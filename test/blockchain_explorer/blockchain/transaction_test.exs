@@ -12,7 +12,7 @@ defmodule BlockChainExplorer.TransactionTest do
       blocks = Blockchain.get_n_blocks( block, 100 )
       trans = Transaction.transaction_with_everything_in_it_from_tuple( blocks )
       tuple = Transaction.get_transaction_tuple( trans )
-      Transaction.decode_transaction( tuple )
+      Transaction.decode_transaction_tuple( tuple )
     end
 
     defp has_a_valid_address?( addresses_str_list ) do

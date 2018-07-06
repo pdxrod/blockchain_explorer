@@ -132,10 +132,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp find_transactions_in_background( conn, val ) do
-    IO.puts "before find_transactions"
     TransactionFinder.find_transactions val
-    IO.puts "after find_transactions"
-
     redirect( conn, to: "/transactions" )
   end
 
