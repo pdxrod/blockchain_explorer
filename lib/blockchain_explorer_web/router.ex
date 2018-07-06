@@ -22,6 +22,7 @@ defmodule BlockChainExplorerWeb.Router do
     get "/blocks/:id", BlockController, :show
     post "/index", BlockController, :index
     get "/index", BlockController, :index
+    get "/transactions", TransactionController, :index
     resources "/trans", TransactionController, only: [:show]
   end
 

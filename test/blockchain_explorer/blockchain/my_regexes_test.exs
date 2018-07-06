@@ -5,7 +5,7 @@ defmodule BlockChainExplorer.MyRegexesTest do
   describe "my regexes" do
     @base_58_address    "2MtiNuyRfvx8jHEpt3Zx5tCcEutJUh7gAmi"
     @base_58_invalid    "0OtiNuyRfvx8jHEpt3Zx5tCcEutJUh7gAmi"
-    @base_58_exclusions ~w{ O I } # Some valid addresses include 0 or l
+    @base_58_exclusions ~w{ O I } # Should be base 60, because some valid addresses include 0 or l
     @base_16_hash       "1f0d81065545bba0d42886b6f0fbf67cf5c5000dcfe663448ef4a37d031f9dea"
     @base_16_invalid    "0d81065545bba0d42886b6f0fbf67cf5c5g500dcfe663448ef4a37d031f9deaz"
     @base_16_too_short  "1f0d81065545bba0d42886b6f0fbf67cf5c5000dcfe663448ef4a37d031f9de"
@@ -33,9 +33,8 @@ defmodule BlockChainExplorer.MyRegexesTest do
       base_58_partial_regex = Utils.env( :base_58_partial_regex )
       assert @base_58_address =~ base_58_partial_regex
       assert "2MtiN" =~ base_58_partial_regex
-      assert "44aaaa" =~ base_58_partial_regex
-      assert "44aaa"  =~ base_58_partial_regex
-      assert !( "44aa" =~ base_58_partial_regex )
+      assert "44z"  =~ base_58_partial_regex
+      assert !( "4z" =~ base_58_partial_regex )
       assert !( "" =~ base_58_partial_regex )
     end
 

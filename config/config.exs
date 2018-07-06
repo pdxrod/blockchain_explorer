@@ -9,8 +9,8 @@ use Mix.Config
 config :blockchain_explorer, bitcoin_url: "http://USERNAME:PASSWORD@127.0.0.1:18332"
 config :blockchain_explorer, base_16_regex:         ~r/^([A-Fa-f0-9]+)$/
 config :blockchain_explorer, base_16_hash_regex:    ~r/^([A-Fa-f0-9]{64})$/
-# Note that base 58 doesn't necessarily mean base 58 - some addresses include 0 or l
-config :blockchain_explorer, base_58_partial_regex: ~r/^([1-9a-km-zA-HJ-NP-Z]{5,})$/
+# Note that base 58 is really base 60 - some addresses include 0 or l
+config :blockchain_explorer, base_58_partial_regex: ~r/^([1-9a-km-zA-HJ-NP-Z]{3,})$/
 config :blockchain_explorer, base_58_address_regex: ~r/^([0-9a-zA-HJ-NP-Z]{10,})$/
 config :blockchain_explorer, base_10_integer_regex: ~r/^([0-9]+)$/
 

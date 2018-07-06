@@ -1,0 +1,5 @@
+%code= raw( @error )
+%br
+- for num <- 0..tuple_size( @transactions ) - 1 do
+  - transaction = elem @transactions, num
+  %code= transaction |> mark_up_transaction |> raw

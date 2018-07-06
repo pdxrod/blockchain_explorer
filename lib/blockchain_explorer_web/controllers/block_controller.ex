@@ -4,6 +4,8 @@ defmodule BlockChainExplorerWeb.BlockController do
   alias BlockChainExplorer.Block
   alias BlockChainExplorer.HashStack
   alias BlockChainExplorer.Utils
+  alias BlockChainExplorer.Transaction
+  alias BlockChainExplorer.TransactionFinder
 
   defp show_error( conn, page, error ) do
     case error do
@@ -57,7 +59,7 @@ defmodule BlockChainExplorerWeb.BlockController do
 
   defp show_n_hashes( conn, direction ) do
     case direction do
-      :latest ->
+      "latestblockhash" ->
         result = Blockchain.getbestblockhash()
         ok = elem( result, 0 )
         cond do
@@ -117,10 +119,6 @@ defmodule BlockChainExplorerWeb.BlockController do
     end
   end
 
-  def find_transactions_in_background( conn, val ) do
-    render(conn, "show.html", block: %Block{}) # TODO
-  end
-
   defp analyse_params( params ) do
     user_input = params[ "blocks" ][ "num" ]
     user_input = if user_input == nil, do: "", else: user_input
@@ -129,14 +127,21 @@ defmodule BlockChainExplorerWeb.BlockController do
       user_input =~ Utils.env( :base_10_integer_regex ) -> {:height, String.to_integer( user_input )}
       user_input =~ Utils.env( :base_58_partial_regex ) -> {:adr, user_input}
       params_id != nil -> {:hash, params_id}
-      true -> {:first_block, nil}
+      true -> {"latestblockhash", nil}
     end
   end
 
+  defp find_transactions_in_background( conn, val ) do
+    IO.puts "before find_transactions"
+    TransactionFinder.find_transactions val
+    IO.puts "after find_transactions"
+
+    redirect( conn, to: "/transactions", transactions: { %Transaction{} } )
+  end
+
   def index(conn, params) do
-    last = HashStack.peek()
     direction = cond do # See index.html.eex for where params comes from
-      params == %{} -> :latest
+      params == %{} -> "latestblockhash"
       params[ "n" ] == "t" -> "previousblockhash"
       true -> "nextblockhash"
     end
@@ -148,6 +153,10 @@ defmodule BlockChainExplorerWeb.BlockController do
     status = analyse_params params
     conn = assign(conn, :error, "")
     conn = assign(conn, :block, %{})
+    conn = assign(conn, :transactions, {})
+
+IO.puts "show"
+IO.inspect status
 
     case elem( status, 0 ) do
       :height ->
@@ -162,5 +171,4 @@ defmodule BlockChainExplorerWeb.BlockController do
         render( conn, "show.html", block: decoded )
     end
   end
-
 end
