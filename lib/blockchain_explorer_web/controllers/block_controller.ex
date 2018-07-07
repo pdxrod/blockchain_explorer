@@ -132,7 +132,11 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp find_transactions_in_background( conn, val ) do
-    TransactionFinder.find_transactions val
+    task = TransactionFinder.find_transactions val
+    try do
+      Task.await task, 5000
+    catch :exit, _ -> IO.puts "\nExit find"
+    end
     redirect( conn, to: "/transactions" )
   end
 
@@ -159,8 +163,7 @@ defmodule BlockChainExplorerWeb.BlockController do
       :adr ->
         find_transactions_in_background( conn, elem( status, 1 ) )
       _ ->
-        block = Blockchain.get_best_block()
-        decoded = Block.decode_block block
+        decoded = Blockchain.get_best_block() |> Block.decode_block
         render( conn, "show.html", block: decoded )
     end
   end
