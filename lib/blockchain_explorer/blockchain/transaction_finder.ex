@@ -15,11 +15,10 @@ defmodule BlockChainExplorer.TransactionFinder do
   defp transaction?( thing ) do
     try do
       thing.vsize && thing.outputs && thing.inputs
+      true
     rescue e in ArgumentError -> e
-      IO.puts "\ntransaction? #{e.message}"
       false
     end
-    true
   end
 
   def push( transaction ) do
@@ -34,6 +33,7 @@ defmodule BlockChainExplorer.TransactionFinder do
       [ hd | tl ] = addresses_str_list
       cond do
         String.starts_with?( hd, address_str ) ->
+          push Transaction.decode transaction
           IO.puts "\nis_in_transaction_addresses? transaction #{transaction["txid"]}, address #{hd}, str #{address_str} - FOUND"
           true
         true -> is_in_transaction_addresses?( transaction, tl, address_str )

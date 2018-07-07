@@ -70,7 +70,10 @@ defmodule BlockChainExplorer.TransactionFinderTest do
         Task.await task
       catch :exit, _ -> IO.puts "\nExit find"
       end
-      IO.inspect TransactionFinder.peek()
+      transactions = TransactionFinder.peek()
+      trans = elem( transactions, 0 )
+      assert trans.hash
+      assert trans.size
     end
 
     test "stack" do
@@ -83,10 +86,10 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       assert err.message == "TransactionFinder only accepts transactions"
       a_transaction = Transaction.decode @a_transaction
       TransactionFinder.push a_transaction
-      assert a_transaction == TransactionFinder.peek()
-      trans = get_a_useful_transaction()
-      TransactionFinder.push trans
-      assert trans == TransactionFinder.peek()
+      assert {a_transaction} == TransactionFinder.peek()
+      a_transaction = get_a_useful_transaction()
+      TransactionFinder.push a_transaction
+      assert {a_transaction} == TransactionFinder.peek()
     end
 
   end
