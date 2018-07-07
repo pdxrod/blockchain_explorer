@@ -13,7 +13,7 @@ defmodule BlockChainExplorerWeb.TransactionController do
 
     def index(conn, _params) do
       conn = assign(conn, :error, "")
-      transactions = TransactionFinder.get()
+      transactions = TransactionFinder.peek()
       transactions = if Utils.mt?( transactions ), do: { %Transaction{} }, else: transactions
       render( conn, "index.html", transactions: transactions )
     end

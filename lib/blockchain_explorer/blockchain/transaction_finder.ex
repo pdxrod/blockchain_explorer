@@ -7,8 +7,23 @@ defmodule BlockChainExplorer.TransactionFinder do
     Agent.start_link(fn -> [] end, name: __MODULE__ )
   end
 
-  def get do
-    { %Transaction{}, %Transaction{} }
+  def peek do
+    result = Agent.get(__MODULE__, &List.pop_at( &1, 0 ))
+    {                       elem( result, 0 )           }
+  end
+
+  defp transaction?( thing ) do
+    try do
+      thing.vsize && thing.outputs && thing.inputs
+    rescue e in ArgumentError -> e
+      false
+    end
+    true
+  end
+
+  def push( transaction ) do
+    if ! transaction?( transaction ), do: raise "TransactionFinder only accepts transactions"
+    Agent.update(__MODULE__, &List.insert_at( &1, 0, transaction ))
   end
 
   defp is_in_transaction_addresses?( transaction, addresses_str_list, address_str ) do
