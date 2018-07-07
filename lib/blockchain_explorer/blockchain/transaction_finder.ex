@@ -16,6 +16,7 @@ defmodule BlockChainExplorer.TransactionFinder do
     try do
       thing.vsize && thing.outputs && thing.inputs
     rescue e in ArgumentError -> e
+      IO.puts "\ntransaction? #{e.message}"
       false
     end
     true
