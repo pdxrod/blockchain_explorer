@@ -121,7 +121,7 @@ defmodule BlockChainExplorerWeb.BlockController do
 
   defp analyse_params( params ) do
     user_input = params[ "blocks" ][ "num" ]
-    user_input = if user_input == nil, do: "", else: user_input
+    user_input = if user_input == nil, do: "", else: String.trim( user_input )
     params_id = params[ "id" ]
     cond do
       user_input =~ Utils.env( :base_10_integer_regex ) -> {:height, String.to_integer( user_input )}
