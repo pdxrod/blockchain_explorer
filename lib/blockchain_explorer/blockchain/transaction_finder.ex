@@ -4,12 +4,12 @@ defmodule BlockChainExplorer.TransactionFinder do
   alias BlockChainExplorer.Utils
 
   def start_link do
-    Agent.start_link(fn -> [] end, name: __MODULE__ )
+    Agent.start_link(fn -> %{ } end, name: __MODULE__ )
   end
 
-  def peek do
-    result = Agent.get(__MODULE__, &List.pop_at( &1, 0 ))
-    {                       elem( result, 0 )           }
+  def peek( address_str ) do
+    result = Agent.get(__MODULE__, &Map.get( &1, address_str ))
+    result
   end
 
   defp transaction?( thing ) do
@@ -21,9 +21,12 @@ defmodule BlockChainExplorer.TransactionFinder do
     end
   end
 
-  def push( transaction ) do
+  def put( address_str, transaction ) do
     if ! transaction?( transaction ), do: raise "TransactionFinder only accepts transactions"
-    Agent.update(__MODULE__, &List.insert_at( &1, 0, transaction ))
+    tuple = peek( address_str )
+    tuple = if tuple == nil, do: {}, else: tuple
+    tuple = Tuple.append( tuple, transaction )
+    Agent.update(__MODULE__, &Map.put( &1, address_str, tuple ))
   end
 
   defp is_in_transaction_addresses?( transaction, addresses_str_list, address_str ) do
@@ -33,7 +36,7 @@ defmodule BlockChainExplorer.TransactionFinder do
       [ hd | tl ] = addresses_str_list
       cond do
         String.starts_with?( hd, address_str ) ->
-          push Transaction.decode transaction
+          put address_str, Transaction.decode( transaction )
           IO.puts "\nis_in_transaction_addresses? transaction #{transaction["txid"]}, address #{hd}, str #{address_str} - FOUND"
           true
         true -> is_in_transaction_addresses?( transaction, tl, address_str )

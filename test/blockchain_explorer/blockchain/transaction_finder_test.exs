@@ -62,34 +62,39 @@ defmodule BlockChainExplorer.TransactionFinderTest do
     end
 
     test "find" do
-      trans = get_a_useful_transaction()
-      address_str = get_an_address trans.outputs
+      a_transaction = get_a_useful_transaction()
+      address_str = get_an_address a_transaction.outputs
       address_str = String.slice address_str, 0..5
       task = TransactionFinder.find_transactions address_str
       try do
         Task.await task
       catch :exit, _ -> IO.puts "\nExit find"
       end
-      transactions = TransactionFinder.peek()
+      transactions = TransactionFinder.peek( address_str )
       trans = elem( transactions, 0 )
       assert trans.hash
       assert trans.size
     end
 
-    test "stack" do
+    test "only accepts transactions" do
       err = try do
-        TransactionFinder.push "This is not a transaction"
+        TransactionFinder.put "2Mud", "This is not a transaction"
         raise "We should not have reached this line"
       rescue
         e in RuntimeError -> e
       end
       assert err.message == "TransactionFinder only accepts transactions"
+    end
+
+    test "stack" do
       a_transaction = Transaction.decode @a_transaction
-      TransactionFinder.push a_transaction
-      assert {a_transaction} == TransactionFinder.peek()
+      TransactionFinder.put "2Mud", a_transaction
+      assert {a_transaction} == TransactionFinder.peek( "2Mud" )
       a_transaction = get_a_useful_transaction()
-      TransactionFinder.push a_transaction
-      assert {a_transaction} == TransactionFinder.peek()
+      address_str = get_an_address a_transaction.outputs
+      address_str = String.slice address_str, 0..4
+      TransactionFinder.put address_str, a_transaction
+      assert {a_transaction} == TransactionFinder.peek( address_str )
     end
 
   end
