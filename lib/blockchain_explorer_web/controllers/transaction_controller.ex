@@ -11,10 +11,9 @@ defmodule BlockChainExplorerWeb.TransactionController do
             |> Transaction.decode_transaction_tuple )
     end
 
-    def index(conn, _params) do
+    def index(conn, %{"address_str" => address_str}) do
       conn = assign(conn, :error, "")
-      transactions = TransactionFinder.peek()
-      transactions = if Utils.mt?( transactions ), do: { %Transaction{} }, else: transactions
+      transactions = TransactionFinder.peek( address_str )
       render( conn, "index.html", transactions: transactions )
     end
 

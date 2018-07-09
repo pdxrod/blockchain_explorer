@@ -37,7 +37,7 @@ defmodule BlockChainExplorer.TransactionFinder do
       cond do
         String.starts_with?( hd, address_str ) ->
           put address_str, Transaction.decode( transaction )
-          IO.puts "\nis_in_transaction_addresses? transaction #{transaction["txid"]}, address #{hd}, str #{address_str} - FOUND"
+          IO.puts "\ntransaction #{transaction["txid"]}, address #{hd}, str #{address_str}"
           true
         true -> is_in_transaction_addresses?( transaction, tl, address_str )
       end
