@@ -1,5 +1,15 @@
 %code= raw( @error )
 %br
-- for num <- 0..tuple_size( @transactions ) - 1 do
-  - transaction = elem @transactions, num
-  %code= transaction |> mark_up_transaction |> raw
+
+- alias BlockChainExplorer.Utils
+
+- if Utils.notmt? @transactions do
+  - for num <- 0..tuple_size( @transactions ) - 1 do
+    - transaction = elem @transactions, num
+    %hr
+    %p
+      = transaction |> mark_up_transaction |> raw
+      %b Outputs:
+      = transaction.outputs |> mark_up_outputs |> raw
+      %b Inputs:
+      = transaction.inputs |> mark_up_inputs |> raw
