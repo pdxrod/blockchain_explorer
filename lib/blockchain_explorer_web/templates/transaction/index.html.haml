@@ -6,7 +6,6 @@
 - if Utils.notmt? @transactions do
   - for num <- 0..tuple_size( @transactions ) - 1 do
     - transaction = elem @transactions, num
-    %hr
     %p.solid{ style: "border-style: solid;" }
       = transaction |> mark_up_transaction |> raw
       %b Outputs:
