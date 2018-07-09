@@ -4,7 +4,6 @@ defmodule BlockChainExplorerWeb.BlockController do
   alias BlockChainExplorer.Block
   alias BlockChainExplorer.HashStack
   alias BlockChainExplorer.Utils
-  alias BlockChainExplorer.Transaction
   alias BlockChainExplorer.TransactionFinder
 
   defp show_error( conn, page, error ) do

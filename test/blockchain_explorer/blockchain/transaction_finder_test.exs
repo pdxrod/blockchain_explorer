@@ -1,6 +1,5 @@
 defmodule BlockChainExplorer.TransactionFinderTest do
   use BlockChainExplorerWeb.ConnCase
-  alias BlockChainExplorer.Utils
   alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.Transaction
   alias BlockChainExplorer.TransactionFinder
@@ -74,6 +73,8 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       trans = elem( transactions, 0 )
       assert trans.hash
       assert trans.size
+      assert trans.inputs
+      assert trans.outputs
     end
 
     test "only accepts transactions" do
