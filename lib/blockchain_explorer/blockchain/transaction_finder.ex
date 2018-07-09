@@ -91,7 +91,7 @@ defmodule BlockChainExplorer.TransactionFinder do
   end
 
   def find_transactions( address_str ) do
-    task = Task.async( fn() -> find_blocks( address_str ) end)
+    Task.async( fn() -> find_blocks( address_str ) end)
   end
 
 end

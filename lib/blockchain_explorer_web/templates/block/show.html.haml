@@ -7,5 +7,17 @@
       = label :blocks_label, :"enter a block height, e.g. 1325614, or the start of a bitcoin address, e.g. 2Mz84"
         = text_input :blocks, :num, value: ""
           = submit "submit", id: "submit", class: "btn btn-primary"
+          %span{ id: "please_wait_message", name: "please_wait_message" }
+            = "Please wait..."
+
     %br
 %code= @block |> mark_up_block |> raw
+:javascript
+  $(document).ready(function(){
+    $( "#please_wait_message" ).hide();
+
+    function submitclick(){
+      $( "#please_wait_message" ).show();
+    }
+  });
+  $( 'submit' ).onkeyup=submitclick();
