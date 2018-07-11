@@ -7,22 +7,11 @@
     %code
       = label :blocks_label, :"enter a block height, e.g. 1325614, or the start of a bitcoin address, e.g. 2Mz84"
         = text_input :blocks, :num, value: ""
-          = submit "submit", id: "submit", class: "btn btn-primary"
-          %span{ id: "please_wait_message", name: "please_wait_message" }
-            = "Please wait..."
 
-    %br
-
+= submit "Submit", id: "submit", class: "btn btn-primary"
+%span{ id: "please_wait_message", name: "please_wait_message", style: "visibility: hidden" }
+  = "Please wait..."
 %code= @block |> mark_up_block |> raw
 
 :javascript
-  var waiting = false;
-  $( document ).ready( function() {
-    if( waiting )
-      $( "#please_wait_message" ).show();
-    else
-      $( "#please_wait_message" ).hide();
-
-  }
-  
-  $( "#submit" ).onkeyup = function(){ waiting = true; };
+  // HAML for Phoenix generates the wrong Javascript
