@@ -1,5 +1,4 @@
 
-  document.getElementById( "submit" ).onkeyup = function() {
-    console.log( "Hello" );
+  $( '#submit' ).on( 'click', function() {
     document.getElementById( "please_wait_message" ).style.visibility = "visible";
-  };
+  });
