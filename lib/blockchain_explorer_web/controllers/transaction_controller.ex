@@ -13,8 +13,17 @@ defmodule BlockChainExplorerWeb.TransactionController do
 
     def index(conn, %{"address_str" => address_str}) do
       conn = assign(conn, :error, "")
-      transactions = TransactionFinder.peek( address_str )
-      render( conn, "index.html", transactions: transactions )
+      if address_str =~ Utils.env( :base_58_address_regex ) do
+        task = TransactionFinder.find_transactions address_str
+        try do
+          Task.await task, 3000
+        catch :exit, _ -> IO.puts "\nExit find"
+        end
+        redirect( conn, to: "/transactions/#{ address_str }" )
+      else
+        transactions = TransactionFinder.peek( address_str )
+        render( conn, "index.html", transactions: transactions )
+      end
     end
 
 end

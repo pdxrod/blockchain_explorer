@@ -80,8 +80,7 @@ defmodule BlockChainExplorer.TransactionFinder do
   end
 
   defp block_contains_address( block_json, address_str ) do
-    trans = transactions_contain_address block_json[ "tx" ], address_str
-    trans
+    transactions_contain_address block_json[ "tx" ], address_str
   end
 
   defp find_blocks( address_str ) do
