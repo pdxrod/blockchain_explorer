@@ -7,14 +7,6 @@ defmodule BlockChainExplorer.TransactionTest do
 
   describe "transaction" do
 
-    defp get_a_useful_transaction do
-      block = Blockchain.get_best_block()
-      blocks = Blockchain.get_n_blocks( block, 100 )
-      trans = Transaction.transaction_with_everything_in_it_from_tuple( blocks )
-      tuple = Transaction.get_transaction_tuple( trans )
-      Transaction.decode_transaction_tuple( tuple )
-    end
-
     defp has_a_valid_address?( addresses_str_list ) do
       case addresses_str_list do
         nil -> false
@@ -80,7 +72,7 @@ defmodule BlockChainExplorer.TransactionTest do
     end
 
     test "check transaction" do
-      decoded = get_a_useful_transaction()
+      decoded = Transaction.get_a_useful_transaction()
       assert Transaction.outputs_total_value( decoded ) > 0.0
       assert decoded.version > 0
       assert decoded.txid =~ Utils.env( :base_16_hash_regex )
@@ -90,7 +82,7 @@ defmodule BlockChainExplorer.TransactionTest do
     end
 
     test "outputs" do
-      decoded = get_a_useful_transaction()
+      decoded = Transaction.get_a_useful_transaction()
       assert Transaction.has_output_addresses?( decoded.outputs )
       assert at_least_one_output_has_a_valid_address?( decoded.outputs )
       for output <- decoded.outputs do
@@ -105,7 +97,7 @@ defmodule BlockChainExplorer.TransactionTest do
     end
 
     test "inputs" do
-      decoded = get_a_useful_transaction()
+      decoded = Transaction.get_a_useful_transaction()
       for input <- decoded.inputs do
         assert input.sequence > 0
         assert input.scriptsig["asm"] && input.scriptsig["hex"]

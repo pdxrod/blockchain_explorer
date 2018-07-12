@@ -134,7 +134,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   defp find_transactions_in_background( conn, address_str ) do
     task = TransactionFinder.find_transactions address_str
     try do
-      Task.await task, 10_000
+      Task.await task, 1000
     catch :exit, _ -> IO.puts "\nExit find"
     end
     redirect( conn, to: "/transactions/#{ address_str }" )

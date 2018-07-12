@@ -1,7 +1,6 @@
 defmodule BlockChainExplorer.TransactionFinderTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Utils
-  alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.Transaction
   alias BlockChainExplorer.TransactionFinder
 
