@@ -4,6 +4,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   alias BlockChainExplorer.Block
   alias BlockChainExplorer.HashStack
   alias BlockChainExplorer.Utils
+  alias BlockChainExplorer.Transaction
   alias BlockChainExplorer.TransactionFinder
 
   defp show_error( conn, page, error ) do
@@ -98,7 +99,7 @@ defmodule BlockChainExplorerWeb.BlockController do
     case tuple do
       {:ok, block} ->
         decoded = Block.decode_block block
-        render(conn, "show.html", block: decoded)
+        render(conn, "show.html", block: decoded, address_str: "n4ME4" )
 
       other ->
         show_error(conn, "show.html", other)
@@ -111,7 +112,7 @@ defmodule BlockChainExplorerWeb.BlockController do
     case tuple do
       {:ok, block} ->
         decoded = Block.decode_block block
-        render(conn, "show.html", block: decoded)
+        render(conn, "show.html", block: decoded, address_str: "n4ME4" )
 
       other ->
         show_error(conn, "show.html", other)
@@ -133,7 +134,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   defp find_transactions_in_background( conn, address_str ) do
     task = TransactionFinder.find_transactions address_str
     try do
-      Task.await task, 5000
+      Task.await task, 10_000
     catch :exit, _ -> IO.puts "\nExit find"
     end
     redirect( conn, to: "/transactions/#{ address_str }" )
@@ -162,8 +163,11 @@ defmodule BlockChainExplorerWeb.BlockController do
       :adr ->
         find_transactions_in_background( conn, elem( status, 1 ) )
       _ ->
+        a_transaction = Transaction.get_a_useful_transaction()
+        address_str = Transaction.get_an_address a_transaction.outputs
+        address_str = String.slice address_str, 0..4
         decoded = Blockchain.get_best_block() |> Block.decode_block
-        render( conn, "show.html", block: decoded )
+        render( conn, "show.html", block: decoded, address_str: address_str )
     end
   end
 end

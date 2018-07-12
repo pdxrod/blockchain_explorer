@@ -5,11 +5,11 @@
   %form#number{method: "post", name: "number"}
     %input#_csrf_token{name: "_csrf_token", type: "hidden", value: "#{Plug.CSRFProtection.get_csrf_token()}"}
     #form_contents
-      = "Enter a block height, e.g. 1325614, or the start of a bitcoin address, e.g. 2Mz84"
-      = text_input :blocks, :num, value: ""
+      = "Enter a block height, e.g. 1325614, or the start of a bitcoin address, e.g. "
+      = text_input :blocks, :num, value: @address_str
       = submit "submit", id: "submit", class: "btn btn-primary"
       %br
-      %span{ id: "please_wait_message", name: "please_wait_message", style: "visibility: hidden" }
+      %span{ id: "please_wait_message", name: "please_wait_message", style:  "visibility: hidden; color: #FF7F50" }
         = "Please wait..."
 
 %code= @block |> mark_up_block |> raw

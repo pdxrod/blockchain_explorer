@@ -44,26 +44,10 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       "hash": "98e8e6534e0fb4a515f314ea7bd7f8d4b63803894feca243c8c9608e0aa8e679"
     }
 
-    defp get_a_useful_transaction do
-      Blockchain.get_n_blocks( nil, 100 )
-      |> Transaction.transaction_with_everything_in_it_from_tuple()
-      |> Transaction.get_transaction_tuple()
-      |> Transaction.decode_transaction_tuple()
-    end
-
-    def get_an_address( outputs ) do
-      [ hd | tl ] = outputs
-      addresses = hd.scriptpubkey.addresses
-      case addresses do
-        nil -> get_an_address( tl )
-        [] -> get_an_address( tl )
-        _ -> List.first addresses
-      end
-    end
 
     test "find" do
-      a_transaction = get_a_useful_transaction()
-      address_str = get_an_address a_transaction.outputs
+      a_transaction = Transaction.get_a_useful_transaction()
+      address_str = Transaction.get_an_address a_transaction.outputs
       address_str = String.slice address_str, 0..5
       task = TransactionFinder.find_transactions address_str
       try do
@@ -92,8 +76,8 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       a_transaction = Transaction.decode @a_transaction
       TransactionFinder.put "2Mud", a_transaction
       assert {a_transaction} == TransactionFinder.peek( "2Mud" )
-      a_transaction = get_a_useful_transaction()
-      address_str = get_an_address a_transaction.outputs
+      a_transaction = Transaction.get_a_useful_transaction()
+      address_str = Transaction.get_an_address a_transaction.outputs
       address_str = String.slice address_str, 0..4
       TransactionFinder.put address_str, a_transaction
       assert {a_transaction} == TransactionFinder.peek( address_str )

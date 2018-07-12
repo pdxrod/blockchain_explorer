@@ -103,11 +103,27 @@ defmodule BlockChainExplorer.Transaction do
          end
     end
   end
-
 # Find a transaction which has inputs, outputs, addresses, etc.
   def transaction_with_everything_in_it_from_tuple( blocks_tuple ) do
     blocks_list = Tuple.to_list( blocks_tuple )
     transaction_with_everything_in_it_from_list( blocks_list )
+  end
+
+  def get_a_useful_transaction do
+    Blockchain.get_n_blocks( nil, 100 )
+    |> transaction_with_everything_in_it_from_tuple()
+    |> get_transaction_tuple()
+    |> decode_transaction_tuple()
+  end
+
+  def get_an_address( outputs ) do
+    [ hd | tl ] = outputs
+    addresses = hd.scriptpubkey.addresses
+    case addresses do
+      nil -> get_an_address( tl )
+      [] -> get_an_address( tl )
+      _ -> List.first addresses
+    end
   end
 
   defp decode_outputs( list_of_maps ) do
