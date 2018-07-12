@@ -9,7 +9,7 @@ defmodule BlockChainExplorerWeb.TransactionControllerTest do
       address_str = Transaction.get_an_address transaction.outputs
       conn = build_conn()
       conn = get conn, "/transactions/#{ address_str }"
-      assert html_response(conn, 302) =~ "transactions/#{ address_str }"
+      assert html_response(conn, 200) =~ "Txid:    #{ transaction.txid }"
     end
 
     test "shows a transaction" do

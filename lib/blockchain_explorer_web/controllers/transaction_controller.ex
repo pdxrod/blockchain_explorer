@@ -19,11 +19,9 @@ defmodule BlockChainExplorerWeb.TransactionController do
           Task.await task, 3000
         catch :exit, _ -> IO.puts "\nExit find"
         end
-        redirect( conn, to: "/transactions/#{ address_str }" )
-      else
-        transactions = TransactionFinder.peek( address_str )
-        render( conn, "index.html", transactions: transactions )
       end
+      transactions = TransactionFinder.peek( address_str )
+      render( conn, "index.html", transactions: transactions )
     end
 
 end
