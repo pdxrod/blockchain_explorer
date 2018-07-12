@@ -9,13 +9,15 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   defp trans_link( hash ), do: ["<a href='/trans/#{hash}'>#{hash}</a><br />"]
 
+  defp addr_link( addr ), do: "<a href='/transactions/#{addr}'>#{addr}</a><br />"
+
   def mark_up_transaction( transaction ) do
     """
-    Vsize:   #{ transaction.vsize }<br />
-    Version: #{ transaction.version }<br />
-    Txid:    #{ transaction.txid }<br />
-    Size:    #{ transaction.size }<br />
-    Hash:    #{ transaction.hash }<br /><br />
+    Vsize:   #{ transaction.vsize }   <br />
+    Version: #{ transaction.version } <br />
+    Txid:    #{ transaction.txid }    <br />
+    Size:    #{ transaction.size }    <br />
+    Hash:    #{ transaction.hash }    <br /><br />
     """
   end
 
@@ -45,7 +47,7 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   defp mark_up_addresses( addresses_list ) do
     case addresses_list do
-      [ head | tail ] -> "&nbsp;&nbsp;#{ head }<br />\n" <> mark_up_addresses( tail )
+      [ head | tail ] -> "&nbsp;&nbsp;#{ addr_link( head ) }\n" <> mark_up_addresses( tail )
       _ -> "<br />\n "
     end
   end
