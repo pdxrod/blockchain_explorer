@@ -1,6 +1,5 @@
 defmodule BlockChainExplorerWeb.TransactionController do
   use BlockChainExplorerWeb, :controller
-  alias BlockChainExplorer.Utils
   alias BlockChainExplorer.Transaction
   alias BlockChainExplorer.TransactionFinder
 
@@ -13,12 +12,10 @@ defmodule BlockChainExplorerWeb.TransactionController do
 
     def index(conn, %{"address_str" => address_str}) do
       conn = assign(conn, :error, "")
-      if address_str =~ Utils.env( :base_58_address_regex ) do
-        task = TransactionFinder.find_transactions address_str
-        try do
-          Task.await task, 3000
-        catch :exit, _ -> IO.puts "\nExit find"
-        end
+      task = TransactionFinder.find_transactions address_str
+      try do
+        Task.await task, 5000
+      catch :exit, _ -> IO.puts "\nExit find"
       end
       transactions = TransactionFinder.peek( address_str )
       render( conn, "index.html", transactions: transactions )

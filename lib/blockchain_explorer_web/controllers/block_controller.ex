@@ -5,7 +5,6 @@ defmodule BlockChainExplorerWeb.BlockController do
   alias BlockChainExplorer.HashStack
   alias BlockChainExplorer.Utils
   alias BlockChainExplorer.Transaction
-  alias BlockChainExplorer.TransactionFinder
 
   defp show_error( conn, page, error ) do
     case error do
@@ -132,11 +131,6 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp find_transactions_in_background( conn, address_str ) do
-    task = TransactionFinder.find_transactions address_str
-    try do
-      Task.await task, 3000
-    catch :exit, _ -> IO.puts "\nExit find"
-    end
     redirect( conn, to: "/transactions/#{ address_str }" )
   end
 
