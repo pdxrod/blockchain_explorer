@@ -1,4 +1,10 @@
-%code= raw( @error )
+= raw( @error )
+%br
+
+%h5
+  Blocks listed by hash
+%br
+
 .form-group
   %form#navigate{:method => "post", :name => "navigate"}
     - next = next_button @latest

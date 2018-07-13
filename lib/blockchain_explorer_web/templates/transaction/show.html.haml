@@ -1,4 +1,10 @@
-%code= raw(@error)
+
+%br
+
+%h5
+  = "Transaction #{ @transaction.txid }"
+%br
+
 %ul
   %p.solid{ style: "border-style: solid;" }
     = @transaction |> mark_up_transaction |> raw

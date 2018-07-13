@@ -18,17 +18,17 @@
   </head>
 
   <body>
+
+   <span id="error"><%= @error %></span>
+
     <div class="container">
-      <p style="display: flex; flex-direction: row; margin: 0 0 3em 0;">
         <code style="display: inline-block !important;"><a href="/blocks">[home]</a></code>&nbsp;&nbsp;
         <code style="display: inline-block !important;"><a href="/index">[blocks]</a></code>
-      </p>
-
-      <main role="main">
+        <br />
         <%= render @view_module, @view_template, assigns %>
-      </main>
+    </div>
 
-    </div> <!-- /container -->
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+
   </body>
 </html>
