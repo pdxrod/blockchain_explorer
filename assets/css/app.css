@@ -6,7 +6,6 @@ html {
     box-sizing: inherit;
 }
 
-
 html {
     min-height: 100%;
     height: 100%;
@@ -19,10 +18,18 @@ body {
     height: 100%;
 }
 
-.container {
+.outer {
     min-height: 100%;
-    width: fit-content;
+    width: 1000px;
+    align-content: center;
     margin: 0 auto;
+}
+
+.container {
+    min-height: 99%;
+    width: 900px;
+    align-content: center;
+    margin: 1 auto;
     padding: 4em 2em;
 }
 
@@ -45,4 +52,10 @@ h5 {
 
 h6 {
   color: #008080;
+}
+
+p {
+    margin: auto;
+    padding: 2px;
+    text-align: left;
 }
