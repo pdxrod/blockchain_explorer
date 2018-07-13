@@ -21,14 +21,15 @@
 
    <span id="error"><%= @error %></span>
 
-   <div class="outer">
+   <span class="outer">
      <div class="container">
-        <code style="display: inline-block !important;"><a href="/blocks">home</a></code>&nbsp;&nbsp;&nbsp;
-        <code style="display: inline-block !important;"><a href="/index">blocks</a></code>
+        <span class="links"; style="display: inline-block !important;"><a href="/blocks">home</a></span>&nbsp;&nbsp;&nbsp;
+        <span class="links"; style="display: inline-block !important;"><a href="/index">blocks</a></span>
+        <br />
         <br />
         <%= render @view_module, @view_template, assigns %>
       </div>
-    </div>
+    </span>
 
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
 
