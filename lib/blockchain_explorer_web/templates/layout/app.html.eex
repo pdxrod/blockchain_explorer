@@ -18,19 +18,21 @@
    </head>
 
    <body>
-    <div class="outer">
-      <span id="error"><%= @error %></span>
+     <center>
+      <div class="outer">
+        <span id="error"><%= @error %></span>
 
-      <div class="container">
-        <span class="links"; style="display: inline-block !important;"><a href="/blocks">home</a></span>&nbsp;&nbsp;&nbsp;
-        <span class="links"; style="display: inline-block !important;"><a href="/index">blocks</a></span>
-        <br />
-        <br />
-        <%= render @view_module, @view_template, assigns %>
+        <div class="container">
+          <span class="links"; style="display: inline-block !important;"><a href="/blocks">home</a></span>&nbsp;&nbsp;&nbsp;
+          <span class="links"; style="display: inline-block !important;"><a href="/index">blocks</a></span>
+          <br />
+          <br />
+          <%= render @view_module, @view_template, assigns %>
+        </div>
+
+        <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+
       </div>
-
-      <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
-
-   </div>
+    </center>
  </body>
 </html>
