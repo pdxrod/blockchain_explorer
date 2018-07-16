@@ -25,11 +25,13 @@ form {
 }
 
 .transaction_block {
-  border-style: 1px solid rgba(0,100,100,0.75);
+  border-style: 1px solid;
+  border-width: thin;
 }
 
 .inputs_outputs_block {
-  border-style: 1px dotted rgba(0,100,100,0.75);
+  border-style: 1px dotted;
+  border-width: thin;
 }
 
 code {
