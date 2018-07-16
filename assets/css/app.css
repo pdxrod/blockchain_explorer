@@ -11,6 +11,15 @@ body {
 form {
 }
 
+.error {
+  color: #FF8000;
+}
+
+.test {
+  color: #FF8000;
+  font-size: 45px;
+}
+
 .links {
   font-size: 17px;
   text-decoration: underline;
@@ -70,7 +79,7 @@ p {
     text-align: left;
 }
 
-div.outer {
+.outer {
   margin: auto;
   margin-top: 5px;
   padding: 2px;
@@ -78,7 +87,7 @@ div.outer {
   text-align: center;
 }
 
-div.container {
+.container {
   display: inline-block;
   margin-left: auto;
   margin-right: auto;
