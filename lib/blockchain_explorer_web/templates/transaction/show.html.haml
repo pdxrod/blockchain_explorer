@@ -1,15 +1,16 @@
 %span.instructions
   = "Transaction #{ @transaction.txid }"
 %br
+%br
 
 %ul
-  %p.solid{ style: "border-style: solid;" }
+  %p.transaction_block{ style: "border-style: solid;" }
     = @transaction |> mark_up_transaction |> raw
-  %p.solid{ style: "border-style: dotted;" }
+  %p.inputs_outputs_block{ style: "border-style: dashed;" }
     %b Outputs:
     %br
     = @transaction.outputs |> mark_up_outputs |> raw
-  %p.solid{ style: "border-style: dotted;" }
+  %p.inputs_outputs_block{ style: "border-style: dashed;" }
     %b Inputs:
     %br
     = @transaction.inputs |> mark_up_inputs |> raw

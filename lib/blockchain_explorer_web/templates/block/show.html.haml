@@ -1,5 +1,3 @@
-%h5
-
 .form-group
   %form#number{method: "post", name: "number"}
     %input#_csrf_token{name: "_csrf_token", type: "hidden", value: "#{Plug.CSRFProtection.get_csrf_token()}"}

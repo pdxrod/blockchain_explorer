@@ -1,8 +1,9 @@
 %span.instructions
   = "Transactions which refer to address #{ @address }"
+%br
+%br
 
 - alias BlockChainExplorer.Utils
-
 - if Utils.notmt? @transactions do
   - for num <- 0..tuple_size( @transactions ) - 1 do
     - transaction = elem @transactions, num

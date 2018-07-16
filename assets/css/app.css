@@ -19,17 +19,17 @@ body {
 form {
 }
 
-.container {
-    display: inline-block;
-    min-height: 99%;
-    padding: 4em 2em;
-    text-align: left;
-    font-size: 16px;
-}
-
 .links {
   font-size: 17px;
   text-decoration: underline;
+}
+
+.transaction_block {
+  border-style: 1px solid rgba(0,0,0,0.25);
+}
+
+.inputs_outputs_block {
+  border-style: 1px solid rgba(0,0,0,0.25);
 }
 
 code {
@@ -74,4 +74,19 @@ p {
     margin: auto;
     padding: 2px;
     text-align: left;
+}
+
+div.outer {
+  margin: auto;
+  margin-top: 5px;
+  padding: 2px;
+  display: block;
+  text-align: center;
+}
+
+div.container {
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
 }
