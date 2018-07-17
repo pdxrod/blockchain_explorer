@@ -112,15 +112,18 @@ defmodule BlockChainExplorer.Transaction do
 
 # This is mostly for testing, but it's also used to show an example search string on a page, so it belongs here
   def get_a_useful_transaction do
-    Blockchain.get_n_blocks( nil, 100 )
+    tuple = Blockchain.get_n_blocks( nil, 100 )
     |> transaction_with_everything_in_it_from_tuple()
     |> get_transaction_tuple()
-    |> decode_transaction_tuple()
+    case elem( tuple, 0 ) do
+      :ok -> elem( tuple, 1 )
+      _ -> %{ error: tuple }
+    end
   end
 
   def get_an_address( outputs ) do
     [ hd | tl ] = outputs
-    addresses = hd.scriptpubkey.addresses
+    addresses = hd["scriptpubkey"]["addresses"]
     case addresses do
       nil -> get_an_address( tl )
       [] -> get_an_address( tl )

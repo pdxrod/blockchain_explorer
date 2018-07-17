@@ -14,9 +14,9 @@ defmodule BlockChainExplorer.TransactionFinder do
 
   defp transaction?( thing ) do
     try do
-      thing.vsize && thing.outputs && thing.inputs
+      thing["vsize"] && thing["outputs"] && thing["inputs"]
       true
-    rescue e in ArgumentError -> e
+    rescue f in FunctionClauseError -> f
       false
     end
   end
@@ -36,7 +36,7 @@ defmodule BlockChainExplorer.TransactionFinder do
       [ hd | tl ] = addresses_str_list
       cond do
         String.starts_with?( hd, address_str ) ->
-          put address_str, Transaction.decode( transaction )
+          put address_str, transaction
           IO.puts "\ntransaction #{transaction["txid"]}, address #{hd}, str #{address_str}"
           true
         true -> is_in_transaction_addresses?( transaction, tl, address_str )

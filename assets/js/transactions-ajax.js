@@ -10,6 +10,6 @@ function findTransactionsInBackground() {
     }
   };
   var address = document.getElementById( "transactions_address" ).value
-  xhttp.open( "GET", "/transaction/find/" + address, true );
+  xhttp.open( "GET", "/transactions_ajax/" + address, true );
   xhttp.send();
 }

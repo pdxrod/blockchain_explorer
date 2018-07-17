@@ -72,7 +72,7 @@ defmodule BlockChainExplorer.TransactionTest do
     end
 
     test "check transaction" do
-      decoded = Transaction.get_a_useful_transaction()
+      decoded = Transaction.get_a_useful_transaction() |> Transaction.decode()
       assert Transaction.outputs_total_value( decoded ) > 0.0
       assert decoded.version > 0
       assert decoded.txid =~ Utils.env( :base_16_hash_regex )
@@ -82,7 +82,8 @@ defmodule BlockChainExplorer.TransactionTest do
     end
 
     test "outputs" do
-      decoded = Transaction.get_a_useful_transaction()
+      trans = Transaction.get_a_useful_transaction()
+      decoded = Transaction.decode trans
       assert Transaction.has_output_addresses?( decoded.outputs )
       assert at_least_one_output_has_a_valid_address?( decoded.outputs )
       for output <- decoded.outputs do
@@ -97,7 +98,7 @@ defmodule BlockChainExplorer.TransactionTest do
     end
 
     test "inputs" do
-      decoded = Transaction.get_a_useful_transaction()
+      decoded = Transaction.get_a_useful_transaction() |> Transaction.decode()
       for input <- decoded.inputs do
         assert input.sequence > 0
         assert input.scriptsig["asm"] && input.scriptsig["hex"]

@@ -46,7 +46,7 @@ defmodule BlockChainExplorer.TransactionFinderTest do
 
     test "find" do
       a_transaction = Transaction.get_a_useful_transaction()
-      address_str = Transaction.get_an_address a_transaction.outputs
+      address_str = Transaction.get_an_address a_transaction["vout"]
       address_str = String.slice address_str, 0..5
       task = TransactionFinder.find_transactions address_str
       try do
@@ -55,10 +55,10 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       end
       transactions = TransactionFinder.peek( address_str )
       trans = elem( transactions, 0 )
-      assert trans.hash
-      assert trans.size
-      assert trans.inputs
-      assert Utils.notmt? trans.outputs
+      assert trans["hash"]
+      assert trans["size"]
+      assert trans["vin"]
+      assert Utils.notmt? trans["vout"]
     end
 
     test "only accepts transactions" do
@@ -72,11 +72,10 @@ defmodule BlockChainExplorer.TransactionFinderTest do
     end
 
     test "stack" do
-      a_transaction = Transaction.decode @a_transaction
-      TransactionFinder.put "2Mud", a_transaction
-      assert {a_transaction} == TransactionFinder.peek( "2Mud" )
+      TransactionFinder.put "2Mud", @a_transaction
+      assert {@a_transaction} == TransactionFinder.peek( "2Mud" )
       a_transaction = Transaction.get_a_useful_transaction()
-      address_str = Transaction.get_an_address a_transaction.outputs
+      address_str = Transaction.get_an_address a_transaction["vout"]
       address_str = String.slice address_str, 0..4
       TransactionFinder.put address_str, a_transaction
       assert {a_transaction} == TransactionFinder.peek( address_str )
