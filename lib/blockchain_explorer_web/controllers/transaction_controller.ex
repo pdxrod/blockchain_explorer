@@ -16,6 +16,17 @@ defmodule BlockChainExplorerWeb.TransactionController do
       task = TransactionFinder.find_transactions address_str
       try do
         Task.await task, 7000
+      catch :exit, _ -> IO.puts "\nExit index"
+      end
+      transactions = TransactionFinder.peek( address_str )
+      render( conn, "index.html", transactions: transactions, address: address_str )
+    end
+
+    def find(conn, %{"address_str" => address_str}) do
+      conn = assign(conn, :error, "")
+      task = TransactionFinder.find_transactions address_str
+      try do
+        Task.await task, 7000
       catch :exit, _ -> IO.puts "\nExit find"
       end
       transactions = TransactionFinder.peek( address_str )
