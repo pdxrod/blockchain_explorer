@@ -10,7 +10,7 @@ defmodule BlockChainExplorerWeb.TransactionController do
             |> Transaction.decode_transaction_tuple )
     end
 
-# This may be called with a user enters a partial address on the home page, or when they click on an address on the transactions 
+# This may be called with a user enters a partial address on the home page, or when they click on an address on the transactions
     def index(conn, %{"address_str" => address_str}) do
       conn = assign(conn, :error, "")
       task = TransactionFinder.find_transactions address_str
@@ -19,8 +19,7 @@ defmodule BlockChainExplorerWeb.TransactionController do
       catch :exit, _ -> IO.puts "\nExit find"
       end
       transactions = TransactionFinder.peek( address_str )
-      address = if String.length( address_str ) > 20, do: address_str, else: "#{ address_str }..."
-      render( conn, "index.html", transactions: transactions, address: address )
+      render( conn, "index.html", transactions: transactions, address: address_str )
     end
 
 end

@@ -19,6 +19,7 @@
         = transaction.inputs |> mark_up_inputs |> raw
 
 .form-group
+  = text_input :transactions, :address, type: :hidden, value: @address
   = submit "press for more transactions", id: "transactions_submit_button", class: "btn btn-primary"
 
 #more_transactions
