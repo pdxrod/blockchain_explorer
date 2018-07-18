@@ -26,19 +26,10 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  defp decode_inputs( list_of_maps ) do
-    if list_of_maps do
-      Enum.map( list_of_maps, fn( map ) -> %Input{ vout: map["vout"], txid: map["txid"],
-                          sequence: map["sequence"], scriptsig: map["scriptSig"] } end )
-    else
-      []
-    end
-  end
-
   defp output_has_addresses?( output ) do
-    output.scriptpubkey &&
-     output.scriptpubkey.addresses &&
-      length( output.scriptpubkey.addresses ) > 0
+    output["scriptPubKey"] &&
+     output["scriptPubKey"]["addresses"] &&
+      length( output["scriptPubKey"]["addresses"] ) > 0
   end
 
   def has_output_addresses?( list_of_output_modules ) do
@@ -61,8 +52,8 @@ defmodule BlockChainExplorer.Transaction do
     transaction_tuple = get_transaction_tuple( transaction_str )
     if elem( transaction_tuple, 0 ) == :ok do
       trans = elem( transaction_tuple, 1 )
-      ok = trans["vsize"] > 0 && trans["vout"] != [] && trans["vin"] != []
-       && trans["txid"] != "" && trans["hash"] != ""
+      ok = trans["vsize"] > 0 && trans["vout"] != nil && trans["vout"] != [] &&
+       trans["vin"] != [] && trans["txid"] != "" && trans["hash"] != ""
       if ok do
         outputs_has_everything?( trans["vout"] ) &&
          inputs_has_everything?( trans["vin"] )
@@ -123,11 +114,20 @@ defmodule BlockChainExplorer.Transaction do
 
   def get_an_address( outputs ) do
     [ hd | tl ] = outputs
-    addresses = hd["scriptpubkey"]["addresses"]
+    addresses = hd["scriptPubKey"]["addresses"]
     case addresses do
       nil -> get_an_address( tl )
       [] -> get_an_address( tl )
       _ -> List.first addresses
+    end
+  end
+
+  defp decode_inputs( list_of_maps ) do
+    if list_of_maps do
+      Enum.map( list_of_maps, fn( map ) -> %Input{ vout: map["vout"], txid: map["txid"],
+                          sequence: map["sequence"], scriptsig: map["scriptSig"] } end )
+    else
+      []
     end
   end
 

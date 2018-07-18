@@ -25,9 +25,9 @@ defmodule BlockChainExplorer.TransactionTest do
         [] -> false
         [ output | more_outputs ] ->
           cond do
-            Utils.mt?( output.scriptpubkey ) -> false
-            Utils.mt?( output.scriptpubkey.addresses ) -> false
-            has_a_valid_address?( output.scriptpubkey.addresses ) -> true
+            Utils.mt?( output["scriptPubKey"] ) -> false
+            Utils.mt?( output["scriptPubKey"]["addresses"] ) -> false
+            has_a_valid_address?( output["scriptPubKey"]["addresses"] ) -> true
             true -> at_least_one_output_has_a_valid_address?( more_outputs )
           end
       end
@@ -37,9 +37,9 @@ defmodule BlockChainExplorer.TransactionTest do
       mt_list = []
       assert false == Transaction.has_output_addresses?( mt_list )
 
-      output_modules_no_addresses = [ %Output{
+      output_modules_no_addresses = [ %{
         value: 0.78152,
-        scriptpubkey: %{
+        scriptPubKey: %{
           hex: "a9141a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf87",
           asm: "OP_HASH160 1a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf OP_EQUAL",
           "addresses": []
@@ -48,9 +48,9 @@ defmodule BlockChainExplorer.TransactionTest do
       }]
       assert false == Transaction.has_output_addresses?( output_modules_no_addresses )
 
-      list_with_valid_output_module = [ %Output{}, %Output{
+      list_with_valid_output_module = [ %{}, %{
         value: 0.78152,
-        scriptpubkey: %{
+        scriptPubKey: %{
           hex: "a9141a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf87",
           asm: "OP_HASH160 1a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf OP_EQUAL",
           "addresses": [
@@ -83,9 +83,9 @@ defmodule BlockChainExplorer.TransactionTest do
 
     test "outputs" do
       trans = Transaction.get_a_useful_transaction()
+      assert Transaction.has_output_addresses?( trans["vout"] )
+      assert at_least_one_output_has_a_valid_address?( trans["vout"] )
       decoded = Transaction.decode trans
-      assert Transaction.has_output_addresses?( decoded.outputs )
-      assert at_least_one_output_has_a_valid_address?( decoded.outputs )
       for output <- decoded.outputs do
   #      assert has_a_valid_address?( output.scriptpubkey.addresses )
         assert output.value >= 0.0
