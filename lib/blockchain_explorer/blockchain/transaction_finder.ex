@@ -16,8 +16,8 @@ defmodule BlockChainExplorer.TransactionFinder do
       thing["vsize"] && thing["outputs"] && thing["inputs"]
       true
     rescue f in FunctionClauseError -> f
-      false
     end
+    false
   end
 
   def put( address_str, transaction ) do

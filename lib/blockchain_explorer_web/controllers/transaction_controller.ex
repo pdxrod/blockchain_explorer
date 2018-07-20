@@ -28,26 +28,12 @@ defmodule BlockChainExplorerWeb.TransactionController do
 
     def find(conn, %{"address_str" => address_str}) do
       conn = assign(conn, :error, "")
-
-IO.puts "\nfind 1"
-
       task = TransactionFinder.find_transactions address_str
-
-
-IO.puts "\nfind 2"
-
       try do
         Task.await task, 7000
       catch :exit, _ -> IO.puts "\nExit find"
       end
-
-IO.puts "\nfind 3"
-
-
       transactions = TransactionFinder.peek( address_str )
-
-IO.puts "\nfind 4"
-
       render( conn, "json.html", transactions: transactions )
     end
 
