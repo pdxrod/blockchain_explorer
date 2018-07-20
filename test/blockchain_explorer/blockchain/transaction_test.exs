@@ -3,7 +3,6 @@ defmodule BlockChainExplorer.TransactionTest do
   alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.Utils
   alias BlockChainExplorer.Transaction
-  alias BlockChainExplorer.Transaction.Output
 
   describe "transaction" do
 
@@ -38,26 +37,26 @@ defmodule BlockChainExplorer.TransactionTest do
       assert false == Transaction.has_output_addresses?( mt_list )
 
       output_modules_no_addresses = [ %{
-        value: 0.78152,
-        scriptPubKey: %{
-          hex: "a9141a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf87",
-          asm: "OP_HASH160 1a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf OP_EQUAL",
-          "addresses": []
+        "value" => 0.78152,
+        "scriptPubKey" => %{
+          "hex" => "a9141a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf87",
+          "asm" => "OP_HASH160 1a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf OP_EQUAL",
+          "addresses" => []
         },
-        n: 0
+        "n" => 0
       }]
       assert false == Transaction.has_output_addresses?( output_modules_no_addresses )
 
       list_with_valid_output_module = [ %{}, %{
-        value: 0.78152,
-        scriptPubKey: %{
-          hex: "a9141a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf87",
-          asm: "OP_HASH160 1a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf OP_EQUAL",
-          "addresses": [
+        "value" => 0.78152,
+        "scriptPubKey" => %{
+          "hex" => "a9141a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf87",
+          "asm" => "OP_HASH160 1a30c2cb52f5bd4fcbd8697b37b636f9b73ebedf OP_EQUAL",
+          "addresses" => [
             "2MudhyEqJ7RzedMPXrReNXDcJ9Hch1AUqdv"
           ]
         },
-        n: 0
+        "n" => 0
       }]
       assert true == Transaction.has_output_addresses?( list_with_valid_output_module )
     end

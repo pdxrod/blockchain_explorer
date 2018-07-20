@@ -27,9 +27,16 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp output_has_addresses?( output ) do
-    output["scriptPubKey"] &&
+
+IO.puts "\n\noutput_has_addresses? "
+IO.inspect output
+
+    result  = output["scriptPubKey"] &&
      output["scriptPubKey"]["addresses"] &&
       length( output["scriptPubKey"]["addresses"] ) > 0
+
+IO.puts "result is #{result}\n"
+    result
   end
 
   def has_output_addresses?( list_of_output_modules ) do
