@@ -6,6 +6,7 @@ function findTransactionsInBackground() {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if( this.readyState == 4 && this.status == 200 ) {
+      console.log( "findTransactionsInBackground "+this.responseText );
       document.getElementById( "more_transactions" ).innerHTML = this.responseText;
     }
   };

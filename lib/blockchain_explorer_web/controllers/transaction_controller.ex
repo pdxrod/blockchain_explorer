@@ -33,8 +33,10 @@ defmodule BlockChainExplorerWeb.TransactionController do
         Task.await task, 7000
       catch :exit, _ -> IO.puts "\nExit find"
       end
-      transactions = TransactionFinder.peek( address_str )
-      render( conn, "json.html", transactions: transactions )
+      transactions_tuple = TransactionFinder.peek( address_str )
+      transactions_tuple = if Utils.mt?( transactions_tuple ), do: { }, else: transactions_tuple
+      transactions_list = Tuple.to_list transactions_tuple
+      render( conn, "json.html", transactions: transactions_list )
     end
 
 end
