@@ -99,7 +99,6 @@ defmodule BlockChainExplorerWeb.BlockController do
       {:ok, block} ->
         decoded = Block.decode_block block
         render(conn, "show.html", block: decoded, address_str: "n4ME4" )
-
       other ->
         show_error(conn, "show.html", other)
     end
