@@ -19,14 +19,16 @@ defmodule BlockChainExplorerWeb.TransactionController do
         Task.await task, 7000
         catch :exit, _ -> IO.puts "\nExit index"
       end
-      transactions = TransactionFinder.peek( address_str )
-      decoded = {}
-      if Utils.notmt?( transactions ) do
-        for num <- 0..tuple_size( transactions ) - 1 do
-          trans = Transaction.decode elem( transactions, num )
-          decoded = Tuple.append( decoded, trans )
-        end
-      end
+      transactions_tuple = TransactionFinder.peek( address_str )
+      transactions_list = Tuple.to_list transactions_tuple
+      decoded = if Utils.notmt?( transactions_list ) do
+                  Enum.map( transactions_list, fn( tran ) -> Transaction.decode( tran ) end)
+                else
+                  []
+                end
+IO.puts "transaction controller index"
+IO.inspect decoded
+
       render( conn, "index.html", transactions: decoded, address: address_str )
     end
 
