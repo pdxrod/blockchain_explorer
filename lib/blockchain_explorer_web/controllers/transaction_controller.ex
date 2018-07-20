@@ -20,15 +20,9 @@ defmodule BlockChainExplorerWeb.TransactionController do
         catch :exit, _ -> IO.puts "\nExit index"
       end
       transactions_tuple = TransactionFinder.peek( address_str )
+      transactions_tuple = if Utils.mt?( transactions_tuple ), do: { }, else: transactions_tuple
       transactions_list = Tuple.to_list transactions_tuple
-      decoded = if Utils.notmt?( transactions_list ) do
-                  Enum.map( transactions_list, fn( tran ) -> Transaction.decode( tran ) end)
-                else
-                  []
-                end
-IO.puts "transaction controller index"
-IO.inspect decoded
-
+      decoded = Enum.map( transactions_list, fn( tran ) -> Transaction.decode( tran ) end)
       render( conn, "index.html", transactions: decoded, address: address_str )
     end
 

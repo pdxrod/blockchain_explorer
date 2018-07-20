@@ -8,8 +8,7 @@ defmodule BlockChainExplorer.TransactionFinder do
   end
 
   def peek( address_str ) do
-    result = Agent.get(__MODULE__, &Map.get( &1, address_str ))
-    result
+    Agent.get(__MODULE__, &Map.get( &1, address_str ))
   end
 
   defp transaction?( thing ) do
