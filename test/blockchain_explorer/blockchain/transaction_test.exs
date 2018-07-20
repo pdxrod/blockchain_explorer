@@ -24,8 +24,8 @@ defmodule BlockChainExplorer.TransactionTest do
         [] -> false
         [ output | more_outputs ] ->
           cond do
-            Utils.mt?( output["scriptPubKey"] ) -> false
-            Utils.mt?( output["scriptPubKey"]["addresses"] ) -> false
+            Utils.mt?( output["scriptPubKey"] ) -> at_least_one_output_has_a_valid_address?( more_outputs )
+            Utils.mt?( output["scriptPubKey"]["addresses"] ) -> at_least_one_output_has_a_valid_address?( more_outputs )
             has_a_valid_address?( output["scriptPubKey"]["addresses"] ) -> true
             true -> at_least_one_output_has_a_valid_address?( more_outputs )
           end
