@@ -19,5 +19,14 @@ defmodule BlockChainExplorerWeb.TransactionControllerTest do
       assert html_response(conn, 200) =~ "Txid:    #{ transaction["txid"] }"
     end
 
+    test "ajax" do
+      transaction = Transaction.get_a_useful_transaction()
+      address_str = Transaction.get_an_address transaction["vout"]
+      address_str = String.slice address_str, 0..5
+      conn = build_conn()
+      conn = get conn, transaction_path(conn, :find, address_str)
+      assert html_response(conn, 200) =~ transaction["txid"]
+    end
+
   end
 end
