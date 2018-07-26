@@ -1,0 +1,7 @@
+<%=
+  if @transactions == nil || @transactions == [] do
+    "no transactions"
+  else
+    List.first( @transactions )["txid"]
+  end
+%>

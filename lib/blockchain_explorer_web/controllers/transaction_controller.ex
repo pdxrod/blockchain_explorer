@@ -16,7 +16,7 @@ defmodule BlockChainExplorerWeb.TransactionController do
       conn = assign(conn, :error, "")
       task = TransactionFinder.find_transactions address_str
       try do
-        Task.await task, 7000
+        Task.await task, 11_000
         catch :exit, _ -> IO.puts "\nExit index"
       end
       transactions_tuple = TransactionFinder.peek( address_str )
@@ -32,7 +32,12 @@ defmodule BlockChainExplorerWeb.TransactionController do
       transactions_tuple = TransactionFinder.peek( address_str )
       transactions_tuple = if Utils.mt?( transactions_tuple ), do: { }, else: transactions_tuple
       transactions_list = Tuple.to_list transactions_tuple
-      render( conn, "transactions.json", transactions: transactions_list )
+
+IO.puts "\ntransaction controller find - transactions list is"
+IO.inspect transactions_list
+# unable to encode value: {:safe, [["" | "transactions.json.haml"] | "\n"]}
+
+      render( conn, "find.html", transactions: transactions_list )
     end
 
 end
