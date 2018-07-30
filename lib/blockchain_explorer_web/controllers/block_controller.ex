@@ -134,7 +134,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   def index(conn, params) do
-    direction = cond do # See index.html.eex for where params comes from
+    direction = cond do # See index.html.haml for where params comes from
       params == %{} -> "latestblockhash"
       params[ "n" ] == "t" -> "previousblockhash"
       true -> "nextblockhash"
