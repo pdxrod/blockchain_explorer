@@ -1,6 +1,8 @@
 %span.instructions
   = "Transactions which refer to address #{ @address }"
 %br
+%span{ id: "please_wait_message", name: "please_wait_message", style: "visibility: hidden; color: #FF7F50" }
+  = "Please wait..."
 %br
 
 #transactions
@@ -14,10 +16,6 @@
       %b Inputs:
       %br
       = transaction.inputs |> mark_up_inputs |> raw
-
-.form-group
-  = text_input :transactions, :address, type: :hidden, value: @address
-  = submit "press for more transactions", id: "transactions_submit_button", class: "btn btn-primary"
 
 #more_transactions
   = "transactions should appear here"
