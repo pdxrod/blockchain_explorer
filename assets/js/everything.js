@@ -5,13 +5,7 @@ $( "form#number" ).submit( function() {
 });
 // Thanks https://stackoverflow.com/questions/5691054/disable-submit-button-on-form-submit
 $( "#blocks_show_submit_button" ).on( "click", function() {
-  document.getElementById( "please_wait_message" ).style.visibility = "visible";
-});
-
-$( document ).ready( function() {
-  document.getElementById( "please_wait_message" ).style.visibility = "visible";
-  console.log( "Trying to call findTransactionsInBackground() " );
-  findTransactionsInBackground();
+  document.getElementById( "blocks_please_wait_message" ).style.visibility = "visible";
 });
 
 function findTransactionsInBackground() {
@@ -29,3 +23,9 @@ function findTransactionsInBackground() {
   xhttp.open( "GET", "/find/" + address, true );
   xhttp.send();
 }
+
+$( document ).ready( function() {
+  document.getElementById( "transactions_please_wait_message" ).style.visibility = "visible";
+  console.log( "Trying to call findTransactionsInBackground() " );
+  findTransactionsInBackground();
+});

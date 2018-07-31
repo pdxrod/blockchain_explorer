@@ -16,7 +16,7 @@ defmodule BlockChainExplorerWeb.TransactionController do
       conn = assign(conn, :error, "")
       task = TransactionFinder.find_transactions address_str
       try do
-        Task.await task, 1000
+        Task.await task, 5000
         catch :exit, _ -> IO.puts "\nExit index"
       end
       transactions_tuple = TransactionFinder.peek( address_str )

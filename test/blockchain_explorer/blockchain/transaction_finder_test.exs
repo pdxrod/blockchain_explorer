@@ -43,7 +43,6 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       "hash": "98e8e6534e0fb4a515f314ea7bd7f8d4b63803894feca243c8c9608e0aa8e679"
     }
 
-
     test "find" do
       a_transaction = Transaction.get_a_useful_transaction()
       address_str = Transaction.get_an_address a_transaction["vout"]
