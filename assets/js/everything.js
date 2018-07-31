@@ -1,12 +1,15 @@
 console.log( "everything.js" );
 
-$( "form#number" ).submit( function() {
-    $( this ).find( ":input[type=submit]" ).prop( "disabled", true );
-});
+var form_number = $( "form#number" );
+if( form_number ) {
+  $( "form#number" ).submit( function() {
+      $( this ).find( ":input[type=submit]" ).prop( "disabled", true );
+  });
 // Thanks https://stackoverflow.com/questions/5691054/disable-submit-button-on-form-submit
-$( "#blocks_show_submit_button" ).on( "click", function() {
-  document.getElementById( "blocks_please_wait_message" ).style.visibility = "visible";
-});
+  $( "#blocks_show_submit_button" ).on( "click", function() {
+    document.getElementById( "blocks_please_wait_message" ).style.visibility = "visible";
+  });
+}
 
 function findTransactionsInBackground() {
   var xhttp = new XMLHttpRequest();
@@ -24,8 +27,11 @@ function findTransactionsInBackground() {
   xhttp.send();
 }
 
-$( document ).ready( function() {
-  document.getElementById( "transactions_please_wait_message" ).style.visibility = "visible";
-  console.log( "Trying to call findTransactionsInBackground() " );
-  findTransactionsInBackground();
-});
+var transactions_please_wait_message = document.getElementById( "transactions_please_wait_message" );
+if( transactions_please_wait_message ) {
+  $( document ).ready( function() {
+    document.getElementById( "transactions_please_wait_message" ).style.visibility = "visible";
+    console.log( "Calling findTransactionsInBackground() " );
+    findTransactionsInBackground();
+  });
+}
