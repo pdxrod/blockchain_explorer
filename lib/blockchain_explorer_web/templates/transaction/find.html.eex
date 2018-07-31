@@ -1,7 +1,17 @@
-<%=
-  if @transactions == nil || @transactions == [] do
-    "no transactions"
-  else
-    List.first( @transactions )["txid"]
-  end
-%>
+<% alias BlockChainExplorer.Transaction %>
+  <% if @transactions == nil || @transactions == [] do %>
+    "no more transactions"
+  <% else %>
+    <% for transaction <- @transactions do %>
+      <p id='more_transaction_block'>
+        <% decoded = Transaction.decode( transaction ) %>
+        <%= decoded |> mark_up_transaction |> raw %>
+        <b> Outputs:</b>
+        <br />
+        <%= decoded.outputs |> mark_up_outputs |> raw %>
+        <b> Inputs:</b>
+        <br />
+        <%= decoded.inputs |> mark_up_inputs |> raw # Yes, it's ugly %>
+      </p>
+    <% end %>
+  <% end %>

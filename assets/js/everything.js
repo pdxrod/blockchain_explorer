@@ -17,7 +17,6 @@ if( transactions_please_wait_message ) {
     transactions_please_wait_message.style.visibility = "visible";
     console.log( "Calling ajax " );
     var xhttp = new XMLHttpRequest();
-    console.log( "ajax() " );
     xhttp.onreadystatechange = function() {
       if( this.readyState == 4 && this.status == 200 ) {
         console.log( "ajax " + this.responseText );
@@ -25,12 +24,12 @@ if( transactions_please_wait_message ) {
       }
     };
 
-    var transactions_address = document.getElementById( "transactions_address" );
-    console.log( "transactions_address " + transactions_address );
-    var address = transactions_address.innerHTML.trim();
-    console.log( "ajax " + address );
+    var address = document.getElementById( "address" );
+    console.log( "address " + address );
+    var transactions_address = address.innerHTML.trim();
+    console.log( "ajax " + transactions_address );
 
-    xhttp.open( "GET", "/find/" + address, true );
+    xhttp.open( "GET", "/find/" + transactions_address, true );
     xhttp.send();
   });
 }
