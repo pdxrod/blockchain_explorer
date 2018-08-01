@@ -4,7 +4,7 @@
     "no transactions"
   <% else %>
     <% for transaction <- @transactions do %>
-      <p id='more_transaction_block'>
+      <p id='transaction_block'>
         <% decoded = Transaction.decode( transaction ) %>
         <%= decoded |> mark_up_transaction |> raw %>
         <b> Outputs:</b>
@@ -17,4 +17,3 @@
     <% end %>
   <% end %>
 </div>
-  
