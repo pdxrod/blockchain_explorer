@@ -24,6 +24,15 @@ defmodule BlockChainExplorer.Utils do
     ! mt?( thing )
   end
 
+  def div_extrator( page ) do
+    starting = :binary.match( page, "<div id='transactions_block'>" ) |> elem( 0 )
+    ending = String.length page
+    div = String.slice page, starting, ending
+    ending = :binary.match( div, "</div>" ) |> elem( 0 )
+    ending = ending + 6
+    String.slice div, 0, ending
+  end
+
   def env( atom ) do
     Application.get_env( :blockchain_explorer, atom )
   end
