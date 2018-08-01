@@ -1,6 +1,7 @@
 <% alias BlockChainExplorer.Transaction %>
+<div id='transactions_block'>
   <% if @transactions == nil || @transactions == [] do %>
-    "no more transactions"
+    "no transactions"
   <% else %>
     <% for transaction <- @transactions do %>
       <p id='more_transaction_block'>
@@ -15,3 +16,5 @@
       </p>
     <% end %>
   <% end %>
+</div>
+  

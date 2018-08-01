@@ -6,18 +6,6 @@
 %br
 
 #transactions
-
-  - for transaction <- @transactions do
-    %p.transaction_block
-      = transaction |> mark_up_transaction |> raw
-      %b Outputs:
-      %br
-      = transaction.outputs |> mark_up_outputs |> raw
-      %b Inputs:
-      %br
-      = transaction.inputs |> mark_up_inputs |> raw
-
-#more_transactions
   %span{ id: "transactions_please_wait_message", name: "transactions_please_wait_message", style: "visibility: hidden; color: #FF7F50" }
     = "Please wait..."
   %br
