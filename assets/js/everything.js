@@ -45,8 +45,9 @@ function transaction_finder_loop ( n ) {
      $.ajax( {
          url : "/find/" + transactions_address,
          success : function( result ) {
-           var div = div_extractor( result.trim() );
-           document.getElementById( "transactions" ).innerHTML = div;
+        //   var div = div_extractor( result.trim() );
+        //   document.getElementById( "transactions" ).innerHTML = div;
+           document.getElementById( "transactions" ).innerHTML = result;
          }
      } );
 
