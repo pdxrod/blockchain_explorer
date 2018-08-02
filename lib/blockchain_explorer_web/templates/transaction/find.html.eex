@@ -1,8 +1,11 @@
 <% alias BlockChainExplorer.Transaction %>
 <div id='transactions_block'>
+  <% IO.puts "\nin transactions block" %>
   <% if @transactions == nil || @transactions == [] do %>
-    "no transactions"
+    <% IO.puts "\nno transactions" %>
+       no transactions
   <% else %>
+    <% IO.puts "\nsome transactions" %>
     <% for transaction <- @transactions do %>
       <p id='transaction_block'>
         <% decoded = Transaction.decode( transaction ) %>

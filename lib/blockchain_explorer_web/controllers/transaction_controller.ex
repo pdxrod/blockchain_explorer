@@ -11,7 +11,7 @@ defmodule BlockChainExplorerWeb.TransactionController do
             |> Transaction.decode_transaction_tuple )
     end
 
-# This may be called when a user enters a partial address on the home page, or when they click on an address on the transactions
+# This may be called when a user enters a partial address on the home page, or when they click on an address in a transaction
     def index(conn, %{"address_str" => address_str}) do
       conn = assign(conn, :error, "")
       TransactionFinder.find_transactions address_str

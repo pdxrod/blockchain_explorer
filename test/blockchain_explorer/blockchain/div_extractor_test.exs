@@ -50,7 +50,7 @@ defmodule BlockChainExplorer.DivExtractorTest do
   describe "div extractor" do
 
     test "div extractor for transactions page" do
-      assert Utils.div_extrator( @page ) == @div
+      assert Utils.div_extractor( @page ) == @div
     end
 
   end
