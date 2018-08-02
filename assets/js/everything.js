@@ -19,7 +19,7 @@ if( transactions_please_wait_message ) { // You're on the /transactions page
 }
 
 function div_extractor( page ) {
-  var starting = page.indexOf( "<div id='transactions_block'>" );
+  var starting = page.indexOf( "<div id=\"transactions_block\">" );
   console.log( "div_extractor - starting is "+starting );
   var ending = page.length - 1;
   var div = page.substring( starting, ending );
@@ -29,8 +29,8 @@ function div_extractor( page ) {
   return div;
 }
 
-function transaction_finder_loop ( n ) {
-   setTimeout(function () {
+function transaction_finder_loop( n ) {
+   setTimeout( function () {
      var address = document.getElementById( "address" );
      console.log( "address " + address );
      var transactions_address = address.innerHTML.trim();
@@ -45,9 +45,8 @@ function transaction_finder_loop ( n ) {
      $.ajax( {
          url : "/find/" + transactions_address,
          success : function( result ) {
-        //   var div = div_extractor( result.trim() );
-        //   document.getElementById( "transactions" ).innerHTML = div;
-           document.getElementById( "transactions" ).innerHTML = result;
+           var div = div_extractor( result.trim() );
+           document.getElementById( "transactions" ).innerHTML = div;
          }
      } );
 
