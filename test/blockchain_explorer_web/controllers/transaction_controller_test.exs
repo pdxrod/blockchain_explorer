@@ -9,7 +9,7 @@ defmodule BlockChainExplorerWeb.TransactionControllerTest do
       address_str = Transaction.get_an_address transaction["vout"]
       conn = build_conn()
       conn = get conn, "/transactions/#{ address_str }"
-      assert html_response(conn, 200) =~ "Txid:    #{ transaction["txid"] }"
+      assert html_response(conn, 200) =~ "Transactions which refer to address"
     end
 
     test "shows a transaction" do
@@ -25,7 +25,7 @@ defmodule BlockChainExplorerWeb.TransactionControllerTest do
       address_str = String.slice address_str, 0..5
       conn = build_conn()
       conn = get conn, transaction_path(conn, :find, address_str)
-      assert html_response(conn, 200) =~ transaction["txid"]
+      assert html_response(conn, 200) =~ "Transactions which refer to address"
     end
 
   end

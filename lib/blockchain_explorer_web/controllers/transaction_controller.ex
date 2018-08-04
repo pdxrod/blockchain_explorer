@@ -24,9 +24,6 @@ defmodule BlockChainExplorerWeb.TransactionController do
       transactions_tuple = TransactionFinder.peek( address_str )
       transactions_tuple = if Utils.mt?( transactions_tuple ), do: { }, else: transactions_tuple
       transactions_list = Tuple.to_list transactions_tuple
-
-IO.puts "\ntransaction controller find - transactions list length is #{ length transactions_list }"
-
       render( conn, "find.html", transactions: transactions_list )
     end
 
