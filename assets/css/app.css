@@ -26,12 +26,7 @@ form {
 }
 
 .transaction_block {
-  border-style: 1px solid;
-  border-width: thin;
-}
-
-.inputs_outputs_block {
-  border-style: 1px dotted;
+  border-style: solid;
   border-width: thin;
 }
 

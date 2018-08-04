@@ -18,19 +18,19 @@ defmodule BlockChainExplorerWeb.TransactionView do
     Txid:    #{ transaction.txid }        <br />
     Size:    #{ transaction.size }        <br />
     Hash:    #{ transaction.hash }  <br /><br />
-    """
+    """ <> mark_up_outputs( transaction.outputs ) <> mark_up_inputs( transaction.inputs ) <> "<hr/>"
   end
 
-  def mark_up_outputs( outputs_list ) do
+  defp mark_up_outputs( outputs_list ) do
     case outputs_list do
       [ head | tail ] -> mark_output( head ) <> mark_up_outputs( tail )
       _ -> ""
     end
   end
 
-  def mark_up_inputs( inputs_list ) do
+  defp mark_up_inputs( inputs_list ) do
     case inputs_list do
-      [ head | tail ] -> mark_input( head ) <> mark_up_inputs( tail ) <> "\n<hr />"
+      [ head | tail ] -> mark_input( head ) <> mark_up_inputs( tail )
       _ -> ""
     end
   end

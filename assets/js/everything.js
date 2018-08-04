@@ -43,9 +43,12 @@ function transaction_finder_loop( n ) {
 
      n -- ;
      if( n > 0 ) {
+       var msg = transactions_please_wait_message.innerHTML.trim();
+       msg += "...";
+       transactions_please_wait_message.innerHTML = msg;
        transaction_finder_loop( n );
      } else {
-       document.getElementById( "transactions_please_wait_message" ).style.visibility = "hidden";
+       transactions_please_wait_message.style.visibility = "hidden";
      }
 
    }, 6000 );
