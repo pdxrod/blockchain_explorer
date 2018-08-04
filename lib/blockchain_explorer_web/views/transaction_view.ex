@@ -13,11 +13,11 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   def mark_up_transaction( transaction ) do
     """
-    Vsize:   #{ transaction.vsize }   <br />
-    Version: #{ transaction.version } <br />
-    Txid:    #{ transaction.txid }    <br />
-    Size:    #{ transaction.size }    <br />
-    Hash:    #{ transaction.hash }    <br /><br />
+    <b>Vsize:</b> #{ transaction.vsize }  <br />
+    Version: #{ transaction.version }     <br />
+    Txid:    #{ transaction.txid }        <br />
+    Size:    #{ transaction.size }        <br />
+    Hash:    #{ transaction.hash }  <br /><br />
     """
   end
 
@@ -30,7 +30,7 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   def mark_up_inputs( inputs_list ) do
     case inputs_list do
-      [ head | tail ] -> mark_input( head ) <> mark_up_inputs( tail )
+      [ head | tail ] -> mark_input( head ) <> mark_up_inputs( tail ) <> "\n<hr />"
       _ -> ""
     end
   end
