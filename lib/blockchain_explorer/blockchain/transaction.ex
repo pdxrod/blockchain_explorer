@@ -2,7 +2,7 @@ defmodule BlockChainExplorer.Transaction do
   alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.Utils
 
-  defmodule ScriptPubKey do
+  defmodule ScriptPubKey do # locking script for outputs
     defstruct type: nil, reqsigs: 0, hex: nil, asm: nil, addresses: nil
   end
 
@@ -10,7 +10,7 @@ defmodule BlockChainExplorer.Transaction do
     defstruct value: -1.0, scriptpubkey: %ScriptPubKey{}, n: -1
   end
 
-  defmodule Input do
+  defmodule Input do # scriptsig is unlocking key for inputs
     defstruct vout: nil, txid: nil, sequence: 0, scriptsig: nil, coinbase: nil
   end
 

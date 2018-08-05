@@ -9,10 +9,13 @@ if( form_number ) { // You're on the /blocks page
   } );
 }
 
+var LOOP = 12;
+var TIME = 10000;
+
 var transactions_please_wait_message = document.getElementById( "transactions_please_wait_message" );
 if( transactions_please_wait_message ) { // You're on the /transactions page
   $( document ).ready( function() {
-    transaction_finder_loop( 20 );
+    transaction_finder_loop( LOOP );
   } );
 }
 
@@ -49,5 +52,5 @@ function transaction_finder_loop( n ) {
        transactions_please_wait_message.style.visibility = "hidden";
      }
 
-   }, 10000 );
+   }, TIME );
 }
