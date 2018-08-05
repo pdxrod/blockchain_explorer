@@ -1,11 +1,11 @@
 %span.instructions
   = "Transactions which refer to address "
-  %span{ id: "transactions_address", name: "transactions_address", style: "visibility: hidden" }
   %span{ id: "address", name: "address" }
     = @address
 %br
-%span{ id: "transactions_please_wait_message", name: "transactions_please_wait_message", style: "color: #FF7F50; font-weight: bold;" }
-  = "Please wait..."
+%span{ id: "transactions_please_wait_message", name: "transactions_please_wait_message", style: "color: #FF7F50" }
+  %span{ style: "font-weight: bold" }Please wait
+  = "..."
 %br
 %br
 #transactions

@@ -13,12 +13,13 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   def mark_up_transaction( transaction ) do
     """
-    <b>Txid:</b> #{ transaction.txid }   <br />
+    <b>Txid:</b> #{ trans_link transaction.txid }   <br />
     Vsize:       #{ transaction.vsize }  <br />
     Version:     #{ transaction.version} <br />
     Size:        #{ transaction.size }   <br />
     Hash:        #{ transaction.hash }   <br /><br />
-    """ <> mark_up_outputs( transaction, transaction.outputs ) <> mark_up_inputs( transaction, transaction.inputs )
+    """ <> "Outputs:<br/>\n" <> mark_up_outputs( transaction, transaction.outputs ) <>
+           "Inputs:<br/>\n"  <> mark_up_inputs( transaction, transaction.inputs )
   end
 
   defp mark_up_outputs( transaction, outputs ) do
@@ -61,7 +62,7 @@ defmodule BlockChainExplorerWeb.TransactionView do
     """
     Sequence: #{ input.sequence           }<br />
     Txid:     #{ trans_link input.txid    }
-    Asm: 
+    Asm:
     <span id="#{ transaction.txid }_input_asm" style="display :none">#{ input.scriptsig["asm"] }</span>
     &nbsp;&nbsp;#{ asm_truncate input.scriptsig["asm"] }<br />
     Hex:
