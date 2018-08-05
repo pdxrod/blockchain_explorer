@@ -13,34 +13,39 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   def mark_up_transaction( transaction ) do
     """
-    <b>Vsize:</b> #{ transaction.vsize }  <br />
-    Version: #{ transaction.version }     <br />
-    Txid:    #{ transaction.txid }        <br />
-    Size:    #{ transaction.size }        <br />
-    Hash:    #{ transaction.hash }  <br /><br />
-    """ <> mark_up_outputs( transaction.outputs ) <> mark_up_inputs( transaction.inputs ) <> "<hr/>"
+    <b>Txid:</b> #{ transaction.txid }   <br />
+    Vsize:       #{ transaction.vsize }  <br />
+    Version:     #{ transaction.version} <br />
+    Size:        #{ transaction.size }   <br />
+    Hash:        #{ transaction.hash }   <br /><br />
+    """ <> mark_up_outputs( transaction, transaction.outputs ) <> mark_up_inputs( transaction, transaction.inputs )
   end
 
-  defp mark_up_outputs( outputs_list ) do
-    case outputs_list do
-      [ head | tail ] -> mark_output( head ) <> mark_up_outputs( tail )
+  defp mark_up_outputs( transaction, outputs ) do
+    case outputs do
+      [ head | tail ] -> mark_output( transaction, head ) <> mark_up_outputs( transaction, tail )
       _ -> ""
     end
   end
 
-  defp mark_up_inputs( inputs_list ) do
-    case inputs_list do
-      [ head | tail ] -> mark_input( head ) <> mark_up_inputs( tail )
+  defp mark_up_inputs( transaction, inputs ) do
+    case inputs do
+      [ head | tail ] -> mark_input( transaction, head ) <> mark_up_inputs( transaction, tail )
       _ -> ""
     end
   end
 
-  defp mark_output( output ) do
+  defp asm_truncate( long_str ) do
+    String.slice( long_str, 0..31 ) <> "..."
+  end
+
+  defp mark_output( transaction, output ) do
     """
         #{ output.n }<br />
         Value: #{ output.value }<br />
-        Asm: <br />
-        &nbsp;&nbsp;#{ output.scriptpubkey.asm }<br />
+        Asm:
+        <span id="#{ transaction.txid }_output_asm" style="display: none">#{ output.scriptpubkey.asm }</span>
+        &nbsp;&nbsp;#{ asm_truncate output.scriptpubkey.asm }<br />
         Addresses: <br />
     """ <> mark_up_addresses( output.scriptpubkey.addresses )
   end
@@ -52,14 +57,16 @@ defmodule BlockChainExplorerWeb.TransactionView do
     end
   end
 
-  defp mark_input( input ) do
+  defp mark_input( transaction, input ) do # It's not pretty, I know
     """
     Sequence: #{ input.sequence           }<br />
     Txid:     #{ trans_link input.txid    }
-    Asm: <br />
-    &nbsp;&nbsp;#{ input.scriptsig["asm"] }<br />
-    Hex: <br />
-    &nbsp;&nbsp;#{ input.scriptsig["hex"] }<br /><br />
+    Asm: 
+    <span id="#{ transaction.txid }_input_asm" style="display :none">#{ input.scriptsig["asm"] }</span>
+    &nbsp;&nbsp;#{ asm_truncate input.scriptsig["asm"] }<br />
+    Hex:
+    <span id-"#{ transaction.txid }_input_hex" style="display: none">#{ input.scriptsig["hex"] }</span>
+    &nbsp;&nbsp;#{ asm_truncate input.scriptsig["hex"] }<br /><br />
     """
   end
 end

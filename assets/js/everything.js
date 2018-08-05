@@ -16,7 +16,7 @@ if( transactions_please_wait_message ) { // You're on the /transactions page
   } );
 }
 
-function div_extractor( page ) {
+function transactions_div_extractor( page ) {
   var starting = page.indexOf( "<div id=\"transactions_block\">" );
   var ending = page.length - 1;
   var div = page.substring( starting, ending );
@@ -36,7 +36,7 @@ function transaction_finder_loop( n ) {
      $.ajax( {
          url : "/find/" + transactions_address,
          success : function( result ) {
-           var div = div_extractor( result.trim() );
+           var div = transactions_div_extractor( result );
            document.getElementById( "transactions" ).innerHTML = div;
          }
      } );
