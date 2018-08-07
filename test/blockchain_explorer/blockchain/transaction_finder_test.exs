@@ -80,5 +80,37 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       assert {a_transaction} == TransactionFinder.peek( address_str )
     end
 
+    # Should be the same as LOOP and TIME in the Javascript
+    @loop 12
+    @time 5_000
+
+    @tag timeout: (@loop + 1)*@time
+    test "two simultaneous puts and finds" do
+      a_transaction = Transaction.get_a_useful_transaction()
+      address_str = Transaction.get_an_address a_transaction["vout"]
+      address_str = String.slice address_str, 0..4
+      TransactionFinder.put address_str, a_transaction
+      TransactionFinder.put "2Mud", @a_transaction
+      TransactionFinder.find_transactions address_str
+      for n <- 1..@loop do
+        TransactionFinder.peek( "2Mud" )
+        :timer.sleep( @time )
+        if n == @loop do
+          transactions = TransactionFinder.peek( "2Mud" )
+          trans = elem( transactions, 0 )
+          assert trans["hash"]
+          assert trans["size"]
+          assert trans["vin"]
+          assert Utils.notmt? trans["vout"]["addresses"]
+        end
+      end
+      transactions = TransactionFinder.peek( address_str )
+      trans = elem( transactions, 0 )
+      assert trans["hash"]
+      assert trans["size"]
+      assert trans["vin"]
+      assert Utils.notmt? trans["vout"]["addresses"]
+    end
+
   end
 end
