@@ -1,11 +1,15 @@
 %span.instructions
   = "Transactions which refer to address "
   %span{ id: "address", name: "address" }
-    = @address
+    - len = String.length @address
+    - if len > 10 do
+      = @address
+    - else
+      = @address <> "..."
+
 %br
 %span{ id: "transactions_please_wait_message", name: "transactions_please_wait_message", style: "color: #FF7F50" }
-  %span{ style: "font-weight: bold" }Please wait
-  = "..."
+  = "Please wait..."
 %br
 %br
 #transactions
