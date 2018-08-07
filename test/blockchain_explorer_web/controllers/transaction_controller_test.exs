@@ -16,7 +16,10 @@ defmodule BlockChainExplorerWeb.TransactionControllerTest do
       transaction = Transaction.get_a_useful_transaction()
       conn = build_conn()
       conn = get conn, transaction_path(conn, :show,  transaction["txid"])
-      assert html_response(conn, 200) =~ "Txid:    #{ transaction["txid"] }"
+      <b>Txid:</b> <a href='/trans/d8c06430f5cd1f17231db71a498f80fdd65956cf9516c252c3b4600e62208569'>d8c06430f5cd1f17231db71a498f80fdd65956cf9516c252c3b4600e62208569
+      page = html_response(conn, 200)
+      assert page =~ ~r/Txid:.*href/
+      assert page =~ "/trans/#{ transaction["txid"] }"
     end
 
     test "ajax" do
