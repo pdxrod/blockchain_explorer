@@ -82,7 +82,7 @@ defmodule BlockChainExplorer.TransactionFinderTest do
 
     # Should be the same as LOOP and TIME in the Javascript
     @loop 12
-    @time 5_000
+    @time 8_000
 
     @tag timeout: (@loop + 1)*@time
     test "two simultaneous puts and finds" do
@@ -98,17 +98,11 @@ defmodule BlockChainExplorer.TransactionFinderTest do
         if n == @loop do
           transactions = TransactionFinder.peek( "2Mud" )
           trans = elem( transactions, 0 )
-          assert trans["hash"]
-          assert trans["size"]
-          assert trans["vin"]
           assert Utils.notmt? trans["vout"]["addresses"]
         end
       end
       transactions = TransactionFinder.peek( address_str )
       trans = elem( transactions, 0 )
-      assert trans["hash"]
-      assert trans["size"]
-      assert trans["vin"]
       assert Utils.notmt? trans["vout"]["addresses"]
     end
 
