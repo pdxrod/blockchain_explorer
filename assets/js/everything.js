@@ -1,3 +1,8 @@
+String.prototype.indexOfRegex = function( regex ) {
+  var match = this.match(regex);
+  return match ? this.indexOf(match[ 0 ]) : -1;
+}
+
 var form_number = $( "form#number" );
 if( form_number ) { // You're on the /blocks page
     form_number.submit( function() {
@@ -9,8 +14,8 @@ if( form_number ) { // You're on the /blocks page
   } );
 }
 
-var LOOP = 12;
-var TIME = 10000;
+const LOOP = 12;
+const TIME = 10000;
 
 var transactions_please_wait_message = document.getElementById( "transactions_please_wait_message" );
 if( transactions_please_wait_message ) { // You're on the /transactions page
@@ -29,10 +34,14 @@ function transactions_div_extractor( page ) {
 }
 
 function transaction_finder_loop( n ) {
-   setTimeout( function () {
+   setTimeout( function() {
      transactions_please_wait_message.style.visibility = "visible";
      var address = document.getElementById( "address" );
      var transactions_address = address.innerHTML.trim();
+     var dots = transactions_address.indexOfRegex( /\./ ); // Remove the dots
+     if( dots > -1 ) {
+       transactions_address = transactions_address.substring( 0, dots );
+     }
 
      $.ajax( {
          url : "/find/" + transactions_address,
@@ -45,7 +54,7 @@ function transaction_finder_loop( n ) {
      n -- ;
      if( n > 0 ) {
        var msg = transactions_please_wait_message.innerHTML.trim();
-       msg += "...";
+       msg += "....";
        transactions_please_wait_message.innerHTML = msg;
        transaction_finder_loop( n );
      } else {

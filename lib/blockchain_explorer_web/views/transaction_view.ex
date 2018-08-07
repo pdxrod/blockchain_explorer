@@ -45,7 +45,7 @@ defmodule BlockChainExplorerWeb.TransactionView do
         #{ output.n }<br />
         Value: #{ output.value }<br />
         Asm:
-        <span id="#{ transaction.txid }_output_asm" style="display: none">#{ output.scriptpubkey.asm }</span>
+        <span id="#{ transaction.txid }_output_asm" style="display :none">#{ output.scriptpubkey.asm }</span>
         &nbsp;&nbsp;#{ asm_truncate output.scriptpubkey.asm }<br />
         Addresses: <br />
     """ <> mark_up_addresses( output.scriptpubkey.addresses )
@@ -63,10 +63,10 @@ defmodule BlockChainExplorerWeb.TransactionView do
     Sequence: #{ input.sequence           }<br />
     Txid:     #{ trans_link input.txid    }
     Asm:
-    <span id="#{ transaction.txid }_input_asm" style="display :none">#{ input.scriptsig["asm"] }</span>
+    <span id="#{ transaction.txid }_input_asm" style="display: none">#{ input.scriptsig["asm"] }</span>
     &nbsp;&nbsp;#{ asm_truncate input.scriptsig["asm"] }<br />
     Hex:
-    <span id-"#{ transaction.txid }_input_hex" style="display: none">#{ input.scriptsig["hex"] }</span>
+    <span id-"#{ transaction.txid }_input_hex" style="display :none">#{ input.scriptsig["hex"] }</span>
     &nbsp;&nbsp;#{ asm_truncate input.scriptsig["hex"] }<br /><br />
     """
   end
