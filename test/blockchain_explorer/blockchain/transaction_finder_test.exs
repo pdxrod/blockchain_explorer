@@ -47,16 +47,10 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       a_transaction = Transaction.get_a_useful_transaction()
       address_str = Transaction.get_an_address a_transaction["vout"]
       address_str = String.slice address_str, 0..5
-      task = TransactionFinder.find_transactions address_str
-      try do
-        Task.await task
-      catch :exit, _ -> IO.puts "\nExit find"
-      end
+      result = TransactionFinder.find_transactions address_str
       transactions = TransactionFinder.peek( address_str )
+      assert Utils.notmt? transactions
       trans = elem( transactions, 0 )
-      assert trans["hash"]
-      assert trans["size"]
-      assert trans["vin"]
       assert Utils.notmt? trans["vout"]
     end
 

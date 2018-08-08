@@ -7,10 +7,6 @@ defmodule BlockChainExplorer.TransactionFinder do
     Agent.start_link(fn -> %{ } end, name: __MODULE__ )
   end
 
-  def peek( address_str ) do
-    Agent.get(__MODULE__, &Map.get( &1, address_str ))
-  end
-
   defp transaction?( thing ) do
     try do
       thing["vsize"] && thing["outputs"] && thing["inputs"]
@@ -83,13 +79,23 @@ IO.puts "\ntransaction_finder #{String.slice( transaction["txid"], 0..10) <> "..
   end
 
   defp find_blocks( address_str ) do
-    Blockchain.get_n_blocks( nil, 500 )
+    Blockchain.get_n_blocks( nil, 250 ) # <-
     |> Tuple.to_list()
     |> Enum.map( &block_contains_address( &1, address_str ) )
   end
 
   def find_transactions( address_str ) do
-    Task.start_link( fn() -> find_blocks( address_str ) end)
+    task = Task.async( fn() -> find_blocks( address_str ) end)
+    try do
+      Task.await task, 10_000 # <-
+    catch :exit, _ -> IO.puts "\nExit find_transactions"
+    end
+  end
+
+  def peek( address_str ) do
+    task = Task.async( fn() -> Agent.get(__MODULE__, &Map.get( &1, address_str )) end)
+    result = Task.await task, 5000 # <-
+    if Utils.mt?( result ), do: { }, else: result
   end
 
 end
