@@ -43,17 +43,6 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       "hash": "98e8e6534e0fb4a515f314ea7bd7f8d4b63803894feca243c8c9608e0aa8e679"
     }
 
-    test "find" do
-      a_transaction = Transaction.get_a_useful_transaction()
-      address_str = Transaction.get_an_address a_transaction["vout"]
-      address_str = String.slice address_str, 0..5
-      result = TransactionFinder.find_transactions address_str
-      transactions = TransactionFinder.peek( address_str )
-      assert Utils.notmt? transactions
-      trans = elem( transactions, 0 )
-      assert Utils.notmt? trans["vout"]
-    end
-
     test "only accepts transactions" do
       err = try do
         TransactionFinder.put "2Mud", "This is not a transaction"
@@ -66,12 +55,25 @@ defmodule BlockChainExplorer.TransactionFinderTest do
 
     test "stack" do
       TransactionFinder.put "2Mud", @a_transaction
-      assert {@a_transaction} == TransactionFinder.peek( "2Mud" )
+      tuple = TransactionFinder.peek( "2Mud" )
+      assert elem( tuple, 0 ) == @a_transaction
       a_transaction = Transaction.get_a_useful_transaction()
       address_str = Transaction.get_an_address a_transaction["vout"]
       address_str = String.slice address_str, 0..4
       TransactionFinder.put address_str, a_transaction
-      assert {a_transaction} == TransactionFinder.peek( address_str )
+      tuple = TransactionFinder.peek( address_str )
+      assert elem( tuple, 0 ) == a_transaction
+    end
+
+    test "find" do
+      a_transaction = Transaction.get_a_useful_transaction()
+      address_str = Transaction.get_an_address a_transaction["vout"]
+      address_str = String.slice address_str, 0..5
+      TransactionFinder.find_transactions address_str
+      transactions = TransactionFinder.peek( address_str )
+      assert Utils.notmt? transactions
+      a_nother_transaction = elem( transactions, 0 )
+      assert Utils.notmt? a_nother_transaction["vout"]
     end
 
     # Should be the same as LOOP and TIME in the Javascript
@@ -86,6 +88,7 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       TransactionFinder.put address_str, a_transaction
       TransactionFinder.put "2Mud", @a_transaction
       TransactionFinder.find_transactions address_str
+      TransactionFinder.find_transactions "2mud"
       for n <- 1..@loop do
         TransactionFinder.peek( "2Mud" )
         :timer.sleep( @time )
