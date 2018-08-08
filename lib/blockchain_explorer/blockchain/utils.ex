@@ -1,5 +1,23 @@
 defmodule BlockChainExplorer.Utils do
 
+  defmodule AsynchronousTask do
+    defstruct foo: nil, bar: nil
+
+    def do_something do
+      for n <- 1..3 do
+        :timer.sleep 400
+        IO.puts "foo"
+      end
+    end
+
+    def do_something_else do
+      for n <- 1..3 do
+        :timer.sleep 400
+        IO.puts "bar"
+      end
+    end
+  end
+
   types = ~w[function nil integer binary bitstring list map float atom tuple pid port reference]
   for type <- types do
     def typeof(x) when unquote(:"is_#{type}")(x), do: unquote(type)
