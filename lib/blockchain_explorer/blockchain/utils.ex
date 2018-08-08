@@ -6,15 +6,26 @@ defmodule BlockChainExplorer.Utils do
     def do_something do
       for n <- 1..3 do
         :timer.sleep 400
-        IO.puts "foo"
+        IO.write "*"
       end
     end
 
     def do_something_else do
       for n <- 1..3 do
         :timer.sleep 400
-        IO.puts "bar"
+        IO.write "-"
       end
+    end
+
+    defp foo do
+      for n <- 1..3 do
+        :timer.sleep 400
+        "foo"
+      end
+    end
+
+    def really_do_something_else do
+      Enum.map( ["foo", "bar", "baz"], fn(item) -> foo() end)
     end
   end
 
