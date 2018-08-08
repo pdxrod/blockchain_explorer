@@ -5,23 +5,21 @@ defmodule BlockChainExplorer.Utils do
 
     def do_something do
       for n <- 1..3 do
-        :timer.sleep 400
+        :timer.sleep 333
         IO.write "*"
       end
     end
 
     def do_something_else do
       for n <- 1..3 do
-        :timer.sleep 400
+        :timer.sleep 333
         IO.write "-"
       end
     end
 
     defp foo do
-      for n <- 1..3 do
-        :timer.sleep 400
-        "foo"
-      end
+      :timer.sleep 333
+      "foo"
     end
 
     def really_do_something_else do
