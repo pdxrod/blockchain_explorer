@@ -78,8 +78,12 @@ IO.puts "\ntransaction_finder #{String.slice( transaction["txid"], 0..10) <> "..
     transactions_contain_address block_json[ "tx" ], address_str
   end
 
+  @num_blocks 250
+  @find_wait (@num_blocks * 40)
+  @peek_wait (@num_blocks * 20)
+
   defp find_blocks( address_str ) do
-    Blockchain.get_n_blocks( nil, 250 ) # <-
+    Blockchain.get_n_blocks( nil, @num_blocks )
     |> Tuple.to_list()
     |> Enum.map( &block_contains_address( &1, address_str ) )
   end
@@ -87,14 +91,14 @@ IO.puts "\ntransaction_finder #{String.slice( transaction["txid"], 0..10) <> "..
   def find_transactions( address_str ) do
     task = Task.async( fn() -> find_blocks( address_str ) end)
     try do
-      Task.await task, 10_000 # <-
+      Task.await task, @find_wait
     catch :exit, _ -> IO.puts "\nExit find_transactions"
     end
   end
 
   def peek( address_str ) do
     task = Task.async( fn() -> Agent.get(__MODULE__, &Map.get( &1, address_str )) end)
-    result = Task.await task, 5000 # <-
+    result = Task.await task, @peek_wait
     if Utils.mt?( result ), do: { }, else: result
   end
 
