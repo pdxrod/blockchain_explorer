@@ -78,7 +78,7 @@ defmodule BlockChainExplorer.TransactionFinderTest do
 
     # Should be the same as LOOP and TIME in the Javascript
     @loop 12
-    @time 8_000
+    @time 18_000
 
     @tag timeout: (@loop + 1)*@time
     test "two simultaneous puts and finds" do
