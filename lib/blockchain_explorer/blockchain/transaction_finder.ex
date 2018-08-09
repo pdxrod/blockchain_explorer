@@ -29,10 +29,11 @@ defmodule BlockChainExplorer.TransactionFinder do
       false
     else
       [ hd | tl ] = addresses_str_list
+# IO.puts "\ntransaction_finder looking at address str #{address_str}, address #{hd}"
       cond do
         String.starts_with?( hd, address_str ) ->
           put address_str, transaction
-IO.puts "\ntransaction_finder #{String.slice( transaction["txid"], 0..10) <> "..."}, address str #{address_str}, address #{hd}"
+IO.puts "\ntransaction_finder address str #{address_str}, address #{hd}, tx found #{String.slice( transaction["txid"], 0..10) <> "..."}"
           true
         true -> is_in_transaction_addresses?( transaction, tl, address_str )
       end
@@ -78,8 +79,8 @@ IO.puts "\ntransaction_finder #{String.slice( transaction["txid"], 0..10) <> "..
     transactions_contain_address block_json[ "tx" ], address_str
   end
 
-  @num_blocks 250
-  @find_wait (@num_blocks * 40)
+  @num_blocks 100
+  @find_wait (@num_blocks * 50)
   @peek_wait (@num_blocks * 20)
 
   defp find_blocks( address_str ) do
