@@ -84,7 +84,6 @@ IO.puts "\ntransaction_finder address str #{address_str}, address #{hd}, tx foun
   end
 
   defp show_map( map ) do
-    IO.write "transaction finder map: "
     if Utils.mt? Map.keys( map ) do
       IO.puts "                        []"
     else
