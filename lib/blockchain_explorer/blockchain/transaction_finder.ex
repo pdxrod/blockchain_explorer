@@ -79,26 +79,26 @@ IO.puts "\ntransaction_finder address str #{address_str}, address #{hd}, tx foun
     transactions_contain_address block_json[ "tx" ], address_str
   end
 
-  defp get_map do # debugging code
+  defp debug do
     Agent.get(__MODULE__, fn( map ) -> show_map( map ) end)
   end
 
   defp show_map( map ) do
-    IO.puts "transaction finder map: "
+    IO.write "transaction finder map: "
     if Utils.mt? Map.keys( map ) do
       IO.puts "                        []"
     else
       for key <- Map.keys( map ) do
-        IO.write "                        #{ key }"
+        IO.write "                        #{ key } => "
         transactions_tuple = Map.get( map, key )
         transactions_list = Tuple.to_list transactions_tuple
         for transaction <- transactions_list do
-          IO.write " #{ String.slice( transaction[ "txid" ], 0..5 ) <> "...> " } "
+          IO.write " #{ String.slice( transaction[ "txid" ], 0..5 ) <> "...-> " } "
           if Utils.notmt?( transaction["vout"] ) do
             for output <- transaction["vout"] do
               if Utils.notmt?( output["scriptPubKey"] ) && Utils.notmt?( output["scriptPubKey"]["addresses"] ) do
                 for address <- output["scriptPubKey"]["addresses"] do
-                  IO.write String.slice( address, 0..7 ) <> "..., "
+                  IO.write String.slice( address, 0..7 ) <> "... "
                 end
               end
             end
@@ -133,7 +133,7 @@ IO.puts "\ntransaction_finder address str #{address_str}, address #{hd}, tx foun
     task = Task.async( fn() -> Agent.get(__MODULE__, &Map.get( &1, address_str )) end)
     result = Task.await task, @peek_wait
     result = if Utils.mt?( result ), do: { }, else: result
-    get_map()
+    debug()
     result
   end
 
