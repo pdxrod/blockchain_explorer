@@ -20,8 +20,10 @@ defmodule BlockChainExplorer.TransactionFinder do
     if ! transaction?( transaction ), do: raise "TransactionFinder only accepts transactions"
     tuple = peek( address_str )
     tuple = if tuple == nil, do: {}, else: tuple
-    tuple = Tuple.append( tuple, transaction )
-    Agent.update(__MODULE__, &Map.put( &1, address_str, tuple ))
+    if ! Utils.is_in_tuple?( tuple, transaction ) do
+      tuple = Tuple.append( tuple, transaction )
+      Agent.update(__MODULE__, &Map.put( &1, address_str, tuple ))
+    end
   end
 
   defp is_in_transaction_addresses?( transaction, addresses_str_list, address_str ) do
@@ -92,7 +94,7 @@ defmodule BlockChainExplorer.TransactionFinder do
         transactions_tuple = Map.get( map, key )
         transactions_list = Tuple.to_list transactions_tuple
         for transaction <- transactions_list do
-          IO.write " #{    transaction["txid"] } -> "
+          IO.write " #{ String.slice( transaction["txid"], 0..6 ) }...-> "
           if Utils.notmt?( transaction["vout"] ) do
             for output <-  transaction["vout"] do
               if Utils.notmt?( output["scriptPubKey"] ) && Utils.notmt?( output["scriptPubKey"]["addresses"] ) do
@@ -111,7 +113,7 @@ defmodule BlockChainExplorer.TransactionFinder do
   end
 
   @num_blocks 100
-  @find_wait (@num_blocks * 50)
+  @find_wait (@num_blocks * 90)
   @peek_wait (@num_blocks * 20)
 
   defp find_blocks( address_str ) do
@@ -124,7 +126,7 @@ defmodule BlockChainExplorer.TransactionFinder do
     task = Task.async( fn() -> find_blocks( address_str ) end)
     try do
       Task.await task, @find_wait
-    catch :exit, _ -> IO.puts "\nExit find_transactions"
+    catch :exit, _ -> IO.puts ""
     end
   end
 
