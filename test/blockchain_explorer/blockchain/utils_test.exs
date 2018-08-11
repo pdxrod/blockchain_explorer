@@ -29,6 +29,18 @@ defmodule BlockChainExplorer.UtilsTest do
       assert Utils.env( :bitcoin_url ) == Application.get_env( :blockchain_explorer, :bitcoin_url )
     end
 
+    test "is_in_list?" do
+      assert ! Utils.is_in_list?( [], :foo )
+      assert ! Utils.is_in_list?( [ :foo, :bar ], { :baz } )
+      assert Utils.is_in_list?( [ :foo, :bar, {:baz} ], { :baz } )
+    end
+
+    test "Utils.is_in_tuple?" do
+      assert ! Utils.is_in_tuple?( { }, :foo )
+      assert ! Utils.is_in_tuple?( { :foo, :bar }, :baz )
+      assert Utils.is_in_tuple?( { :foo, :bar, :baz }, :baz )
+    end
+
 # Does this map have a key :foo with value zero?
     defp a_condition( a_map ) do
       a_map[ :foo ] == 0

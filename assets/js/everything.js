@@ -10,12 +10,12 @@ if( form_number ) { // You're on the /blocks page
   } );
 // Thanks https://stackoverflow.com/questions/5691054/disable-submit-button-on-form-submit
   $( "#blocks_show_submit_button" ).on( "click", function() {
-    // document.getElementById( "blocks_please_wait_message" ).style.visibility = "visible";
+     document.getElementById( "blocks_please_wait_message" ).style.visibility = "visible";
   } );
 }
 
 const LOOP = 12;
-const TIME = 5000;
+const TIME = 12000;
 
 var transactions_please_wait_message = document.getElementById( "transactions_please_wait_message" );
 if( transactions_please_wait_message ) { // You're on the /transactions page

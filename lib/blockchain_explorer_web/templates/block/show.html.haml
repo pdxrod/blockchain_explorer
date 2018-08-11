@@ -7,6 +7,9 @@
       = text_input :blocks, :num, value: @address_str
       = submit "submit", id: "blocks_show_submit_button", class: "btn btn-primary"
       %br
+      %span{ id: "blocks_please_wait_message", name: "blocks_please_wait_message", style: "visibility: hidden; color: #FF7F50" }
+        = "Please wait..."
+      %br
 
 %code= @block |> mark_up_block |> raw
 

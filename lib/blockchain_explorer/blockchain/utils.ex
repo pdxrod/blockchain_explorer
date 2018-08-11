@@ -1,7 +1,34 @@
 defmodule BlockChainExplorer.Utils do
 
-  types = ~w[function nil integer binary bitstring list map float atom tuple pid port reference]
-  for type <- types do
+  defmodule AsynchronousTask do
+    defstruct foo: nil, bar: nil
+
+    def do_something do
+      for n <- 1..3 do
+        :timer.sleep 333
+        IO.write "*"
+      end
+    end
+
+    def do_something_else do
+      for n <- 1..3 do
+        :timer.sleep 333
+        IO.write "-"
+      end
+    end
+
+    defp foo do
+      :timer.sleep 333
+      "foo"
+    end
+
+    def really_do_something_else do
+      Enum.map( ["foo", "bar", "baz"], fn(item) -> foo() end)
+    end
+  end
+
+  @types ~w[function nil integer binary bitstring list map float atom tuple pid port reference]
+  for type <- @types do
     def typeof(x) when unquote(:"is_#{type}")(x), do: unquote(type)
   end
 
@@ -35,6 +62,17 @@ defmodule BlockChainExplorer.Utils do
 
   def env( atom ) do
     Application.get_env( :blockchain_explorer, atom )
+  end
+
+  def is_in_list?( list, item ) do
+    case list do
+      [] -> false
+      [ head | tail ] -> if item == head, do: true, else: is_in_list?( tail, item )
+    end
+  end
+
+  def is_in_tuple?( tuple, item ) do
+    is_in_list? Tuple.to_list( tuple ), item
   end
 
 end

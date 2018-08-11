@@ -1,9 +1,7 @@
 - alias BlockChainExplorer.Transaction
 %div{ id: "transactions_block" }
   - if @transactions != nil && @transactions != [] do
-    - IO.puts "find.html - #{length @transactions} transactions found"
     - for transaction <- @transactions do
-      - IO.puts "find.html - transaction #{transaction["txid"]}"
       #transaction_block{ class: "transaction_block" }
         - decoded = Transaction.decode transaction
         = decoded |> mark_up_transaction |> raw
