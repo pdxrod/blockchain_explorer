@@ -31,7 +31,6 @@ defmodule BlockChainExplorer.TransactionFinder do
       false
     else
       [ hd | tl ] = addresses_str_list
-# IO.puts "\ntransaction_finder looking at address str #{address_str}, address #{hd}"
       cond do
         String.starts_with?( hd, address_str ) ->
           put address_str, transaction
@@ -94,7 +93,7 @@ defmodule BlockChainExplorer.TransactionFinder do
         transactions_tuple = Map.get( map, key )
         transactions_list = Tuple.to_list transactions_tuple
         for transaction <- transactions_list do
-          IO.write " #{ String.slice( transaction["txid"], 0..6 ) }...-> "
+          IO.write " #{ String.slice( transaction["txid"], 0..10 ) }...-> "
           if Utils.notmt?( transaction["vout"] ) do
             for output <-  transaction["vout"] do
               if Utils.notmt?( output["scriptPubKey"] ) && Utils.notmt?( output["scriptPubKey"]["addresses"] ) do
@@ -113,8 +112,8 @@ defmodule BlockChainExplorer.TransactionFinder do
   end
 
   @num_blocks 100
-  @find_wait (@num_blocks * 90)
-  @peek_wait (@num_blocks * 20)
+  @find_wait (@num_blocks * 40)
+  @peek_wait (@num_blocks * 10)
 
   defp find_blocks( address_str ) do
     Blockchain.get_n_blocks( nil, @num_blocks )
