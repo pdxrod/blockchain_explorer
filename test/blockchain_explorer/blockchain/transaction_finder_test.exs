@@ -104,17 +104,6 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       assert elem( tuple, 0 ) == a_transaction
     end
 
-    test "find" do
-      a_transaction = Transaction.get_a_useful_transaction()
-      address_str = Transaction.get_an_address a_transaction["vout"]
-      address_str = String.slice address_str, 0..5
-      TransactionFinder.find_transactions address_str
-      transactions = TransactionFinder.peek( address_str )
-      assert Utils.notmt? transactions
-      a_nother_transaction = elem( transactions, 0 )
-      assert Utils.notmt? a_nother_transaction["vout"]
-    end
-
     defp at_least_one_output_has_at_least_one_address( outputs ) do
       if Utils.mt? outputs do
         false
