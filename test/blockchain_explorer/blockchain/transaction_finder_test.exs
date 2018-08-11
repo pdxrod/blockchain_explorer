@@ -125,7 +125,7 @@ defmodule BlockChainExplorer.TransactionFinderTest do
     @loop 12
     @time 12_000
 
-    @tag timeout: (@loop + 1)*@time
+    @tag timeout: :infinity
     test "two simultaneous puts and finds" do
       a_transaction = Transaction.get_a_useful_transaction()
       address_str = Transaction.get_an_address a_transaction["vout"]
