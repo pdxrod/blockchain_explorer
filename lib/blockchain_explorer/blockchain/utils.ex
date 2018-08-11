@@ -64,4 +64,15 @@ defmodule BlockChainExplorer.Utils do
     Application.get_env( :blockchain_explorer, atom )
   end
 
+  def is_in_list?( list, item ) do
+    case list do
+      [] -> false
+      [ head | tail ] -> if item == head, do: true, else: is_in_list?( tail, item )
+    end
+  end
+
+  def is_in_tuple?( tuple, item ) do
+    is_in_list? Tuple.to_list( tuple ), item
+  end
+
 end

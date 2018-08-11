@@ -33,7 +33,6 @@ defmodule BlockChainExplorer.TransactionFinder do
       cond do
         String.starts_with?( hd, address_str ) ->
           put address_str, transaction
-IO.puts "\ntransaction_finder address str #{address_str}, address #{hd}, tx found #{String.slice( transaction["txid"], 0..10) <> "..."}"
           true
         true -> is_in_transaction_addresses?( transaction, tl, address_str )
       end
@@ -93,9 +92,9 @@ IO.puts "\ntransaction_finder address str #{address_str}, address #{hd}, tx foun
         transactions_tuple = Map.get( map, key )
         transactions_list = Tuple.to_list transactions_tuple
         for transaction <- transactions_list do
-          IO.write " #{ String.slice( transaction[ "txid" ], 0..5 ) <> "...-> " } "
+          IO.write " #{    transaction["txid"] } -> "
           if Utils.notmt?( transaction["vout"] ) do
-            for output <- transaction["vout"] do
+            for output <-  transaction["vout"] do
               if Utils.notmt?( output["scriptPubKey"] ) && Utils.notmt?( output["scriptPubKey"]["addresses"] ) do
                 for address <- output["scriptPubKey"]["addresses"] do
                   IO.write String.slice( address, 0..7 ) <> "... "
@@ -103,7 +102,7 @@ IO.puts "\ntransaction_finder address str #{address_str}, address #{hd}, tx foun
               end
             end
           else
-            IO.write "no addresses"
+            raise "transaction finder - transaction #{ transaction["txid"] } has no addresses"
           end
         end
         IO.puts ""
