@@ -7,4 +7,3 @@ rm priv/static/js/*
 cd assets
 ./node_modules/brunch/bin/brunch build
 cd ..
-
