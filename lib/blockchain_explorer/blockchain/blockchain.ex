@@ -56,7 +56,7 @@ defmodule BlockChainExplorer.Blockchain do
 
   def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
     block = if block == nil, do: get_best_block(), else: block
-    if tuple_size( blocks ) < 1, do: blocks = {block}
+    blocks = if tuple_size( blocks ) < 1, do: {block}, else: blocks
     cond do
       n <= 1 ->
         blocks
@@ -75,9 +75,20 @@ defmodule BlockChainExplorer.Blockchain do
     end
   end
 
-  defp get_next_or_previous_n_blocks_empty( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
-    if tuple_size( blocks ) < 1, do: blocks = {block}
+  defp get_next_or_previous_n_blocks_empty( block, n, direction, blocks ) do
+    block = if block == nil, do: get_best_block(), else: block
+    blocks = if tuple_size( blocks ) < 1, do: {block}, else: blocks
+
+    IO.write "\nget_next_or_previous_n_blocks_empty "
+    IO.inspect block
+    IO.write "#{n} #{direction} blocks is "
+    IO.inspect blocks
+    IO.puts "tuple_size blocks is #{tuple_size blocks}\n"
+
     if n <= 1 do
+
+    IO.puts "returning blocks because n <= 1\n"
+
       blocks
     else
       if direction != "previousblockhash" && direction != "nextblockhash", do: raise "direction should be previousblockhash or nextblockhash, not #{ direction }"
@@ -97,7 +108,12 @@ defmodule BlockChainExplorer.Blockchain do
   def get_next_or_previous_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
     size = tuple_size( blocks )
     if size == 0 do
-      get_next_or_previous_n_blocks_empty( block, n, direction )
+      result = get_next_or_previous_n_blocks_empty( block, n, direction, blocks )
+
+IO.puts "\nget_next_or_previous_n_blocks returning result of size #{tuple_size result}\n"
+
+      result
+
     else
       num = if direction == "previousblockhash", do: size - 1, else: 0
       new_block = elem( blocks, num )

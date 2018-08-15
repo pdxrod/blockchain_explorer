@@ -112,9 +112,9 @@ defmodule BlockChainExplorer.BlockchainTest do
     test "get next or previous n blocks works with small values and nil" do
       block = Blockchain.get_best_block()
       blocks = Blockchain.get_next_or_previous_n_blocks(block, 0)
-      assert tuple_size( blocks ) == 0
+      assert tuple_size( blocks ) == 1
       blocks = Blockchain.get_next_or_previous_n_blocks(nil, 0)
-      assert tuple_size( blocks ) == 0
+      assert tuple_size( blocks ) == 1
       blocks = Blockchain.get_next_or_previous_n_blocks(block, 1)
       assert tuple_size( blocks ) == 1
       blocks = Blockchain.get_next_or_previous_n_blocks(nil, 1)
