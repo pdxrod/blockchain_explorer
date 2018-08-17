@@ -74,5 +74,16 @@ defmodule BlockChainExplorer.UtilsTest do
       assert :bar == Utils.recurse( :foo, :bar, @list_with_foo_map_set_to_0, fn(map) -> map[ :foo ] == 0 end)
     end
 
+    test "collections with Elixir 1.7.2" do
+      tuple = Utils.tuple_test 0
+      assert tuple == {:one}
+      tuple = Utils.tuple_test 1
+      assert tuple == {:one}
+      tuple = Utils.tuple_test 2
+      assert tuple == {:more_than_one}
+      tuple = Utils.tuple_test 99
+      assert tuple == {:more_than_one}
+    end
+
   end
 end

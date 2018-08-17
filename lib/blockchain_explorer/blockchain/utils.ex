@@ -75,4 +75,12 @@ defmodule BlockChainExplorer.Utils do
     is_in_list? Tuple.to_list( tuple ), item
   end
 
+  def tuple_test( num ) do
+    if num <= 1 do
+      {:one}
+    else
+      {:more_than_one}
+    end
+  end
+
 end

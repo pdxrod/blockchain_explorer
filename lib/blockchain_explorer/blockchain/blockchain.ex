@@ -56,7 +56,7 @@ defmodule BlockChainExplorer.Blockchain do
 
   def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
     block = if block == nil, do: get_best_block(), else: block
-    if tuple_size( blocks ) < 1, do: blocks = {block}
+    blocks = if tuple_size( blocks ) < 1, do: {block}, else: blocks
     cond do
       n <= 1 ->
         blocks
@@ -75,8 +75,9 @@ defmodule BlockChainExplorer.Blockchain do
     end
   end
 
-  defp get_next_or_previous_n_blocks_empty( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
-    if tuple_size( blocks ) < 1, do: blocks = {block}
+  defp get_next_or_previous_n_blocks_empty( block, n, direction, blocks ) do
+    block = if block == nil, do: get_best_block(), else: block
+    blocks = if tuple_size( blocks ) < 1, do: {block}, else: blocks
     if n <= 1 do
       blocks
     else
@@ -97,7 +98,7 @@ defmodule BlockChainExplorer.Blockchain do
   def get_next_or_previous_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
     size = tuple_size( blocks )
     if size == 0 do
-      get_next_or_previous_n_blocks_empty( block, n, direction )
+      get_next_or_previous_n_blocks_empty( block, n, direction, blocks )
     else
       num = if direction == "previousblockhash", do: size - 1, else: 0
       new_block = elem( blocks, num )

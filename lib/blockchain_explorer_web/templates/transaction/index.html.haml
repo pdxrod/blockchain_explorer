@@ -1,15 +1,17 @@
-%span.instructions
-  = "Transactions which refer to address "
-  %span{ id: "address", name: "address" }
-    - len = String.length @address
-    - if len > 10 do
-      = @address
-    - else
-      = @address <> "..."
-
-%br
-%span{ id: "transactions_please_wait_message", name: "transactions_please_wait_message", style: "color: #FF7F50" }
-  = "Please wait..."
-%br
-%br
-#transactions
+#form-group
+  #form-contents
+    %span.instructions
+      = "Transactions which refer to address "
+      %span{ id: "address", name: "address" }
+        - len = String.length @address
+        - if len > 10 do
+          = @address
+        - else
+          = @address <> "..."
+    %br
+    %br
+    %span{ id: "transactions_please_wait_message", name: "transactions_please_wait_message", style: "color: #FF7F50" }
+      = "Please wait..."
+    %br
+    %br
+    #transactions
