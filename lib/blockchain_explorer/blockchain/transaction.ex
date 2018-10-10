@@ -95,16 +95,10 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-# Find a transaction which has inputs, outputs, addresses, etc.
-  def transaction_with_everything_in_it_from_tuple( blocks_tuple ) do
-    blocks_list = Tuple.to_list( blocks_tuple )
-    transaction_with_everything_in_it_from_list( blocks_list )
-  end
-
 # This is mostly for testing, but it's also used to show an example search string on a page, so it belongs here
   def get_a_useful_transaction do
     tuple = Blockchain.get_n_blocks( nil, 100 )
-    |> transaction_with_everything_in_it_from_tuple()
+    |> transaction_with_everything_in_it_from_list()
     |> get_transaction_tuple()
     case elem( tuple, 0 ) do
       :ok -> elem( tuple, 1 )

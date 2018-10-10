@@ -54,9 +54,9 @@ defmodule BlockChainExplorer.Blockchain do
     block
   end
 
-  def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
+  def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
     block = if block == nil, do: get_best_block(), else: block
-    blocks = if tuple_size( blocks ) < 1, do: {block}, else: blocks
+    blocks = if length( blocks ) < 1, do: [ block ], else: blocks
     cond do
       n <= 1 ->
         blocks
@@ -65,8 +65,8 @@ defmodule BlockChainExplorer.Blockchain do
         new_block = get_next_or_previous_block( block, direction )
         if map_size( new_block ) > 0 do
           blocks = case direction do
-            "previousblockhash" -> Tuple.append( blocks, new_block )
-            "nextblockhash" -> Tuple.insert_at( blocks, 0, new_block )
+            "previousblockhash" -> blocks ++ [ new_block ]
+            "nextblockhash"     -> [ new_block ] ++ blocks
           end
           get_n_blocks( new_block, n - 1, direction, blocks )
         else
@@ -77,7 +77,7 @@ defmodule BlockChainExplorer.Blockchain do
 
   defp get_next_or_previous_n_blocks_empty( block, n, direction, blocks ) do
     block = if block == nil, do: get_best_block(), else: block
-    blocks = if tuple_size( blocks ) < 1, do: {block}, else: blocks
+    blocks = if length( blocks ) < 1, do: [ block ], else: blocks
     if n <= 1 do
       blocks
     else
@@ -85,8 +85,8 @@ defmodule BlockChainExplorer.Blockchain do
       new_block = get_next_or_previous_block( block, direction )
       if map_size( new_block ) > 0 do
         blocks = case direction do
-          "previousblockhash" -> Tuple.append( blocks, new_block )
-          "nextblockhash" -> Tuple.insert_at( blocks, 0, new_block )
+          "previousblockhash" -> blocks ++ [ new_block ]
+          "nextblockhash"     -> [ new_block ] ++ blocks
         end
         get_next_or_previous_n_blocks_empty( new_block, n - 1, direction, blocks )
       else
@@ -96,13 +96,13 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   def get_next_or_previous_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
-    size = tuple_size( blocks )
+    size = length( blocks )
     if size == 0 do
       get_next_or_previous_n_blocks_empty( block, n, direction, blocks )
     else
       num = if direction == "previousblockhash", do: size - 1, else: 0
-      new_block = elem( blocks, num )
-      get_next_or_previous_n_blocks_empty( new_block, n, direction, {new_block} )
+      new_block = Enum.at( blocks, num )
+      get_next_or_previous_n_blocks_empty( new_block, n, direction, [new_block] )
     end
   end
 

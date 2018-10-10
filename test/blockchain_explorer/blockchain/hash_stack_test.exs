@@ -2,6 +2,7 @@ defmodule BlockChainExplorer.HashStackTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.HashStack
+  alias BlockChainExplorer.Utils
 
   describe "hash stack" do
 
@@ -62,9 +63,9 @@ defmodule BlockChainExplorer.HashStackTest do
         case Blockchain.getblock( hash ) do
           {:ok, block} ->
             first_blocks = Blockchain.get_n_blocks( block, 2 )
-            first_block = elem( first_blocks, 0 )
+            [first_block | _] = first_blocks
             HashStack.push( first_block )
-            block = elem( first_blocks, 1 )
+            block = first_block
             second_blocks = Blockchain.get_n_blocks( block, 2 )
             assert first_blocks != second_blocks
             second_block = elem( second_blocks, 0 )
@@ -90,7 +91,8 @@ defmodule BlockChainExplorer.HashStackTest do
           {:ok, block} ->
             HashStack.push block
             blocks = Blockchain.get_n_blocks( block, 2 )
-            other_block = elem( blocks, 1 )
+            assert length( blocks ) == 2
+            other_block = List.last( blocks )
             HashStack.push other_block
             HashStack.pop_til_empty()
             assert nil == HashStack.pop()
