@@ -42,12 +42,6 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   def get_next_or_previous_block( block, direction ) do
-
-    IO.puts "\bn\n\n--------------\nget_next_or_previous_block"
-    IO.inspect block
-
-
-
     hash = block[ direction ]
     block = case getblock( hash ) do
       {:ok, map} ->
