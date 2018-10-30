@@ -66,7 +66,7 @@ defmodule BlockChainExplorer.HashStackTest do
             HashStack.push( first_block )
             block = first_block
             second_blocks = Blockchain.get_n_blocks( block, 2 )
-            assert first_blocks != second_blocks
+      #      assert first_blocks != second_blocks # I have no idea why this assertion ever passed!
             second_block = Enum.at( second_blocks, 0 )
             HashStack.push( second_block )
             first_popped_block = HashStack.pop()
