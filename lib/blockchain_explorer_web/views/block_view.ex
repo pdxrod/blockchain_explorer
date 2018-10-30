@@ -6,13 +6,6 @@ defmodule BlockChainExplorerWeb.BlockView do
   defp trans_link( hash ), do: "<a href='/trans/#{hash}'>#{hash}</a><br />"
 
   def mark_up_block( block ) do
-
-
-
-        IO.puts "\n\n\n-----------"
-        IO.inspect block
-        IO.puts "\n---------------"
-
     if %{ } == block do
       ""
     else
