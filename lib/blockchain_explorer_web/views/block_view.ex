@@ -3,32 +3,32 @@ defmodule BlockChainExplorerWeb.BlockView do
 
   defp block_link( hash ), do: "<a href='/blocks/#{hash}'>#{hash}</a>"
 
-  defp trans_link( hash ), do: "<a href='/trans/#{hash}'>#{hash}</a><br />"
+  defp trans_link( hash ), do: "<code><a href='/trans/#{hash}'>#{hash}</a></code><br />"
 
   def mark_up_block( block ) do
     if %{ } == block do
       ""
     else
       """
-      Height:         #{ block.height }
-      Hash:           #{ block_link( block.hash ) }
-      Previous block: #{ block_link( block.previousblockhash ) }
-      Next block:     #{ block_link( block.nextblockhash ) }
-      Weight:         #{ block.weight }
-      Versionhex:     #{ block.versionhex }
-      Version:        #{ block.version }
-      Transactions:
-      #{ mark_transactions( block.tx ) }
-      Time:           #{ block.time }
-      Stripped size:  #{ block.strippedsize }
-      Size:           #{ block.size }
-      Nonce:          #{ block.nonce }
-      Merkle root:    #{ block.merkleroot }
-      Median time:    #{ block.mediantime }
-      Difficulty:     #{ block.difficulty }
-      Confirmations:  #{ block.confirmations }
-      Chainwork:      #{ block.chainwork }
-      Bits:           #{ block.bits }<br />
+      Height:         #{ block.height } <br />
+      Hash:           #{ block_link( block.hash ) } <br />
+      Previous block: #{ block_link( block.previousblockhash ) } <br />
+      Next block:     #{ block_link( block.nextblockhash ) } <br />
+      Weight:         #{ block.weight } <br />
+      Versionhex:     #{ block.versionhex } <br />
+      Version:        #{ block.version } <br />
+      Transactions:                      <br />
+      #{ mark_transactions( block.tx ) } 
+      Time:           #{ block.time } <br />
+      Stripped size:  #{ block.strippedsize } <br />
+      Size:           #{ block.size } <br />
+      Nonce:          #{ block.nonce } <br />
+      Merkle root:    #{ block.merkleroot } <br />
+      Median time:    #{ block.mediantime } <br />
+      Difficulty:     #{ block.difficulty } <br />
+      Confirmations:  #{ block.confirmations } <br />
+      Chainwork:      #{ block.chainwork } <br />
+      Bits:           #{ block.bits } <br /><br />
       <hr />
       """
     end
