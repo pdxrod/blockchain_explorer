@@ -117,7 +117,6 @@ defmodule BlockChainExplorer.TransactionFinder do
 
   defp find_blocks( address_str ) do
     Blockchain.get_n_blocks( nil, @num_blocks )
-    |> Tuple.to_list()
     |> Enum.map( &block_contains_address( &1, address_str ) )
   end
 

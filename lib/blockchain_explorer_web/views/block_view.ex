@@ -10,25 +10,25 @@ defmodule BlockChainExplorerWeb.BlockView do
       [ "" ]
     else
       [ """
-      Height:         #{ block["height"] }
-      Hash:           #{ block_link( block["hash"] ) }
-      Previous block: #{ block_link( block["previousblockhash"] ) }
-      Next block:     #{ block_link( block["nextblockhash"] ) }
-      Weight:         #{ block["weight"] }
-      Versionhex:     #{ block["versionhex"] }
-      Version:        #{ block["version"] }
+      Height:         #{ block.height }
+      Hash:           #{ block_link( block.hash ) }
+      Previous block: #{ block_link( block.previousblockhash ) }
+      Next block:     #{ block_link( block.nextblockhash ) }
+      Weight:         #{ block.weight }
+      Versionhex:     #{ block.versionhex }
+      Version:        #{ block.version }
       Transactions:
-      #{ mark_transactions( block["tx"] ) }
-      Time:           #{ block["time"] }
-      Stripped size:  #{ block["strippedsize"] }
-      Size:           #{ block["size"] }
-      Nonce:          #{ block["nonce"] }
-      Merkle root:    #{ block["merkleroot"] }
-      Median time:    #{ block["mediantime"] }
-      Difficulty:     #{ block["difficulty"] }
-      Confirmations:  #{ block["confirmations"] }
-      Chainwork:      #{ block["chainwork"] }
-      Bits:           #{ block["bits"] }<br />
+      #{ mark_transactions( block.tx ) }
+      Time:           #{ block.time }
+      Stripped size:  #{ block.strippedsize }
+      Size:           #{ block.size }
+      Nonce:          #{ block.nonce }
+      Merkle root:    #{ block.merkleroot }
+      Median time:    #{ block.mediantime }
+      Difficulty:     #{ block.difficulty }
+      Confirmations:  #{ block.confirmations }
+      Chainwork:      #{ block.chainwork }
+      Bits:           #{ block.bits }<br />
       <hr />
       """ ]
     end
