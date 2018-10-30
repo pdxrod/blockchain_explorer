@@ -85,7 +85,7 @@ defmodule BlockChainExplorer.BlockchainTest do
       block = List.first blocks
       new_hash = block[ "hash" ]
       assert old_hash == new_hash
-      block = elem( blocks, 1 )
+      block = Enum.at( blocks, 1 )
       new_hash = block[ "hash" ]
       assert old_hash != new_hash
       blocks = Blockchain.get_n_blocks(block, 100, "previousblockhash")
@@ -112,32 +112,32 @@ defmodule BlockChainExplorer.BlockchainTest do
     test "get next or previous n blocks works with small values and nil" do
       block = Blockchain.get_best_block()
       blocks = Blockchain.get_next_or_previous_n_blocks(block, 0)
-      assert tuple_size( blocks ) == 1
+      assert length( blocks ) == 1
       blocks = Blockchain.get_next_or_previous_n_blocks(nil, 0)
-      assert tuple_size( blocks ) == 1
+      assert length( blocks ) == 1
       blocks = Blockchain.get_next_or_previous_n_blocks(block, 1)
-      assert tuple_size( blocks ) == 1
+      assert length( blocks ) == 1
       blocks = Blockchain.get_next_or_previous_n_blocks(nil, 1)
-      assert tuple_size( blocks ) == 1
+      assert length( blocks ) == 1
       blocks = Blockchain.get_next_or_previous_n_blocks(block, 2)
-      assert tuple_size( blocks ) == 2
+      assert length( blocks ) == 2
       blocks = Blockchain.get_next_or_previous_n_blocks(nil, 2)
-      assert tuple_size( blocks ) == 2
+      assert length( blocks ) == 2
     end
 
     test "get next n blocks backward works" do
       block = Blockchain.get_best_block()
       hash = block[ "hash" ]
       blocks = Blockchain.get_next_or_previous_n_blocks(block, 20, "previousblockhash")
-      assert tuple_size( blocks ) == 20
-      block = elem( blocks, 0 )
+      assert length( blocks ) == 20
+      block = List.first blocks
       first_hash = block[ "hash" ]
       assert hash == first_hash
-      block = elem( blocks, 19 )
+      block = Enum.at( blocks, 19 )
       last_hash = block[ "hash" ]
       blocks = Blockchain.get_next_or_previous_n_blocks(block, 40, "previousblockhash")
-      assert tuple_size( blocks ) == 40
-      block = elem( blocks, 0 )
+      assert length( blocks ) == 40
+      block = List.first blocks
       next_first_hash = block[ "hash" ]
       assert last_hash == next_first_hash
     end
@@ -151,30 +151,30 @@ defmodule BlockChainExplorer.BlockchainTest do
 
     test "get next n blocks forward works" do
       original_block = Blockchain.get_best_block()
-      blocks = Blockchain.get_next_or_previous_n_blocks(original_block, 5, "previousblockhash", {original_block})
-      first_block = elem( blocks, 4 )
-      blocks = Blockchain.get_next_or_previous_n_blocks(first_block, 5, "previousblockhash", {first_block})
-      second_block = elem( blocks, 4 )
+      blocks = Blockchain.get_next_or_previous_n_blocks(original_block, 5, "previousblockhash", [original_block])
+      first_block = Enum.at( blocks, 4 )
+      blocks = Blockchain.get_next_or_previous_n_blocks(first_block, 5, "previousblockhash", [first_block])
+      second_block = Enum.at( blocks, 4 )
       assert second_block != first_block
-      blocks = Blockchain.get_next_or_previous_n_blocks( second_block, 5, "nextblockhash", {second_block} )
-      new_block = elem( blocks, 0 )
+      blocks = Blockchain.get_next_or_previous_n_blocks( second_block, 5, "nextblockhash", [second_block] )
+      new_block = Enum.at( blocks, 0 )
       assert new_block[ "hash" ] == first_block[ "hash" ]
-      blocks = Blockchain.get_next_or_previous_n_blocks( new_block, 5, "nextblockhash", {new_block} )
-      another_block = elem( blocks, 0 )
+      blocks = Blockchain.get_next_or_previous_n_blocks( new_block, 5, "nextblockhash", [new_block] )
+      another_block = Enum.at( blocks, 0 )
       assert another_block == original_block
-      blocks = Blockchain.get_next_or_previous_n_blocks( another_block, 5, "nextblockhash", {another_block} )
-      assert blocks == {another_block}
+      blocks = Blockchain.get_next_or_previous_n_blocks( another_block, 5, "nextblockhash", [another_block] )
+      assert blocks == [ another_block ]
       blocks = Blockchain.get_next_or_previous_n_blocks( another_block, 5, "nextblockhash" )
-      assert blocks == {another_block}
+      assert blocks == [ another_block ]
     end
 
-    test "get blocks functions don't need {block} as an argument" do
+    test "get blocks functions don't need [ block ] as an argument" do
       block = Blockchain.get_best_block()
-      one = Blockchain.get_n_blocks(block, 4, "previousblockhash", {block})
-      two = Blockchain.get_n_blocks(block, 4, "previousblockhash", {})
+      one = Blockchain.get_n_blocks(block, 4, "previousblockhash", [ block ])
+      two = Blockchain.get_n_blocks(block, 4, "previousblockhash", [])
       assert one == two
-      one = Blockchain.get_next_or_previous_n_blocks(block, 4, "previousblockhash", {block})
-      two = Blockchain.get_next_or_previous_n_blocks(block, 4, "previousblockhash", {})
+      one = Blockchain.get_next_or_previous_n_blocks(block, 4, "previousblockhash", [ block ])
+      two = Blockchain.get_next_or_previous_n_blocks(block, 4, "previousblockhash", [])
       assert one == two
     end
 
