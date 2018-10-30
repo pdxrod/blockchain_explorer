@@ -3,13 +3,20 @@ defmodule BlockChainExplorerWeb.BlockView do
 
   defp block_link( hash ), do: "<a href='/blocks/#{hash}'>#{hash}</a>"
 
-  defp trans_link( hash ), do: ["<a href='/trans/#{hash}'>#{hash}</a><br />"]
+  defp trans_link( hash ), do: "<a href='/trans/#{hash}'>#{hash}</a><br />"
 
   def mark_up_block( block ) do
+
+
+
+        IO.puts "\n\n\n-----------"
+        IO.inspect block
+        IO.puts "\n---------------"
+
     if %{ } == block do
-      [ "" ]
+      ""
     else
-      [ """
+      """
       Height:         #{ block.height }
       Hash:           #{ block_link( block.hash ) }
       Previous block: #{ block_link( block.previousblockhash ) }
@@ -30,21 +37,21 @@ defmodule BlockChainExplorerWeb.BlockView do
       Chainwork:      #{ block.chainwork }
       Bits:           #{ block.bits }<br />
       <hr />
-      """ ]
+      """
     end
   end
 
   def mark_blocks( blocks ) do
     case blocks do
-      [ head | tail ] -> mark_up_block( head ) ++ mark_blocks( tail )
-      _ -> []
+      [ head | tail ] -> mark_up_block( head ) <> mark_blocks( tail )
+      _ -> ""
     end
   end
 
   defp mark_transactions( list ) do
     case list do
-      [ head | tail ] -> trans_link( head ) ++ mark_transactions( tail )
-      _ -> []
+      [ head | tail ] -> trans_link( head ) <> mark_transactions( tail )
+      _ -> ""
     end
   end
 
