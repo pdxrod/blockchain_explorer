@@ -2,7 +2,6 @@ defmodule BlockChainExplorer.HashStackTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.HashStack
-  alias BlockChainExplorer.Utils
 
   describe "hash stack" do
 
@@ -68,7 +67,7 @@ defmodule BlockChainExplorer.HashStackTest do
             block = first_block
             second_blocks = Blockchain.get_n_blocks( block, 2 )
             assert first_blocks != second_blocks
-            second_block = elem( second_blocks, 0 )
+            second_block = Enum.at( second_blocks, 0 )
             HashStack.push( second_block )
             first_popped_block = HashStack.pop()
             second_popped_block = HashStack.pop()

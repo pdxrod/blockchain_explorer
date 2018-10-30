@@ -6,7 +6,7 @@ defmodule BlockChainExplorerWeb.BlockControllerTest do
     test "shows a block", %{conn: conn} do
       block = Blockchain.get_best_block()
       blocks = Blockchain.get_n_blocks( block, 2 )
-      block = elem( blocks, 1 )
+      block = List.first blocks
       conn = get conn, block_path(conn, :show, id: block[ "hash" ] )
       assert html_response(conn, 200) =~ ~r/Height:.*[0-9]+/
     end

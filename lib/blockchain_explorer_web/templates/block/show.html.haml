@@ -11,7 +11,7 @@
         = "Please wait..."
       %br
 
-%code= @block |> mark_up_block |> raw
+      = @block |> mark_up_block |> raw
 
 :javascript
   // HAML for Phoenix generates the wrong Javascript - instead, see Javascript files in assets/js

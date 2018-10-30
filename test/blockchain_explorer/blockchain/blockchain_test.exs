@@ -79,23 +79,23 @@ defmodule BlockChainExplorer.BlockchainTest do
       block = Blockchain.get_best_block()
       old_hash = block[ "hash" ]
       blocks = Blockchain.get_n_blocks(block, 3, "previousblockhash")
-      assert tuple_size( blocks ) == 3
+      assert length( blocks ) == 3
       blocks = Blockchain.get_n_blocks(block, 2, "previousblockhash")
-      assert tuple_size( blocks ) == 2
-      block = elem( blocks, 0 )
+      assert length( blocks ) == 2
+      block = List.first blocks
       new_hash = block[ "hash" ]
       assert old_hash == new_hash
       block = elem( blocks, 1 )
       new_hash = block[ "hash" ]
       assert old_hash != new_hash
       blocks = Blockchain.get_n_blocks(block, 100, "previousblockhash")
-      assert tuple_size( blocks ) == 100
+      assert length( blocks ) == 100
       blocks = Blockchain.get_n_blocks(block, -1, "previousblockhash")
-      assert tuple_size( blocks ) == 1
+      assert length( blocks ) == 1
       blocks = Blockchain.get_n_blocks(block, 1, "previousblockhash")
-      assert tuple_size( blocks ) == 1
+      assert length( blocks ) == 1
       blocks = Blockchain.get_n_blocks(block, 0, "previousblockhash")
-      assert tuple_size( blocks ) == 1
+      assert length( blocks ) == 1
     end
 
     test "get n blocks blows up given an inappropriate direction" do

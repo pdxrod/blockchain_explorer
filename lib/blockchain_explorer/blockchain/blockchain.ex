@@ -95,7 +95,7 @@ defmodule BlockChainExplorer.Blockchain do
     end
   end
 
-  def get_next_or_previous_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ {} ) do
+  def get_next_or_previous_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
     size = length( blocks )
     if size == 0 do
       get_next_or_previous_n_blocks_empty( block, n, direction, blocks )
