@@ -18,7 +18,7 @@ defmodule BlockChainExplorerWeb.BlockView do
       Versionhex:     #{ block.versionhex } <br />
       Version:        #{ block.version } <br />
       Transactions:                      <br />
-      #{ mark_transactions( block.tx ) } 
+      #{ mark_transactions( block.tx ) }
       Time:           #{ block.time } <br />
       Stripped size:  #{ block.strippedsize } <br />
       Size:           #{ block.size } <br />

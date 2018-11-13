@@ -97,6 +97,9 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       tuple = TransactionFinder.peek( "2Mud" )
       assert elem( tuple, 0 ) == @a_transaction
       a_transaction = Transaction.get_a_useful_transaction()
+      if (Utils.mt? a_transaction) do
+        raise "Unable to find a transaction with inputs and outputs"
+      end
       address_str = Transaction.get_an_address a_transaction["vout"]
       address_str = String.slice address_str, 0..4
       TransactionFinder.put address_str, a_transaction
@@ -128,6 +131,9 @@ defmodule BlockChainExplorer.TransactionFinderTest do
     @tag timeout: :infinity
     test "two simultaneous puts and finds" do
       a_transaction = Transaction.get_a_useful_transaction()
+      if (Utils.mt? a_transaction) do
+        raise "Unable to find a transaction with inputs and outputs"
+      end
       address_str = Transaction.get_an_address a_transaction["vout"]
       address_str = String.slice address_str, 0..4
       TransactionFinder.put address_str, a_transaction

@@ -1,12 +1,12 @@
 # Why Yet Another Blockchain Explorer?
 
 There are many already out there. I wrote this blockchain
-explorer to learn a. Elixir, b. Phoenix, and c. Blockchain.
+explorer to learn a. Elixir, b. Phoenix, and c. Blockchain
 
 I couldn't have done it without https://github.com/pcorey/hello_blockchain
-to get me started.
+to get me started
 
-13 August 2018 - tested with Elixir 1.7.2, Erlang/OTP 21.
+13 August 2018 - tested with Elixir 1.7.2, Erlang/OTP 21
 
 You need to be running bitcoind:
 `start-bitcoind.sh regtest`
@@ -43,3 +43,9 @@ To start Phoenix:
   * Start Phoenix with `mix phx.server`
 
 Now visit [`localhost:4000`](http://localhost:4000) in a browser
+
+On a Mac, your data is written in Library/Application Support/Bitcoin
+
+You can turn it into a soft link pointing to a large (500 Gb+) external
+drive - which you probably will have to do if using testnet or mainnet,
+as the blockchain just keeps getting bigger

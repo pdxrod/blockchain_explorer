@@ -27,6 +27,8 @@ defmodule BlockChainExplorer.Blockchain do
 
   def decoderawtransaction( hex ), do: bitcoin_rpc( "decoderawtransaction", [hex] )
 
+  def sendtoaddress(address, amount), do: bitcoin_rpc( "sendtoaddress", [address, amount] )
+
   def get_best_block do
     getbestblockhash()
     |> elem( 1 )

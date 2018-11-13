@@ -43,9 +43,19 @@ defmodule BlockChainExplorer.Transaction do
                    && output["scriptPubKey"]["addresses"] && length(output["scriptPubKey"]["addresses"]) > 0 end )
   end
 
+  defp useful_input?( input ) do
+    ok = input["scriptSig"] && input["sequence"] > -1
+    if ok do
+      ok = input["scriptSig"]["asm"] && input["scriptSig"]["hex"]
+      if ! ok do
+#        ok = input["coinbase"] && String.length(input["coinbase"]) > 0
+      end
+    end
+    ok # or not
+  end
+
   defp inputs_has_everything?( inputs_list_of_maps ) do
-    Utils.recurse( false, true, inputs_list_of_maps, fn(input) -> input["sequence"] > 0 &&
-                   input["scriptSig"] && input["scriptSig"]["asm"] && input["scriptSig"]["hex"] end)
+    Utils.recurse( false, true, inputs_list_of_maps, &useful_input?/1 )
   end
 
   defp has_everything?( transaction_str ) do
