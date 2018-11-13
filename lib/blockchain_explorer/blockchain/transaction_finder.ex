@@ -132,7 +132,7 @@ defmodule BlockChainExplorer.TransactionFinder do
     task = Task.async( fn() -> Agent.get(__MODULE__, &Map.get( &1, address_str )) end)
     result = Task.await task, @peek_wait
     result = if Utils.mt?( result ), do: { }, else: result
-  #  debug()
+    debug()
     result
   end
 

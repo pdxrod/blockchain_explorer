@@ -1,1 +1,1 @@
-bitcoin-cli -testnet -conf=$HOME/.bitcoin/bitcoin.conf stop
+bitcoin-cli -conf=$HOME/.bitcoin/bitcoin.conf stop

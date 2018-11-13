@@ -34,7 +34,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp render_index_page( conn, blocks, latest ) do
-    decoded = Enum.map( blocks, &Block.decode_block( &1 ) ) 
+    decoded = Enum.map( blocks, &Block.decode_block( &1 ) )
     render( conn, "index.html", blocks: decoded, latest: latest )
   end
 

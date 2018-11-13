@@ -8,9 +8,20 @@ to get me started.
 
 13 August 2018 - tested with Elixir 1.7.2, Erlang/OTP 21.
 
-You need to be running bitcoind (probably in test mode - see start-bitcoind.sh)
+You need to be running bitcoind:
+`start-bitcoind.sh regtest`
+`start-bitcoind.sh testnet`
+or
+`start-bitcoind.sh mainnet`
+(The last of these runs a full node, and uses a lot of disk space - 200 Gb and counting)
+If you are using regtest, the most economical choice, wait a few seconds, then run
+`regenerate.sh`
+to generate some addresses and transactions
 
-You need to create bitcoin.conf in your ~/.bitcoin folder, with
+(For what regtest, testnet and mainnet mean, see
+  https://dzone.com/articles/bitcoin-and-junit)
+
+Before doing the above, you need to create bitcoin.conf in your ~/.bitcoin folder, with
 
 rpcuser=USERNAME
 
