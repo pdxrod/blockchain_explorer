@@ -1,10 +1,12 @@
+if [[ "" == "$1" ]] ; then
+  echo "This script is primarily for running bitcoind in 'regtest' mode, when you need more than"
+  echo "one instance. It needs a parameter, a number corresponding to which config file you need."
+  echo "For example, if you want to use $HOME/.bitcoin/bitcoin2.conf, do this:"
+  echo "./regenerate.sh 2"
+  exit 1
+fi
 
-bitcoin-cli -regtest -conf=$HOME/.bitcoin/bitcoin.conf generate 111 > blocks.txt
-for block in `cut -c4-67 blocks.txt` ; do
-  echo "Block $block"
-  bitcoin-cli -regtest -conf=$HOME/.bitcoin/bitcoin.conf getblock $block
-# Get transactions out of the block, and get addresses out of the transactions
-  # small_number=$(( ( RANDOM % 10 ) + 1 ))
-  # echo "Sending $small_number to $address"
-  # bitcoin-cli -regtest -conf=$HOME/.bitcoin/bitcoin.conf sendtoaddress $address $small_number
-done
+bitcoin-cli -regtest -conf=$HOME/.bitcoin/bitcoin$1.conf generate 42
+if [[ "1" != "$1" ]] ; then
+  bitcoin-cli -regtest -conf=$HOME/.bitcoin/bitcoin$1.conf -datadir=$HOME/.bitcoin/regtest generate 11
+fi

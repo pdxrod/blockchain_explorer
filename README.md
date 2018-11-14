@@ -18,16 +18,24 @@ If you are using regtest, the most economical choice, wait a few seconds, then r
 `regenerate.sh`
 to generate some addresses and transactions
 
-(For what regtest, testnet and mainnet mean, see
-  https://dzone.com/articles/bitcoin-and-junit)
+For what regtest, testnet and mainnet mean, see https://dzone.com/articles/bitcoin-and-junit
 
-Before doing the above, you need to create bitcoin.conf in your ~/.bitcoin folder, with
+Before doing the above, you need to copy at least bitcoin1.conf in your ~/.bitcoin folder
 
-rpcuser=USERNAME
+# regtest
 
-rpcpassword=PASSWORD
+To do anything useful in regtest mode, you need at least two instances of bitcoind running
 
-and the user name and password should be in config.exs
+Copy bitcoin1.conf and bitcoin2.conf into your .bitcoin folder in your home directory.
+Of course, you should not use USERNAME and PASSWORD,
+and the real user name and password should be in config/config.exs
+
+Create a 'regtest' folder under the .bitcoin folder - `$HOME/.bitcoin/regtest`
+
+Start the first instance like this
+`start-bitcoind.sh regtest`
+and the second like this
+`start-bitcoind.sh regtest 2`
 
 See https://github.com/bitcoin/bitcoin
 
@@ -48,4 +56,5 @@ On a Mac, your data is written in Library/Application Support/Bitcoin
 
 You can turn it into a soft link pointing to a large (500 Gb+) external
 drive - which you probably will have to do if using testnet or mainnet,
-as the blockchain just keeps getting bigger
+as the blockchain just keeps getting bigger. And this blockchain explorer
+keeps getting slower. A real production version would use a database.

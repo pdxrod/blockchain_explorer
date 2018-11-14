@@ -37,11 +37,13 @@ defmodule BlockChainExplorer.AddressTest do
 
     test "sending coins" do
       block = Blockchain.get_best_block()
-      blocks = Blockchain.get_n_blocks( block, 100 )
+      blocks = Blockchain.get_n_blocks( block, 400 )
       uniq = Enum.uniq( block_list( blocks ))
       assert length( uniq ) > 0
       for address <- uniq do
-        Blockchain.sendtoaddress(address, :rand.uniform( 6 ) + 1)
+        amount = :rand.uniform( 6 ) + 1
+        IO.puts "\nSending #{amount} to #{address}"
+        Blockchain.sendtoaddress(address, amount)
       end
     end
 

@@ -4,4 +4,8 @@ if [[ "$1" != "testnet" && "$1" != "regtest" && "$1" != "mainnet" ]] ; then
   exit 1
 fi
 
-bitcoind -daemon -$1 -conf=$HOME/.bitcoin/bitcoin.conf
+if [[ "" == "$2" || "1" == "$2" ]] ; then
+  bitcoind -daemon -$1 -conf=$HOME/.bitcoin/bitcoin1.conf
+else
+  bitcoind -daemon -$1 -conf=$HOME/.bitcoin/bitcoin$2.conf -datadir=$HOME/.bitcoin/regtest
+fi
