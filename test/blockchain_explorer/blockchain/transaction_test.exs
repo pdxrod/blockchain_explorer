@@ -100,7 +100,7 @@ defmodule BlockChainExplorer.TransactionTest do
       decoded = Transaction.get_a_useful_transaction() |> Transaction.decode()
       for input <- decoded.inputs do
         assert input.sequence > 0
-        assert input.scriptsig["asm"] && input.scriptsig["hex"]
+        if Utils.mode != "regtest", do: assert input.scriptsig["asm"] && input.scriptsig["hex"]
       end
     end
 

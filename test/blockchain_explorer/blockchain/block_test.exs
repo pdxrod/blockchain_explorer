@@ -10,7 +10,7 @@ defmodule BlockChainExplorer.BlockTest do
       block = Blockchain.get_best_block()
       blocks = Blockchain.get_n_blocks( block, 30 )
       for num <- 20..29 do
-        tuple = Enum.at( blocks, num ) 
+        tuple = Enum.at( blocks, num )
         block = Block.decode_block tuple
         assert Utils.notmt? block.weight
         assert Utils.notmt? block.versionhex
@@ -20,7 +20,7 @@ defmodule BlockChainExplorer.BlockTest do
         assert block.strippedsize > 0
         assert block.size > 0
         assert Utils.notmt? block.previousblockhash
-        assert block.nonce > 0
+        assert block.nonce > -1
         assert Utils.notmt? block.nextblockhash
         assert Utils.notmt? block.merkleroot
         assert block.mediantime > 0

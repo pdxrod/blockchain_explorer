@@ -58,9 +58,10 @@ defmodule BlockChainExplorerWeb.TransactionView do
     end
   end
 
-  defp mark_input( transaction, input ) do 
+  defp mark_input( transaction, input ) do
     """
     Sequence: #{ input.sequence           }<br />
+    Coinbase: #{ input.coinbase           }<br />
     Txid:     #{ trans_link input.txid    }
     Asm:
     <span id="#{ transaction.txid }_input_asm" style="display: none">#{ input.scriptsig["asm"] }</span>

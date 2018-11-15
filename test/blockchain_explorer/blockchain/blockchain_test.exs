@@ -29,9 +29,11 @@ defmodule BlockChainExplorer.BlockchainTest do
     }
 
     test "our block is a real one" do
-      previous = Blockchain.get_next_or_previous_block( @our_block, "previousblockhash" )
-      hash = previous[ "nextblockhash" ]
-      assert hash == @our_block[ "hash" ]
+      if Utils.mode != "regtest" do
+        previous = Blockchain.get_next_or_previous_block( @our_block, "previousblockhash" )
+        hash = previous[ "nextblockhash" ]
+        assert hash == @our_block[ "hash" ]
+      end  
     end
 
     test "return block with a valid id" do
