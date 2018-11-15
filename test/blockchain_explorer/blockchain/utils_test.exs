@@ -85,5 +85,10 @@ defmodule BlockChainExplorer.UtilsTest do
       assert tuple == {:more_than_one}
     end
 
+    test "bitcoin mode" do
+      result = Utils.mode
+      assert result == "main" || result == "test" || result == "regtest"
+    end
+
   end
 end

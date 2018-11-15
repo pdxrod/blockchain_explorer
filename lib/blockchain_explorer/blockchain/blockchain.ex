@@ -45,8 +45,10 @@ defmodule BlockChainExplorer.Blockchain do
         map
       {:error, %{"code" => -1, "message" => "JSON value is not a string as expected"}} ->
         %{}
+      {:error, %{id: nil, reason: :timeout}} ->
+        %{}
       other ->
-        raise "Error calling RPC function getblock: #{ elem(other, 1)["message"] }"
+        raise IO.inspect( other )
     end
     block
   end

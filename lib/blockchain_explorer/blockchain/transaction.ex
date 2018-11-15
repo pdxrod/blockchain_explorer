@@ -44,14 +44,11 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp useful_input?( input ) do
-    ok = input["scriptSig"] && input["sequence"] > -1
-    if ok do
-      ok = input["scriptSig"]["asm"] && input["scriptSig"]["hex"]
-      if ! ok do
-#        ok = input["coinbase"] && String.length(input["coinbase"]) > 0
-      end
+    if Utils.mode == "regtest" do
+      input["sequence"] > -1
+    else
+      input["sequence"] > -1 && (input["scriptSig"] && input["scriptSig"]["asm"] && input["scriptSig"]["hex"])
     end
-    ok # or not
   end
 
   defp inputs_has_everything?( inputs_list_of_maps ) do

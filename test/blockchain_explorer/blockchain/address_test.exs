@@ -35,20 +35,65 @@ defmodule BlockChainExplorer.AddressTest do
       end
     end
 
+    defp show_transactions( blocks ) do
+      decoded = Enum.map( blocks, &Block.decode_block/1 )
+      for block <- decoded do
+        transaction_tuples = Enum.map( block.tx, &Transaction.get_transaction_tuple/1 )
+        for transaction_tuple <- transaction_tuples do
+          decoded_trans = Transaction.decode_transaction_tuple( transaction_tuple )
+          IO.puts "Transaction #{decoded_trans.hash}"
+          if decoded_trans.outputs do
+            for output <- decoded_trans.outputs do
+              if output.scriptpubkey &&
+                output.scriptpubkey.addresses do
+                  for address <- output.scriptpubkey.addresses do
+                    IO.puts "  Output address #{address}"
+                  end
+               end
+             end
+          else
+            IO.puts "  No output addresses"
+          end
+          if decoded_trans.inputs do
+            for input <- decoded_trans.inputs do
+              IO.puts "  Input sequence #{input.sequence}"
+              if input.scriptsig && input.scriptsig["asm"] do
+                IO.puts "  Input asm #{input.scriptsig["asm"]}"
+              else
+                IO.puts "  Input - no asm"
+              end
+              if input.coinbase do
+                IO.puts "  Input coinbase #{input.coinbase}"
+              else
+                IO.puts "  Input - no coinbase"
+              end
+              if input.vout do
+                IO.puts "  Input vout #{IO.inspect input.vout}"
+              else
+                IO.puts "  Input - no vout"
+              end
+              if input.txid do
+                IO.puts "  Input txid #{input.txid}"
+              else
+                IO.puts "  Input - no txid"
+              end
+            end
+          end
+        end
+      end
+    end
+
     test "sending coins" do
+      num = if Utils.mode == "regtest", do: 400, else: 5
       block = Blockchain.get_best_block()
-      blocks = Blockchain.get_n_blocks( block, 400 )
+      blocks = Blockchain.get_n_blocks( block, num )
+      # show_transactions( blocks )
       uniq = Enum.uniq( block_list( blocks ))
       assert length( uniq ) > 0
       for address <- uniq do
         amount = :rand.uniform( 6 ) + 1
-        Blockchain.sendtoaddress(address, amount)
+        if Utils.mode != "main", do: Blockchain.sendtoaddress(address, amount)
       end
-    end
-
-    test "bitcoin mode" do
-      result = Utils.mode
-      assert result == "main" || result == "test" || result == "regtest"
     end
 
   end

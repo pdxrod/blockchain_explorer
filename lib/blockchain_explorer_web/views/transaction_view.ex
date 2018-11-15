@@ -58,7 +58,7 @@ defmodule BlockChainExplorerWeb.TransactionView do
     end
   end
 
-  defp mark_input( transaction, input ) do # It's not pretty, I know
+  defp mark_input( transaction, input ) do 
     """
     Sequence: #{ input.sequence           }<br />
     Txid:     #{ trans_link input.txid    }
