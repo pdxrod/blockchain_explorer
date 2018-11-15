@@ -33,13 +33,13 @@ and the real user name and password should be in config/config.exs
 Create a 'regtest' folder under the .bitcoin folder - `$HOME/.bitcoin/regtest`
 
 Start the first instance like this
-`start-bitcoind.sh regtest`
+`start-bitcoind.sh regtest 1`
 and the second like this
 `start-bitcoind.sh regtest 2`
 
 See https://github.com/bitcoin/bitcoin
 
-See `startup.txt` for installation on Linux
+See `ubuntu-install.txt` for installation on Linux
 
 To start Phoenix:
 
