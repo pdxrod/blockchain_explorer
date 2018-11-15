@@ -1,4 +1,5 @@
 defmodule BlockChainExplorer.Utils do
+  alias BlockChainExplorer.Blockchain
 
   defmodule AsynchronousTask do
     defstruct foo: nil, bar: nil
@@ -62,6 +63,12 @@ defmodule BlockChainExplorer.Utils do
 
   def env( atom ) do
     Application.get_env( :blockchain_explorer, atom )
+  end
+
+  def mode do # 'main', 'test' or 'regtest'
+    result_tuple = Blockchain.getmininginfo
+    info = elem( result_tuple, 1 )
+    info[ "chain" ]
   end
 
   def is_in_list?( list, item ) do

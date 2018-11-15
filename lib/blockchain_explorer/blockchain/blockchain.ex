@@ -16,18 +16,13 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   def getbestblockhash, do: bitcoin_rpc("getbestblockhash")
-
   def getblockhash(height), do: bitcoin_rpc("getblockhash", [height])
-
   def getblock(hash), do: bitcoin_rpc("getblock", [hash])
-
   def getblockheader(hash), do: bitcoin_rpc("getblockheader", [hash])
-
   def getrawtransaction( trans ), do: bitcoin_rpc( "getrawtransaction", [trans] )
-
   def decoderawtransaction( hex ), do: bitcoin_rpc( "decoderawtransaction", [hex] )
-
   def sendtoaddress(address, amount), do: bitcoin_rpc( "sendtoaddress", [address, amount] )
+  def getmininginfo, do: bitcoin_rpc("getmininginfo")
 
   def get_best_block do
     getbestblockhash()

@@ -42,9 +42,13 @@ defmodule BlockChainExplorer.AddressTest do
       assert length( uniq ) > 0
       for address <- uniq do
         amount = :rand.uniform( 6 ) + 1
-        IO.puts "\nSending #{amount} to #{address}"
         Blockchain.sendtoaddress(address, amount)
       end
+    end
+
+    test "bitcoin mode" do
+      result = Utils.mode
+      assert result == "main" || result == "test" || result == "regtest"
     end
 
   end
