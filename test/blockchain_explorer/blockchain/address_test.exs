@@ -84,17 +84,19 @@ defmodule BlockChainExplorer.AddressTest do
     end
 
     test "sending coins" do
-      num = if Utils.mode == "regtest", do: 400, else: 5
-      block = Blockchain.get_best_block()
-      blocks = Blockchain.get_n_blocks( block, num )
-      # show_transactions( blocks )
-      uniq = Enum.uniq( block_list( blocks ))
-      assert length( uniq ) > 0
-      for address <- uniq do
-        amount = :rand.uniform( 6 ) + 1
-        if Utils.mode != "main", do: Blockchain.sendtoaddress(address, amount)
+      if Utils.mode == "regtest" do
+        num = 400
+        block = Blockchain.get_best_block()
+        blocks = Blockchain.get_n_blocks( block, num )
+       # show_transactions( blocks )
+        uniq = Enum.uniq( block_list( blocks ))
+        assert length( uniq ) > 0
+        IO.puts "\n#{ length uniq } addresses"
+        for address <- uniq do
+          amount = :rand.uniform( 3 ) + 1
+          Blockchain.sendtoaddress(address, amount)
+        end
       end
     end
-
   end
 end
