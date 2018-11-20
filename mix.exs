@@ -44,6 +44,7 @@ defmodule BlockChainExplorer.Mixfile do
       {:httpoison, "~> 0.13"},
       {:distillery, "~> 1.0.0"},
       {:phoenix_haml, "~> 0.2"}
+      {:new_relic_agent, "~> 1.0"}
     ]
   end
 
