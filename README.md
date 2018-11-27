@@ -1,10 +1,9 @@
 # Why Yet Another Blockchain Explorer?
 
 There are many already out there. I wrote this blockchain
-explorer to learn a. Elixir, b. Phoenix, and c. Blockchain
+explorer to learn Elixir, Phoenix, and Blockchain
 
 I couldn't have done it without https://github.com/pcorey/hello_blockchain
-to get me started
 
 13 August 2018 - tested with Elixir 1.7.2, Erlang/OTP 21
 
@@ -21,10 +20,13 @@ or
 (The last of these runs a full node, and uses a lot of disk space - 200 Gb and counting)
 
 If you are using regtest, the most economical choice, wait a few seconds, then run
+
 `regenerate.sh`
+
 to generate some blocks
 
-For what regtest, testnet and mainnet mean, see https://dzone.com/articles/bitcoin-and-junit
+For what regtest, testnet and mainnet mean, see
+[https://dzone.com/articles/bitcoin-and-junit](https://dzone.com/articles/bitcoin-and-junit)
 
 Before doing the above, you need to copy at least bitcoin1.conf into your ~/.bitcoin folder
 
@@ -34,16 +36,18 @@ To do anything useful in regtest mode, you need at least two instances of bitcoi
 
 Copy bitcoin1.conf and bitcoin2.conf into your .bitcoin folder in your home directory
 
-Of course, you should not use USERNAME and PASSWORD, which are in these files
-
-You need to change these in your bitcoinN.conf files, and in config/config.exs
+You need to change USERNAME and PASSWORD in regenerate.sh, in
+start-bitcoind.sh, in stop-bitcoind.sh and in config/config.exs
 
 Create 'regtest' folders under the .bitcoin folder - at
 least `$HOME/.bitcoin/regtest1` and `$HOME/.bitcoin/regtest2`
 
 Start the first instance like this
+
 `start-bitcoind.sh regtest 1`
+
 and the second like this
+
 `start-bitcoind.sh regtest 2`
 
 # further information
@@ -64,7 +68,7 @@ To start Phoenix:
 Now visit [`localhost:4000`](http://localhost:4000) in a browser
 
 On a Mac, your data is written in Library/Application Support/Bitcoin,
-unless you've specified a datadir (see start-bitcoin.sh)
+unless you've specified a datadir (see start-bitcoind.sh)
 
 You can turn it into a soft link pointing to a large (500 Gb+) external
 drive - which you probably will have to do if using testnet or mainnet,
