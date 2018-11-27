@@ -91,7 +91,6 @@ defmodule BlockChainExplorer.AddressTest do
        # show_transactions( blocks )
         uniq = Enum.uniq( block_list( blocks ))
         assert length( uniq ) > 0
-        IO.puts "\n#{ length uniq } addresses"
         for address <- uniq do
           amount = :rand.uniform( 3 ) + 1
           Blockchain.sendtoaddress(address, amount)
