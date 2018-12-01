@@ -1,5 +1,6 @@
-if [[ "" == "$1" || "1" == "$1" ]] ; then
-  bitcoin-cli -conf=$HOME/.bitcoin/bitcoin1.conf -rpcuser=USERNAME -rpcpassword=PASSWORD -rpcport=16592 stop
-else
-  bitcoin-cli -conf=$HOME/.bitcoin/bitcoin$1.conf -rpcuser=USERNAME -rpcpassword=PASSWORD -rpcport=16593 stop
+ARG1=$1
+if [[ "" == "$ARG1" ]] ; then
+  ARG1="1"
 fi
+
+bitcoin-cli -rpcuser=USERNAME -rpcpassword=PASSWORD -rpcport=1659$ARG1 stop

@@ -19,7 +19,7 @@ or
 
 (The last of these runs a full node, and uses a lot of disk space - 200 Gb and counting)
 
-If you are using regtest, the most economical choice, wait a few seconds, then run
+If you are using `regtest`, the most economical choice, wait a few seconds, then run
 
 `regenerate.sh`
 
@@ -28,19 +28,14 @@ to generate some blocks
 For what regtest, testnet and mainnet mean, see
 [https://dzone.com/articles/bitcoin-and-junit](https://dzone.com/articles/bitcoin-and-junit)
 
-Before doing the above, you need to copy at least bitcoin1.conf into your ~/.bitcoin folder
-
 # regtest mode
 
 To do anything useful in regtest mode, you need at least two instances of bitcoind running
 
-Copy bitcoin1.conf and bitcoin2.conf into your .bitcoin folder in your home directory
-
 You need to change USERNAME and PASSWORD in regenerate.sh, in
 start-bitcoind.sh, in stop-bitcoind.sh and in config/config.exs
 
-Create 'regtest' folders under the .bitcoin folder - at
-least `$HOME/.bitcoin/regtest1` and `$HOME/.bitcoin/regtest2`
+Create a .bitcoin/ folder in your home directory
 
 Start the first instance like this
 

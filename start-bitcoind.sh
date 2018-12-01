@@ -5,26 +5,19 @@ if [[ "$1" != "testnet" && "$1" != "regtest" && "$1" != "mainnet" ]] ; then
 fi
 
 if [[ "regtest" == "$1" ]] ; then
-  if [[ "" != "$2" && "1" != "$2" && "2" != "$2" ]] ; then
-    echo "If you want to start bitcoind in regtest mode with '$2' as its argument"
-    echo "you can't use this script to do it. Read it and work out what port to use."
-    exit 1
+  ARG2=$2
+  if [[ "" == "$ARG2" ]] ; then
+    ARG2="1"
   fi
-  RPCPORT=16592
-  if [[ "2" == "$2" ]] ; then
-    RPCPORT=16593
+  RPCPORT=1659$ARG2
+  ARG3=$(( $ARG2+1 ))
+  CONNECT=localhost:1759$ARG2
+  PORT=1759$ARG3
+  DATADIR=$HOME/.bitcoin/regtest$ARG2
+  if [[ ! -d $DATADIR ]] ; then
+    mkdir -p $DATADIR
   fi
-  if [[ "" == "$2" || "1" == "$2" ]] ; then
-    if [[ ! -d $HOME/.bitcoin/regtest1 ]] ; then
-      mkdir $HOME/.bitcoin/regtest1
-    fi
-    bitcoind -server -listen -conf=$HOME/.bitcoin/bitcoin1.conf -port=17592 -rpcuser=USERNAME -rpcpassword=PASSWORD -rpcport=$RPCPORT -datadir=$HOME/.bitcoin/regtest1 -connect=localhost:17593 -regtest -daemon
-  else
-    if [[ ! -d $HOME/.bitcoin/regtest$2 ]] ; then
-      mkdir $HOME/.bitcoin/regtest$2
-    fi
-    bitcoind -server -listen -conf=$HOME/.bitcoin/bitcoin$2.conf -port=17593 -rpcuser=USERNAME -rpcpassword=PASSWORD -rpcport=$RPCPORT -datadir=$HOME/.bitcoin/regtest$2 -connect=localhost:17592 -regtest -daemon
-  fi
+  bitcoind -server -listen -port=$PORT -rpcuser=USERNAME -rpcpassword=PASSWORD -rpcport=$RPCPORT -datadir=$DATADIR -connect=$CONNECT -regtest -daemon
 else
-  bitcoind -server -listen -conf=$HOME/.bitcoin/bitcoin1.conf -port=17592 -rpcuser=USERNAME -rpcpassword=PASSWORD -rpcport=16592 -$1 -daemon
+  bitcoind -server -listen -port=17592 -rpcuser=USERNAME -rpcpassword=PASSWORD -rpcport=16591 -$1 -daemon
 fi

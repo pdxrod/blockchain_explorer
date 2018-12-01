@@ -6,18 +6,18 @@ fi
 
 echo ""
 echo "Getting blockchain info"
-echo curl  --user $1:$2 --data-binary '{"jsonrpc":"1.0","method":"getblockchaininfo","params":[]}' http://localhost:16592
+echo curl  --user $1:$2 --data-binary '{"jsonrpc":"1.0","method":"getblockchaininfo","params":[]}' http://localhost:16591
 echo ""
-curl  --user $1:$2 --data-binary '{"jsonrpc":"1.0","method":"getblockchaininfo","params":[]}' http://localhost:16592
+curl  --user $1:$2 --data-binary '{"jsonrpc":"1.0","method":"getblockchaininfo","params":[]}' http://localhost:16591
 echo ""
-echo curl --data-binary '{"jsonrpc":"1.0","method":"getblockchaininfo","params":[]}' http://$1:$2@localhost:16592
+echo curl --data-binary '{"jsonrpc":"1.0","method":"getblockchaininfo","params":[]}' http://$1:$2@localhost:16591
 echo ""
-curl --data-binary '{"jsonrpc":"1.0","method":"getblockchaininfo","params":[]}' http://$1:$2@localhost:16592
+curl --data-binary '{"jsonrpc":"1.0","method":"getblockchaininfo","params":[]}' http://$1:$2@localhost:16591
 echo ""
 echo "Getting new address and private key"
 echo "  bitcoin-cli getnewaddress"
-address=`bitcoin-cli -$3 -conf=$HOME/.bitcoin/bitcoin1.conf -rpcuser=$1 -rpcpassword=$2 -datadir=$HOME/.bitcoin/regtest1 -rpcport=16592 getnewaddress`
+address=`bitcoin-cli -$3 -conf=$HOME/.bitcoin/bitcoin1.conf -rpcuser=$1 -rpcpassword=$2 -datadir=$HOME/.bitcoin/regtest1 -rpcport=16591 getnewaddress`
 echo Address $address
 echo "  bitcoin-cli dumpprivkey $address"
-key=`bitcoin-cli -$3 -conf=$HOME/.bitcoin/bitcoin1.conf -rpcuser=$1 -rpcpassword=$2 -datadir=$HOME/.bitcoin/regtest1 -rpcport=16592 dumpprivkey $address`
+key=`bitcoin-cli -$3 -conf=$HOME/.bitcoin/bitcoin1.conf -rpcuser=$1 -rpcpassword=$2 -datadir=$HOME/.bitcoin/regtest1 -rpcport=16591 dumpprivkey $address`
 echo Private Key $key

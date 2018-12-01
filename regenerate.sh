@@ -6,7 +6,7 @@ if [[ "" == "$1" ]] ; then
   exit 1
 fi
 
-RPCPORT=16592
+RPCPORT=16591
 if [[ "2" == "$1" ]] ; then
   RPCPORT=16593
 fi
