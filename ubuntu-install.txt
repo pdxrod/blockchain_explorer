@@ -4,5 +4,4 @@ add-apt-repository ppa:bitcoin/bitcoin
 apt-get update
 apt-get install bitcoind
 mkdir ~/.bitcoin
-mkdir ~/.bitcoin/regtest
-cp bitcoin*.conf ~/.bitcoin/
+mkdir ~/.bitcoin/regtest1

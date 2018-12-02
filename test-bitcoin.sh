@@ -1,6 +1,6 @@
 if [[ "" == "$3" ]] ; then
-    echo "Takes three arguments: 1. rpc user name, 2. rpc password - see config/config.exs"
-    echo "The third argument is 'regtest', 'testnet' or 'mainnet' - see README.md "
+    echo "Takes three arguments: 1. rpc user name, 2. rpc password, 3. port (1, 2, 3 etc.)"
+    echo "- see config/config.exs"
     exit 1
 fi
 
@@ -16,8 +16,8 @@ curl --data-binary '{"jsonrpc":"1.0","method":"getblockchaininfo","params":[]}' 
 echo ""
 echo "Getting new address and private key"
 echo "  bitcoin-cli getnewaddress"
-address=`bitcoin-cli -$3 -conf=$HOME/.bitcoin/bitcoin1.conf -rpcuser=$1 -rpcpassword=$2 -datadir=$HOME/.bitcoin/regtest1 -rpcport=16591 getnewaddress`
+address=`bitcoin-cli -rpcuser=$1 -rpcpassword=$2 -datadir=$HOME/.bitcoin/regtest1 -rpcport=1659$3 getnewaddress`
 echo Address $address
 echo "  bitcoin-cli dumpprivkey $address"
-key=`bitcoin-cli -$3 -conf=$HOME/.bitcoin/bitcoin1.conf -rpcuser=$1 -rpcpassword=$2 -datadir=$HOME/.bitcoin/regtest1 -rpcport=16591 dumpprivkey $address`
+key=`bitcoin-cli -rpcuser=$1 -rpcpassword=$2 -datadir=$HOME/.bitcoin/regtest1 -rpcport=1659$3 dumpprivkey $address`
 echo Private Key $key
