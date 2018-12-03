@@ -1,11 +1,11 @@
 # Why Yet Another Blockchain Explorer?
 
 There are many already out there. I wrote this blockchain
-explorer to learn Elixir, Phoenix, and Blockchain
+explorer to learn Elixir, Phoenix, and Blockchain.
 
 I couldn't have done it without https://github.com/pcorey/hello_blockchain
 
-13 August 2018 - tested with Elixir 1.7.2, Erlang/OTP 21
+3 December 2018 - tested with Elixir 1.7.2, Erlang/OTP 21 and bitcoind version 0.15.99.0
 
 You need to be running bitcoind:
 
@@ -28,12 +28,11 @@ to generate some blocks
 For what regtest, testnet and mainnet mean, see
 [https://dzone.com/articles/bitcoin-and-junit](https://dzone.com/articles/bitcoin-and-junit)
 
+You need to change USERNAME and PASSWORD in config/config.exs to whatever you give as username/password arguments to the scripts
+
 # regtest mode
 
 To do anything useful in regtest mode, you need at least two instances of bitcoind running
-
-You need to change USERNAME and PASSWORD in regenerate.sh, in
-start-bitcoind.sh, in stop-bitcoind.sh and in config/config.exs
 
 Create a .bitcoin/ folder in your home directory
 
