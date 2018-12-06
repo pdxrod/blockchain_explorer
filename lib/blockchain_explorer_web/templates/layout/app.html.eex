@@ -15,12 +15,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
    </head>
-
    <body>
       <div class="outer">
         <span id="error"><%= @error %></span>
 
         <div class="container">
+          <span class="topofpage">
+            <%=
+              case BlockChainExplorer.Utils.mode do
+                "regtest" -> "The explorer is running in 'regtest' mode. This saves disk space, but there is limited data."
+                "mainnet" -> "The explorer is running as a full 'mainnet' node, communicating with the real blockchain."
+                "testnet" -> "The explorer is running in 'testnet' mode, which is like a full node, but without real money."
+                other -> "BlockChainExplorer.Utils.mode returned an invalid value - '#{other}'"
+              end
+            %><br/>
+              The code for this application can be found at <a class="link" href="https://github.com/pdxrod/blockchain_explorer">github.com/pdxrod/blockchain_explorer</a>.
+          </span>
+          <br/>
+          <br/>
           <span class="links"; style="display: inline-block !important;"><a href="/blocks">home</a></span>&nbsp;&nbsp;&nbsp;
           <span class="links"; style="display: inline-block !important;"><a href="/index">blocks</a></span>
           <br />
