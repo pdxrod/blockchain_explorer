@@ -5,7 +5,7 @@ if [[ "$1" != "testnet" && "$1" != "regtest" && "$1" != "mainnet" ]] ; then
 fi
 
 if [[ "" == "$4" ]] ; then
-  echo "Takes four arguments: 1. testnet, regtest or mainnet, 2. port number (starting with 1),"
+  echo "Takes four arguments: 1. testnet, regtest or mainnet, 2. port number (1, 2, 3 etc.),"
   echo "3. rpc user name, 4. rpc password - see config/config.exs"
   echo "The first argument is 'regtest', 'testnet' or 'mainnet' - see README.md "
   exit 1
