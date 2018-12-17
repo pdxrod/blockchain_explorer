@@ -1,5 +1,6 @@
 defmodule BlockChainExplorer.Blockchain do
   alias BlockChainExplorer.Utils
+  import Ecto.Query
 
   def bitcoin_rpc(method, params \\ []) do
     with url <- Utils.env( :bitcoin_url),
