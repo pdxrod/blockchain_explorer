@@ -1,5 +1,6 @@
 defmodule BlockChainExplorer.Blockchain do
   alias BlockChainExplorer.Utils
+  alias BlockChainExplorer.Repo
   import Ecto.Query
 
   def bitcoin_rpc(method, params \\ []) do
@@ -56,6 +57,9 @@ defmodule BlockChainExplorer.Blockchain do
 
   def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
     block = if block == nil, do: get_best_block(), else: block
+
+    Repo.one from block in BlockChainExplorer.Db, limit: 1
+
     blocks = if length( blocks ) < 1, do: [ block ], else: blocks
     cond do
       n <= 1 ->
