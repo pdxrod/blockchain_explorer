@@ -60,9 +60,17 @@ defmodule BlockChainExplorer.Blockchain do
   def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
     block = if block == nil, do: get_best_block(), else: block
 
-    one = Repo.one from block in Db, limit: 1
-    db_block = %Db{height: block[ "height" ]}
-    Repo.insert db_block
+    height = block[ "height" ]
+    query = from b in "blocks", where: b.height == ^height, select: b.height
+    result = Repo.all(query)
+    if result != [], do: IO.puts "#{ IO.inspect result }"
+    if result == [] do
+      IO.puts "Adding block to db"
+      db_block = %Db{height: height}
+      Repo.insert db_block
+    else
+      IO.puts ""
+    end
 
     blocks = if length( blocks ) < 1, do: [ block ], else: blocks
     cond do
