@@ -8,6 +8,7 @@ defmodule BlockChainExplorer.Application do
 
     children = [
       supervisor( BlockChainExplorerWeb.Endpoint, [] ),
+      worker( BlockChainExplorer.Repo, [] ),
       worker( BlockChainExplorer.HashStack, [] ),
       worker( BlockChainExplorer.TransactionFinder, [] )
     ]

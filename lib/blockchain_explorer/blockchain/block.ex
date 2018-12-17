@@ -1,6 +1,6 @@
 defmodule BlockChainExplorer.Block do
 
-  defstruct weight: "", versionhex: "", version: 0, tx: [],
+  defstruct weight: 0, versionhex: "", version: 0, tx: [],
 	    time: 0, strippedsize: 0, size: 0, previousblockhash: "",
 	    nonce: 0, nextblockhash: "", merkleroot: "", mediantime: 0,
 	    height: 0, hash: "", difficulty: 0.0, confirmations: 0,

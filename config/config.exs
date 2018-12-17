@@ -14,6 +14,15 @@ config :blockchain_explorer, base_58_partial_regex: ~r/^([1-9a-km-zA-HJ-NP-Z]{3,
 config :blockchain_explorer, base_58_address_regex: ~r/^([0-9a-zA-HJ-NP-Z]{20,})$/
 config :blockchain_explorer, base_10_integer_regex: ~r/^([0-9]+)$/
 
+config :blockchain_explorer, BlockChainExplorer.Repo,
+  adapter: Ecto.Adapters.MySQL,
+  database: "blockchain_explorer",
+  username: "root",
+  password: "",
+  hostname: "localhost"
+
+config :blockchain_explorer, ecto_repos: [BlockChainExplorer.Repo]
+
 # Configures the endpoint
 config :blockchain_explorer, BlockChainExplorerWeb.Endpoint,
   url: [host: "localhost"],
