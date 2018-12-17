@@ -23,4 +23,9 @@ defmodule BlockChainExplorer.Db do
     timestamps()
   end
 
+  def changeset(block, params \\ %{}) do
+    block
+    |> Ecto.Changeset.cast(params, ~w(height))
+  end
+
 end
