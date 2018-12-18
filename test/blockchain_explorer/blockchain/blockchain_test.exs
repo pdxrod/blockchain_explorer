@@ -33,7 +33,7 @@ defmodule BlockChainExplorer.BlockchainTest do
         previous = Blockchain.get_next_or_previous_block( @our_block, "previousblockhash" )
         hash = previous[ "nextblockhash" ]
         assert hash == @our_block[ "hash" ]
-      end  
+      end
     end
 
     test "return block with a valid id" do

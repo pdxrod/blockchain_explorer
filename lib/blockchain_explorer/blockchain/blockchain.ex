@@ -71,40 +71,13 @@ defmodule BlockChainExplorer.Blockchain do
 # If it's in the database, return it. If it isn't, insert it and return it. height is unique in db.
   defp find_or_insert_block( block ) do
     height = block[ "height" ]
-
     result = Repo.all(
       from b in Db,
       select: b,
       where: b.height == ^height
     )
-    # [
-    #   %BlockChainExplorer.Db{
-    #     __meta__: #Ecto.Schema.Metadata<:loaded, "blocks">,
-    #     bits: nil,
-    #     block: nil,
-    #     chainwork: nil,
-    #     confirmations: nil,
-    #     difficulty: nil,
-    #     hash: nil,
-    #     height: 747,
-    #     id: 110,
-    #     inserted_at: ~N[2018-12-18 00:18:14.000000],
-    #     mediantime: nil,
-    #     merkleroot: nil,
-    #     nextblockhash: nil,
-    #     nonce: nil,
-    #     previousblockhash: nil,
-    #     size: nil,
-    #     strippedsize: nil,
-    #     time: nil,
-    #     updated_at: ~N[2018-12-18 00:18:14.000000],
-    #     version: nil,
-    #     versionhex: nil,
-    #     weight: nil
-    #   }
-    # ]
     if length( result ) == 0 do
-      IO.puts "Adding block to db\n"
+#      IO.puts "Adding block to db\n"
       db_block = %Db{height: block[ "height" ], bits: block["bits"], block: map_to_string(block), chainwork: block["chainwork"],
                      confirmations: block["confirmations"], difficulty: block["difficulty"], hash: block["hash"],
                      mediantime: block["mediantime"], merkleroot: block["merkleroot"], nextblockhash: block["nextblockhash"],
@@ -114,8 +87,8 @@ defmodule BlockChainExplorer.Blockchain do
       db_block
     else
       db_block = List.first( result )
-      IO.puts "Found height, id #{ db_block.height } #{ db_block.id }"
-      IO.puts "Not adding block to db\n"
+#      IO.puts "Found height, id #{ db_block.height } #{ db_block.id }"
+#      IO.puts "Not adding block to db\n"
       db_block
     end
   end
