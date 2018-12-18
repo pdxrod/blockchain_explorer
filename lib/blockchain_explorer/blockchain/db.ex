@@ -1,5 +1,6 @@
 defmodule BlockChainExplorer.Db do
   use Ecto.Schema
+  alias BlockChainExplorer.Repo
 
   schema "blocks" do
     field :block, :string

@@ -57,20 +57,65 @@ defmodule BlockChainExplorer.Blockchain do
     block
   end
 
+  defp block_from_db( result ) do
+    case result[ "rows" ] do
+      [] -> %{}
+      other ->
+    end
+  end
+
+# If it's in the database, return it. If it isn't, insert it and return it. height is unique in db.
+  defp find_or_insert_block( block ) do
+    height = block[ "height" ]
+
+    result = Repo.all(
+      from b in Db,
+      select: b,
+      where: b.height == ^height
+    )
+    # [
+    #   %BlockChainExplorer.Db{
+    #     __meta__: #Ecto.Schema.Metadata<:loaded, "blocks">,
+    #     bits: nil,
+    #     block: nil,
+    #     chainwork: nil,
+    #     confirmations: nil,
+    #     difficulty: nil,
+    #     hash: nil,
+    #     height: 747,
+    #     id: 110,
+    #     inserted_at: ~N[2018-12-18 00:18:14.000000],
+    #     mediantime: nil,
+    #     merkleroot: nil,
+    #     nextblockhash: nil,
+    #     nonce: nil,
+    #     previousblockhash: nil,
+    #     size: nil,
+    #     strippedsize: nil,
+    #     time: nil,
+    #     updated_at: ~N[2018-12-18 00:18:14.000000],
+    #     version: nil,
+    #     versionhex: nil,
+    #     weight: nil
+    #   }
+    # ]
+    if length( result ) == 0 do
+      IO.puts "Adding block to db\n"
+      db_block = %Db{height: block[ "height" ]}
+      Repo.insert db_block
+      db_block
+    else
+      db_block = List.first( result )
+      IO.puts "Found height, id #{ db_block.height } #{ db_block.id }"
+      IO.puts "Not adding block to db\n"
+      db_block
+    end
+  end
+
   def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
     block = if block == nil, do: get_best_block(), else: block
 
-    height = block[ "height" ]
-    query = from b in "blocks", where: b.height == ^height, select: b.height
-    result = Repo.all(query)
-    if result != [], do: IO.puts "#{ IO.inspect result }"
-    if result == [] do
-      IO.puts "Adding block to db"
-      db_block = %Db{height: height}
-      Repo.insert db_block
-    else
-      IO.puts ""
-    end
+    db_block = find_or_insert_block( block )
 
     blocks = if length( blocks ) < 1, do: [ block ], else: blocks
     cond do
