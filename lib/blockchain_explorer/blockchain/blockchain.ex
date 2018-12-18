@@ -2,7 +2,6 @@ defmodule BlockChainExplorer.Blockchain do
   alias BlockChainExplorer.Block
   alias BlockChainExplorer.Utils
   alias BlockChainExplorer.Repo
-  alias BlockChainExplorer.Db
   import Ecto.Query
 
   def bitcoin_rpc(method, params \\ []) do
@@ -72,13 +71,13 @@ defmodule BlockChainExplorer.Blockchain do
   defp find_or_insert_block( block ) do
     height = block[ "height" ]
     result = Repo.all(
-      from b in Db,
+      from b in Block,
       select: b,
       where: b.height == ^height
     )
     if length( result ) == 0 do
 #      IO.puts "Adding block to db\n"
-      db_block = %Db{height: block[ "height" ], bits: block["bits"], block: map_to_string(block), chainwork: block["chainwork"],
+      db_block = %Block{height: block[ "height" ], bits: block["bits"], block: map_to_string(block), chainwork: block["chainwork"],
                      confirmations: block["confirmations"], difficulty: block["difficulty"], hash: block["hash"],
                      mediantime: block["mediantime"], merkleroot: block["merkleroot"], nextblockhash: block["nextblockhash"],
                      nonce: block["nonce"], previousblockhash: block["previousblockhash"], size: block["size"], weight: block["weight"],

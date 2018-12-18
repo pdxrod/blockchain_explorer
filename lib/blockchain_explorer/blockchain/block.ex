@@ -1,10 +1,33 @@
 defmodule BlockChainExplorer.Block do
+  use Ecto.Schema
 
-  defstruct weight: 0, versionhex: "", version: 0, tx: [],
-	    time: 0, strippedsize: 0, size: 0, previousblockhash: "",
-	    nonce: 0, nextblockhash: "", merkleroot: "", mediantime: 0,
-	    height: 0, hash: "", difficulty: 0.0, confirmations: 0,
-	    chainwork: "", bits: ""
+  schema "blocks" do
+    field :block, :string
+    field :hash, :string
+    field :height, :integer
+    field :previousblockhash, :string
+    field :nextblockhash, :string
+    field :weight, :integer
+    field :versionhex, :string
+    field :version, :integer
+    field :time, :integer
+    field :strippedsize, :integer
+    field :size, :integer
+    field :nonce, :integer
+    field :merkleroot, :string
+    field :mediantime, :integer
+    field :difficulty, :float
+    field :confirmations, :integer
+    field :chainwork, :string
+    field :bits, :string
+    field :tx, :string
+    timestamps()
+  end
+
+  def changeset(block, params \\ %{}) do
+    block
+    |> Ecto.Changeset.cast(params, ~w(height))
+  end
 
   def decode_block( block ) do
     %BlockChainExplorer.Block{
