@@ -11,7 +11,7 @@ defmodule BlockChainExplorer.Db do
     field :weight, :integer
     field :versionhex, :string
     field :version, :integer
-    field :time, :string
+    field :time, :integer
     field :strippedsize, :integer
     field :size, :integer
     field :nonce, :integer

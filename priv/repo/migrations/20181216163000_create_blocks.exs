@@ -11,7 +11,7 @@ defmodule BlockChainExplorer.Repo.Migrations.CreateBlocks do
       add :weight, :integer
       add :versionhex, :string
       add :version, :integer
-      add :time, :string
+      add :time, :integer
       add :strippedsize, :integer
       add :size, :integer
       add :nonce, :integer

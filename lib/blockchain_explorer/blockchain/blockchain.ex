@@ -57,11 +57,15 @@ defmodule BlockChainExplorer.Blockchain do
     block
   end
 
-  defp block_from_db( result ) do
-    case result[ "rows" ] do
-      [] -> %{}
-      other ->
+  defp quotes_if_needed( value ) do
+    cond do
+      Utils.typeof( value ) == "binary" -> "\"#{value}\""
+      true -> value
     end
+  end
+
+  defp map_to_string( map ) do
+    String.slice(Enum.reduce(map, "", fn({k, v}, acc) -> "#{acc}#{k}=#{quotes_if_needed(v)}," end), 0..-2)
   end
 
 # If it's in the database, return it. If it isn't, insert it and return it. height is unique in db.
@@ -101,7 +105,11 @@ defmodule BlockChainExplorer.Blockchain do
     # ]
     if length( result ) == 0 do
       IO.puts "Adding block to db\n"
-      db_block = %Db{height: block[ "height" ]}
+      db_block = %Db{height: block[ "height" ], bits: block["bits"], block: map_to_string(block), chainwork: block["chainwork"],
+                     confirmations: block["confirmations"], difficulty: block["difficulty"], hash: block["hash"],
+                     mediantime: block["mediantime"], merkleroot: block["merkleroot"], nextblockhash: block["nextblockhash"],
+                     nonce: block["nonce"], previousblockhash: block["previousblockhash"], size: block["size"], weight: block["weight"],
+                     strippedsize: block["strippedsize"], time: block["time"], version: block["version"], versionhex: block["versionhex"]}
       Repo.insert db_block
       db_block
     else
