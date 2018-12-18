@@ -32,7 +32,7 @@ defmodule BlockChainExplorer.Block do
   def decode_block( block ) do
     %BlockChainExplorer.Block{
       weight: block[ "weight" ], versionhex: block[ "versionHex" ],
-      version: block[ "version" ], tx: block[ "tx" ],
+      version: block[ "version" ], tx: "#{IO.inspect block[ "tx" ]}",
       time: block[ "time" ], strippedsize: block[ "strippedsize" ],
       size: block[ "size" ], previousblockhash: block[ "previousblockhash" ],
       nonce: block[ "nonce" ], nextblockhash: block[ "nextblockhash" ],

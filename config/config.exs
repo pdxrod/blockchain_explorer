@@ -6,7 +6,7 @@
 use Mix.Config
 
 # General application configuration
-config :blockchain_explorer, bitcoin_url: "http://USERNAME:PASSWORD@127.0.0.1:16591"
+config :blockchain_explorer, bitcoin_url: "http://rpcuser:rpcpass@127.0.0.1:16591"
 config :blockchain_explorer, base_16_regex:         ~r/^([A-Fa-f0-9]+)$/
 config :blockchain_explorer, base_16_hash_regex:    ~r/^([A-Fa-f0-9]{64})$/
 # Note that base 58 is really base 60 - some addresses include 0 or l

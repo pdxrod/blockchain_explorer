@@ -47,7 +47,7 @@ defmodule BlockChainExplorer.BlockchainTest do
       hash = block[ "nextblockhash" ]
       assert nil == hash
       previous = Blockchain.get_next_or_previous_block( block, "previousblockhash" )
-      hash = previous[ "nextblockhash" ]
+      hash = previous.nextblockhash
       assert hash =~ Utils.env :base_16_hash_regex
     end
 
@@ -60,9 +60,8 @@ defmodule BlockChainExplorer.BlockchainTest do
     test "hash works" do
       block = Blockchain.get_best_block()
       hash = block[ "hash" ]
-      result = Blockchain.get_block( hash )
-      block = elem( result, 1 )
-      new_hash = block[ "hash" ]
+      block = Blockchain.get_block( hash )
+      new_hash = block.hash
       assert new_hash =~ Utils.env :base_16_hash_regex
       assert new_hash == hash
     end

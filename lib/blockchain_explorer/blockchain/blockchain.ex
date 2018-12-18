@@ -28,11 +28,10 @@ defmodule BlockChainExplorer.Blockchain do
   def getmininginfo, do: bitcoin_rpc("getmininginfo")
 
   def get_best_block do
-    result = getbestblockhash()
-    case elem( result, 0 ) do
-      :ok -> getblock( elem( result, 1 ) )
-      _ -> result
-    end
+    getbestblockhash()
+    |> elem( 1 )
+    |> getblock()
+    |> elem( 1 )
   end
 
   def get_block( hash ) do
@@ -42,7 +41,9 @@ defmodule BlockChainExplorer.Blockchain do
       where: b.hash == ^hash
     )
     if length( result ) == 0 do
-      block = getblock( hash )
+      result = getblock( hash )
+      block_map = elem( result, 1 )
+      block = Block.decode_block block_map
       Repo.insert block
       block
     else
@@ -67,11 +68,10 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   def get_next_or_previous_block( block, direction ) do
-    hash = case direction do
-             "previousblockhash" -> block.previousblockhash
-             true -> block.nextblockhash
-           end
+    hash = block[ direction ]
     block = case get_block( hash ) do
+      %{} ->
+        block
       {:ok, map} ->
         map
       {:error, %{"code" => -1, "message" => "JSON value is not a string as expected"}} ->

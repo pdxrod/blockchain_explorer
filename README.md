@@ -28,7 +28,7 @@ to generate some blocks
 For what regtest, testnet and mainnet mean, see
 [https://dzone.com/articles/bitcoin-and-junit](https://dzone.com/articles/bitcoin-and-junit)
 
-You need to change USERNAME and PASSWORD in config/config.exs to whatever you give as username/password arguments to the scripts
+You need to change 'rpcuser' and 'rpcpass' in config/config.exs to whatever you give as username/password arguments to the scripts
 
 # regtest mode
 
