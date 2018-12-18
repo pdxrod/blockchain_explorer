@@ -28,22 +28,50 @@ defmodule BlockChainExplorer.Blockchain do
   def getmininginfo, do: bitcoin_rpc("getmininginfo")
 
   def get_best_block do
-    getbestblockhash()
-    |> elem( 1 )
-    |> getblock()
-    |> elem( 1 )
+    result = getbestblockhash()
+    case elem( result, 0 ) do
+      :ok -> getblock( elem( result, 1 ) )
+      _ -> result
+    end
+  end
+
+  def get_block( hash ) do
+    result = Repo.all(
+      from b in Block,
+      select: b,
+      where: b.hash == ^hash
+    )
+    if length( result ) == 0 do
+      block = getblock( hash )
+      Repo.insert block
+      block
+    else
+      List.first( result )
+    end
   end
 
   def get_block_by_height( height ) do
-    case getblockhash( height ) do
-      {:ok, hash} -> getblock( hash )
-      other -> other
+    result = Repo.all(
+      from b in Block,
+      select: b,
+      where: b.height == ^height
+    )
+    if length( result ) == 0 do
+      case getblockhash( height ) do
+        {:ok, hash} -> get_block( hash )
+        other -> other
+      end
+    else
+      List.first( result )
     end
   end
 
   def get_next_or_previous_block( block, direction ) do
-    hash = block[ direction ]
-    block = case getblock( hash ) do
+    hash = case direction do
+             "previousblockhash" -> block.previousblockhash
+             true -> block.nextblockhash
+           end
+    block = case get_block( hash ) do
       {:ok, map} ->
         map
       {:error, %{"code" => -1, "message" => "JSON value is not a string as expected"}} ->
@@ -63,40 +91,12 @@ defmodule BlockChainExplorer.Blockchain do
     end
   end
 
-  defp map_to_string( map ) do
+  defp map_to_string( map ) do # It should be obvious what this does
     String.slice(Enum.reduce(map, "", fn({k, v}, acc) -> "#{acc}#{k}=#{quotes_if_needed(v)}," end), 0..-2)
-  end
-
-# If it's in the database, return it. If it isn't, insert it and return it. height is unique in db.
-  defp find_or_insert_block( block ) do
-    height = block[ "height" ]
-    result = Repo.all(
-      from b in Block,
-      select: b,
-      where: b.height == ^height
-    )
-    if length( result ) == 0 do
-#      IO.puts "Adding block to db\n"
-      db_block = %Block{height: block[ "height" ], bits: block["bits"], block: map_to_string(block), chainwork: block["chainwork"],
-                     confirmations: block["confirmations"], difficulty: block["difficulty"], hash: block["hash"],
-                     mediantime: block["mediantime"], merkleroot: block["merkleroot"], nextblockhash: block["nextblockhash"],
-                     nonce: block["nonce"], previousblockhash: block["previousblockhash"], size: block["size"], weight: block["weight"],
-                     strippedsize: block["strippedsize"], time: block["time"], version: block["version"], versionhex: block["versionhex"]}
-      Repo.insert db_block
-      db_block
-    else
-      db_block = List.first( result )
-#      IO.puts "Found height, id #{ db_block.height } #{ db_block.id }"
-#      IO.puts "Not adding block to db\n"
-      db_block
-    end
   end
 
   def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
     block = if block == nil, do: get_best_block(), else: block
-
-    db_block = find_or_insert_block( block )
-
     blocks = if length( blocks ) < 1, do: [ block ], else: blocks
     cond do
       n <= 1 ->

@@ -39,7 +39,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp show_index_page( conn, hash, more \\ false ) do
-    case Blockchain.getblock( hash ) do
+    case Blockchain.get_block( hash ) do
       {:ok, block} ->
         HashStack.push block
         blocks = Blockchain.get_n_blocks( block, 50, "previousblockhash" )
@@ -106,7 +106,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp show_block_by_hash( conn, hash ) do
-    tuple = Blockchain.getblock hash
+    tuple = Blockchain.get_block hash
 
     case tuple do
       {:ok, block} ->

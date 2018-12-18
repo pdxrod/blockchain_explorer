@@ -1,4 +1,4 @@
-if [[ ("$1" != "testnet" && "$1" != "regtest" && "$1" != "mainnet") || "" == "$4" ]] ; then
+if [[ ("$1" != "testnet" && "$1" != "regtest" && "$1" != "mainnet") || ("$3" == "") || ("$1" == "regtest" && "" == "$4") ]] ; then
   echo "Takes four arguments: 1. testnet, regtest or mainnet, 2. rpc user name," 
   echo "3. rpc password - see config/config.exs, 4. port number (1, 2, 3 etc.)"
   echo "'testnet', 'regtest' and 'mainnet':"

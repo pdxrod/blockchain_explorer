@@ -60,7 +60,7 @@ defmodule BlockChainExplorer.BlockchainTest do
     test "hash works" do
       block = Blockchain.get_best_block()
       hash = block[ "hash" ]
-      result = Blockchain.getblock( hash )
+      result = Blockchain.get_block( hash )
       block = elem( result, 1 )
       new_hash = block[ "hash" ]
       assert new_hash =~ Utils.env :base_16_hash_regex
@@ -68,12 +68,12 @@ defmodule BlockChainExplorer.BlockchainTest do
     end
 
     test "fail to return the block with an fake id" do
-      result = Blockchain.getblock "f0000000000000000000000000000000000000000000000000000000000000ba"
+      result = Blockchain.get_block "f0000000000000000000000000000000000000000000000000000000000000ba"
       assert result == {:error, %{"code" => -5, "message" => "Block not found"}}
     end
 
     test "fail to return the block with a completely invalid id" do
-      result = Blockchain.getblock "Foo bar"
+      result = Blockchain.get_block "Foo bar"
       assert result == {:error, %{"code" => -5, "message" => "Block not found"}}
     end
 
