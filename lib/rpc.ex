@@ -1,6 +1,7 @@
 defmodule BlockChainExplorer.Rpc do
   alias BlockChainExplorer.Utils
 
+# Thanks https://github.com/pcorey/hello_blockchain
   def bitcoin_rpc(method, params \\ []) do
     with url <- Utils.env( :bitcoin_url),
          command <- %{jsonrpc: "1.0", method: method, params: params},

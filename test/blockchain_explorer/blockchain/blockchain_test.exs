@@ -53,27 +53,27 @@ defmodule BlockChainExplorer.BlockchainTest do
 
     test "previous block works" do
       block = Blockchain.get_best_block()
-      hash = block[ "previousblockhash" ]
+      hash = block.previousblockhash
       assert hash =~ Utils.env :base_16_hash_regex
     end
 
     test "hash works" do
       block = Blockchain.get_best_block()
       hash = block[ "hash" ]
-      block = Blockchain.get_block( hash )
+      block = Blockchain.get_block_by_hash( hash )
       new_hash = block.hash
       assert new_hash =~ Utils.env :base_16_hash_regex
       assert new_hash == hash
     end
 
     test "fail to return the block with an fake id" do
-      result = Blockchain.get_block "f0000000000000000000000000000000000000000000000000000000000000ba"
-      assert result == {:error, %{"code" => -5, "message" => "Block not found"}}
+      result = Blockchain.get_block_by_hash "f0000000000000000000000000000000000000000000000000000000000000ba"
+      assert result == %{}
     end
 
     test "fail to return the block with a completely invalid id" do
-      result = Blockchain.get_block "Foo bar"
-      assert result == {:error, %{"code" => -5, "message" => "Block not found"}}
+      result = Blockchain.get_block_by_hash "Foo bar"
+      assert result == %{}
     end
 
     test "get n blocks backward works" do
@@ -128,18 +128,18 @@ defmodule BlockChainExplorer.BlockchainTest do
 
     test "get next n blocks backward works" do
       block = Blockchain.get_best_block()
-      hash = block[ "hash" ]
+      hash = block.hash
       blocks = Blockchain.get_next_or_previous_n_blocks(block, 20, "previousblockhash")
       assert length( blocks ) == 20
       block = List.first blocks
-      first_hash = block[ "hash" ]
+      first_hash = block.hash
       assert hash == first_hash
       block = Enum.at( blocks, 19 )
-      last_hash = block[ "hash" ]
+      last_hash = block.hash
       blocks = Blockchain.get_next_or_previous_n_blocks(block, 40, "previousblockhash")
       assert length( blocks ) == 40
       block = List.first blocks
-      next_first_hash = block[ "hash" ]
+      next_first_hash = block.hash
       assert last_hash == next_first_hash
     end
 

@@ -1,5 +1,6 @@
 defmodule BlockChainExplorer.Block do
   use Ecto.Schema
+  alias BlockChainExplorer.Utils
 
   schema "blocks" do
     field :block, :string
@@ -29,17 +30,29 @@ defmodule BlockChainExplorer.Block do
     |> Ecto.Changeset.cast(params, ~w(height))
   end
 
+  defp quotes_if_needed( value ) do
+    cond do
+      Utils.typeof( value ) == "binary" -> "\"#{value}\""
+      true -> value
+    end
+  end
+
+  defp map_to_string( map ) do
+    String.slice(Enum.reduce(map, "", fn({k, v}, acc) -> "#{acc}#{k}=#{quotes_if_needed(v)}," end), 0..-2)
+  end
+
   def decode_block( block ) do
     %BlockChainExplorer.Block{
-      block: block,
+      block: map_to_string(block),
       hash: block[ "hash" ], height: block[ "height" ],
       previousblockhash: block[ "previousblockhash" ], nextblockhash: block[ "nextblockhash" ],
       weight: block[ "weight" ], versionhex: block[ "versionHex" ],
-      version: block[ "version" ], tx: "#{IO.inspect block[ "tx" ]}",
+      version: block[ "version" ], tx: "#{IO.inspect block["tx"]}",
       time: block[ "time" ], strippedsize: block[ "strippedsize" ],
       size: block[ "size" ], nonce: block[ "nonce" ],
       merkleroot: block[ "merkleroot" ], mediantime: block[ "mediantime" ],
       difficulty: block[ "difficulty" ], confirmations: block[ "confirmations" ],
       chainwork: block[ "chainwork" ], bits: block[ "bits" ] }
+  #  Map.delete result, :__meta__
   end
 end

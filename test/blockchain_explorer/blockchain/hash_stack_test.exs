@@ -9,7 +9,7 @@ defmodule BlockChainExplorer.HashStackTest do
       result = Blockchain.getbestblockhash()
       if elem( result, 0 ) == :ok do
         hash = elem( result, 1 )
-        case Blockchain.get_block( hash ) do
+        case Blockchain.get_block_by_hash( hash ) do
           {:ok, block} ->
             HashStack.push( block )
             new_block = HashStack.pop()
@@ -27,7 +27,7 @@ defmodule BlockChainExplorer.HashStackTest do
       result = Blockchain.getbestblockhash()
       if elem( result, 0 ) == :ok do
         hash = elem( result, 1 )
-        case Blockchain.get_block( hash ) do
+        case Blockchain.get_block_by_hash( hash ) do
           {:ok, block} ->
             blocks = Blockchain.get_n_blocks( block, 2 )
             err = try do
@@ -59,7 +59,7 @@ defmodule BlockChainExplorer.HashStackTest do
       result = Blockchain.getbestblockhash()
       if elem( result, 0 ) == :ok do
         hash = elem( result, 1 )
-        case Blockchain.get_block( hash ) do
+        case Blockchain.get_block_by_hash( hash ) do
           {:ok, block} ->
             first_blocks = Blockchain.get_n_blocks( block, 2 )
             [first_block | _] = first_blocks
@@ -86,7 +86,7 @@ defmodule BlockChainExplorer.HashStackTest do
       result = Blockchain.getbestblockhash()
       if elem( result, 0 ) == :ok do
         hash = elem( result, 1 )
-        case Blockchain.get_block( hash ) do
+        case Blockchain.get_block_by_hash( hash ) do
           {:ok, block} ->
             HashStack.push block
             blocks = Blockchain.get_n_blocks( block, 2 )
@@ -107,7 +107,7 @@ defmodule BlockChainExplorer.HashStackTest do
       result = Blockchain.getbestblockhash()
       if elem( result, 0 ) == :ok do
         hash = elem( result, 1 )
-        case Blockchain.get_block( hash ) do
+        case Blockchain.get_block_by_hash( hash ) do
           {:ok, block} ->
             HashStack.push( block )
             assert block == HashStack.peek()

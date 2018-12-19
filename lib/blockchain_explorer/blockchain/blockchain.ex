@@ -8,10 +8,10 @@ defmodule BlockChainExplorer.Blockchain do
   def get_best_block do
     Rpc.getbestblockhash()
     |> elem( 1 )
-    |> get_block()
+    |> get_block_by_hash()
   end
 
-  def get_block( hash ) do
+  def get_block_by_hash( hash ) do
     result = Repo.all(
       from b in Block,
       select: b,
@@ -21,8 +21,15 @@ defmodule BlockChainExplorer.Blockchain do
       result = Rpc.getblock( hash )
       block_map = elem( result, 1 )
       block = Block.decode_block block_map
-      Repo.insert block
-      block
+      case block do
+        %{"code" => -5, "message" => "Block not found"} ->
+          %{}
+        %BlockChainExplorer.Block{ block: %{"code" => -5, "message" => "Block not found"} } ->
+          %{}
+        _ ->
+          Repo.insert block
+          block
+      end
     else
       List.first( result )
     end
@@ -35,10 +42,8 @@ defmodule BlockChainExplorer.Blockchain do
       where: b.height == ^height
     )
     if length( result ) == 0 do
-      case Rpc.getblockhash( height ) do
-        {:ok, hash} -> get_block( hash )
-        other -> other
-      end
+      Rpc.getblockhash( height )
+      |> get_block_by_hash()
     else
       List.first( result )
     end
@@ -48,32 +53,10 @@ defmodule BlockChainExplorer.Blockchain do
     hash = case direction do
       "previousblockhash" -> block.previousblockhash
       "nextblockhash"     -> block.nextblockhash
-      other -> raise "get_next_or_previous_block second argument is #{other} - it should be previousblockhash or nextblockhash"
+      other -> raise "get_next_or_previous_block second argument is '#{other}' - it should be previousblockhash or nextblockhash"
     end
-    block = case get_block( hash ) do
-      %{} ->
-        block
-      {:ok, map} ->
-        map
-      {:error, %{"code" => -1, "message" => "JSON value is not a string as expected"}} ->
-        %{}
-      {:error, %{id: nil, reason: :timeout}} ->
-        %{}
-      other ->
-        raise IO.inspect( other )
-    end
-    block
-  end
 
-  defp quotes_if_needed( value ) do
-    cond do
-      Utils.typeof( value ) == "binary" -> "\"#{value}\""
-      true -> value
-    end
-  end
-
-  defp map_to_string( map ) do # It should be obvious what this does
-    String.slice(Enum.reduce(map, "", fn({k, v}, acc) -> "#{acc}#{k}=#{quotes_if_needed(v)}," end), 0..-2)
+    get_block_by_hash( hash )
   end
 
   def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
