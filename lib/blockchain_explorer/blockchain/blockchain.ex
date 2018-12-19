@@ -2,36 +2,13 @@ defmodule BlockChainExplorer.Blockchain do
   alias BlockChainExplorer.Block
   alias BlockChainExplorer.Utils
   alias BlockChainExplorer.Repo
+  alias BlockChainExplorer.Rpc
   import Ecto.Query
 
-  def bitcoin_rpc(method, params \\ []) do
-    with url <- Utils.env( :bitcoin_url),
-         command <- %{jsonrpc: "1.0", method: method, params: params},
-         {:ok, body} <- Poison.encode(command),
-         {:ok, response} <- HTTPoison.post(url, body),
-         {:ok, metadata} <- Poison.decode(response.body),
-         %{"error" => nil, "result" => result} <- metadata do
-      {:ok, result}
-    else
-      %{"error" => reason} -> {:error, reason}
-      error -> error
-    end
-  end
-
-  def getbestblockhash, do: bitcoin_rpc("getbestblockhash")
-  def getblockhash(height), do: bitcoin_rpc("getblockhash", [height])
-  def getblock(hash), do: bitcoin_rpc("getblock", [hash])
-  def getblockheader(hash), do: bitcoin_rpc("getblockheader", [hash])
-  def getrawtransaction( trans ), do: bitcoin_rpc( "getrawtransaction", [trans] )
-  def decoderawtransaction( hex ), do: bitcoin_rpc( "decoderawtransaction", [hex] )
-  def sendtoaddress(address, amount), do: bitcoin_rpc( "sendtoaddress", [address, amount] )
-  def getmininginfo, do: bitcoin_rpc("getmininginfo")
-
   def get_best_block do
-    getbestblockhash()
+    Rpc.getbestblockhash()
     |> elem( 1 )
-    |> getblock()
-    |> elem( 1 )
+    |> get_block()
   end
 
   def get_block( hash ) do
@@ -41,7 +18,7 @@ defmodule BlockChainExplorer.Blockchain do
       where: b.hash == ^hash
     )
     if length( result ) == 0 do
-      result = getblock( hash )
+      result = Rpc.getblock( hash )
       block_map = elem( result, 1 )
       block = Block.decode_block block_map
       Repo.insert block
@@ -58,7 +35,7 @@ defmodule BlockChainExplorer.Blockchain do
       where: b.height == ^height
     )
     if length( result ) == 0 do
-      case getblockhash( height ) do
+      case Rpc.getblockhash( height ) do
         {:ok, hash} -> get_block( hash )
         other -> other
       end
@@ -68,7 +45,11 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   def get_next_or_previous_block( block, direction ) do
-    hash = block[ direction ]
+    hash = case direction do
+      "previousblockhash" -> block.previousblockhash
+      "nextblockhash"     -> block.nextblockhash
+      other -> raise "get_next_or_previous_block second argument is #{other} - it should be previousblockhash or nextblockhash"
+    end
     block = case get_block( hash ) do
       %{} ->
         block

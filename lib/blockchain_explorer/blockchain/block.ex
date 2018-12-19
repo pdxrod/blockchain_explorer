@@ -10,6 +10,7 @@ defmodule BlockChainExplorer.Block do
     field :weight, :integer
     field :versionhex, :string
     field :version, :integer
+    field :tx, :string
     field :time, :integer
     field :strippedsize, :integer
     field :size, :integer
@@ -20,7 +21,6 @@ defmodule BlockChainExplorer.Block do
     field :confirmations, :integer
     field :chainwork, :string
     field :bits, :string
-    field :tx, :string
     timestamps()
   end
 
@@ -31,13 +31,15 @@ defmodule BlockChainExplorer.Block do
 
   def decode_block( block ) do
     %BlockChainExplorer.Block{
+      block: block,
+      hash: block[ "hash" ], height: block[ "height" ],
+      previousblockhash: block[ "previousblockhash" ], nextblockhash: block[ "nextblockhash" ],
       weight: block[ "weight" ], versionhex: block[ "versionHex" ],
       version: block[ "version" ], tx: "#{IO.inspect block[ "tx" ]}",
       time: block[ "time" ], strippedsize: block[ "strippedsize" ],
-      size: block[ "size" ], previousblockhash: block[ "previousblockhash" ],
-      nonce: block[ "nonce" ], nextblockhash: block[ "nextblockhash" ],
+      size: block[ "size" ], nonce: block[ "nonce" ],
       merkleroot: block[ "merkleroot" ], mediantime: block[ "mediantime" ],
-      height: block[ "height" ], hash: block[ "hash" ], difficulty: block[ "difficulty" ],
-      confirmations: block[ "confirmations" ], chainwork: block[ "chainwork" ], bits: block[ "bits" ] }
+      difficulty: block[ "difficulty" ], confirmations: block[ "confirmations" ],
+      chainwork: block[ "chainwork" ], bits: block[ "bits" ] }
   end
 end

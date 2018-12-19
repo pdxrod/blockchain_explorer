@@ -38,13 +38,13 @@ defmodule BlockChainExplorer.BlockchainTest do
 
     test "return block with a valid id" do
       block = Blockchain.get_best_block()
-      hash = block[ "hash" ]
+      hash = block.hash
       assert hash =~ Utils.env :base_16_hash_regex
     end
 
     test "next block works" do
       block = Blockchain.get_best_block()
-      hash = block[ "nextblockhash" ]
+      hash = block.nextblockhash
       assert nil == hash
       previous = Blockchain.get_next_or_previous_block( block, "previousblockhash" )
       hash = previous.nextblockhash
@@ -78,16 +78,16 @@ defmodule BlockChainExplorer.BlockchainTest do
 
     test "get n blocks backward works" do
       block = Blockchain.get_best_block()
-      old_hash = block[ "hash" ]
+      old_hash = block.hash
       blocks = Blockchain.get_n_blocks(block, 3, "previousblockhash")
       assert length( blocks ) == 3
       blocks = Blockchain.get_n_blocks(block, 2, "previousblockhash")
       assert length( blocks ) == 2
       block = List.first blocks
-      new_hash = block[ "hash" ]
+      new_hash = block.hash
       assert old_hash == new_hash
       block = Enum.at( blocks, 1 )
-      new_hash = block[ "hash" ]
+      new_hash = block.hash
       assert old_hash != new_hash
       blocks = Blockchain.get_n_blocks(block, 100, "previousblockhash")
       assert length( blocks ) == 100

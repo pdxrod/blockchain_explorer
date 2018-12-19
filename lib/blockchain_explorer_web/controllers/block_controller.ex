@@ -1,6 +1,7 @@
 defmodule BlockChainExplorerWeb.BlockController do
   use BlockChainExplorerWeb, :controller
   alias BlockChainExplorer.Blockchain
+  alias BlockChainExplorer.Rpc
   alias BlockChainExplorer.Block
   alias BlockChainExplorer.HashStack
   alias BlockChainExplorer.Utils
@@ -60,7 +61,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   defp show_n_hashes( conn, direction ) do
     case direction do
       "latestblockhash" ->
-        result = Blockchain.getbestblockhash()
+        result = Rpc.getbestblockhash()
         ok = elem( result, 0 )
         cond do
           ok == :ok ->
@@ -72,7 +73,7 @@ defmodule BlockChainExplorerWeb.BlockController do
       "previousblockhash" ->
         block = HashStack.pop()
         if latest?( block ) do
-          case Blockchain.getbestblockhash() do
+          case Rpc.getbestblockhash() do
             {:ok, hash} ->
               show_index_page( conn, hash, true )
             other ->
