@@ -38,20 +38,36 @@ defmodule BlockChainExplorer.Block do
   end
 
   defp map_to_string( map ) do
-    String.slice(Enum.reduce(map, "", fn({k, v}, acc) -> "#{acc}#{k}=#{quotes_if_needed(v)}," end), 0..-2)
+    case map do
+      %BlockChainExplorer.Block{} ->
+        ""
+      _ ->
+        String.slice(Enum.reduce(map, "", fn({k, v}, acc) -> "#{acc}#{k}=#{quotes_if_needed(v)}," end), 0..-2)
+    end
+  end
+
+  defp join_with_commas( list_of_strings ) do
+    case list_of_strings do
+      [] ->
+        ""
+      [ head | tail ] ->
+        head <> if length(tail) < 1, do: "", else: "," <> join_with_commas( tail )
+    end
   end
 
   def decode_block( block ) do
     case block do
       %{"code" => -5, "message" => "Block not found"} ->
         %{}
+      %BlockChainExplorer.Block{} ->
+        block
       _ ->
         %BlockChainExplorer.Block{
-          block: map_to_string(block),
+          block: map_to_string( block ),
           hash: block[ "hash" ], height: block[ "height" ],
           previousblockhash: block[ "previousblockhash" ], nextblockhash: block[ "nextblockhash" ],
           weight: block[ "weight" ], versionhex: block[ "versionHex" ],
-          version: block[ "version" ], tx: "#{IO.inspect block["tx"]}",
+          version: block[ "version" ], tx: join_with_commas( block["tx"] ),
           time: block[ "time" ], strippedsize: block[ "strippedsize" ],
           size: block[ "size" ], nonce: block[ "nonce" ],
           merkleroot: block[ "merkleroot" ], mediantime: block[ "mediantime" ],

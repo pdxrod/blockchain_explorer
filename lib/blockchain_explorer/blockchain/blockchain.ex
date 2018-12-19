@@ -34,7 +34,7 @@ defmodule BlockChainExplorer.Blockchain do
           block
       end
     else
-      List.first( result )
+      Block.decode_block List.first( result )
     end
   end
 
@@ -53,14 +53,18 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   def get_next_or_previous_block( block, direction ) do
-    hash = case direction do
-      "previousblockhash" -> block.previousblockhash
-      "nextblockhash"     -> block.nextblockhash
-      other -> raise "get_next_or_previous_block second argument is '#{other}' - it should be previousblockhash or nextblockhash"
-    end
-    case hash do
-      nil -> block
-      _ -> get_block_by_hash( hash )
+    if block == %{} do
+      block
+    else
+      hash = case direction do
+        "previousblockhash" -> block.previousblockhash
+        "nextblockhash"     -> block.nextblockhash
+        other -> raise "get_next_or_previous_block second argument is '#{other}' - it should be previousblockhash or nextblockhash"
+      end
+      case hash do
+        nil -> block
+        _ -> get_block_by_hash( hash )
+      end
     end
   end
 

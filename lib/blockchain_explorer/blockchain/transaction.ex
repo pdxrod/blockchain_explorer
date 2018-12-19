@@ -1,6 +1,7 @@
 defmodule BlockChainExplorer.Transaction do
   alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.Utils
+  alias BlockChainExplorer.Rpc
 
   defmodule ScriptPubKey do # locking script for outputs
     defstruct type: nil, reqsigs: 0, hex: nil, asm: nil, addresses: nil
@@ -164,7 +165,7 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp get_hex( transaction_str ) do
-    result = Blockchain.getrawtransaction transaction_str
+    result = Rpc.getrawtransaction transaction_str
     case result do
       {:ok, hex } -> hex
       {:invalid, {:ok, _ }} -> nil
@@ -175,7 +176,7 @@ defmodule BlockChainExplorer.Transaction do
 
   def get_transaction_tuple( transaction_str ) do
     hex = get_hex transaction_str
-    Blockchain.decoderawtransaction hex
+    Rpc.decoderawtransaction hex
   end
 
 end

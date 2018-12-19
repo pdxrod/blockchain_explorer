@@ -25,9 +25,7 @@ defmodule BlockChainExplorer.AddressTest do
         [] -> []
         _ ->
           [head | tail] = blocks
-          block = Block.decode_block head
-          assert length( block.tx ) > 0
-          tx_hash = Enum.at( block.tx, 0 )
+          tx_hash = head.tx
           assert tx_hash =~ Utils.env :base_16_hash_regex
           tx_tuple = Transaction.get_transaction_tuple tx_hash
           decoded = Transaction.decode_transaction_tuple tx_tuple
