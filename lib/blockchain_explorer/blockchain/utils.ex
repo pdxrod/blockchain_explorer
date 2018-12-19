@@ -1,5 +1,6 @@
 defmodule BlockChainExplorer.Utils do
   alias BlockChainExplorer.Blockchain
+  alias BlockChainExplorer.Rpc
 
   defmodule AsynchronousTask do
     defstruct foo: nil, bar: nil
@@ -66,7 +67,7 @@ defmodule BlockChainExplorer.Utils do
   end
 
   def mode do # 'main', 'test' or 'regtest'
-    result_tuple = Blockchain.getmininginfo
+    result_tuple = Rpc.getmininginfo
     info = elem( result_tuple, 1 )
     info[ "chain" ]
   end

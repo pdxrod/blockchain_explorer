@@ -42,17 +42,21 @@ defmodule BlockChainExplorer.Block do
   end
 
   def decode_block( block ) do
-    %BlockChainExplorer.Block{
-      block: map_to_string(block),
-      hash: block[ "hash" ], height: block[ "height" ],
-      previousblockhash: block[ "previousblockhash" ], nextblockhash: block[ "nextblockhash" ],
-      weight: block[ "weight" ], versionhex: block[ "versionHex" ],
-      version: block[ "version" ], tx: "#{IO.inspect block["tx"]}",
-      time: block[ "time" ], strippedsize: block[ "strippedsize" ],
-      size: block[ "size" ], nonce: block[ "nonce" ],
-      merkleroot: block[ "merkleroot" ], mediantime: block[ "mediantime" ],
-      difficulty: block[ "difficulty" ], confirmations: block[ "confirmations" ],
-      chainwork: block[ "chainwork" ], bits: block[ "bits" ] }
-  #  Map.delete result, :__meta__
+    case block do
+      %{"code" => -5, "message" => "Block not found"} ->
+        %{}
+      _ ->
+        %BlockChainExplorer.Block{
+          block: map_to_string(block),
+          hash: block[ "hash" ], height: block[ "height" ],
+          previousblockhash: block[ "previousblockhash" ], nextblockhash: block[ "nextblockhash" ],
+          weight: block[ "weight" ], versionhex: block[ "versionHex" ],
+          version: block[ "version" ], tx: "#{IO.inspect block["tx"]}",
+          time: block[ "time" ], strippedsize: block[ "strippedsize" ],
+          size: block[ "size" ], nonce: block[ "nonce" ],
+          merkleroot: block[ "merkleroot" ], mediantime: block[ "mediantime" ],
+          difficulty: block[ "difficulty" ], confirmations: block[ "confirmations" ],
+          chainwork: block[ "chainwork" ], bits: block[ "bits" ] }
+    end
   end
 end

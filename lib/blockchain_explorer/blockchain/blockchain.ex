@@ -20,11 +20,14 @@ defmodule BlockChainExplorer.Blockchain do
     if length( result ) == 0 do
       result = Rpc.getblock( hash )
       block_map = elem( result, 1 )
+
       block = Block.decode_block block_map
       case block do
         %{"code" => -5, "message" => "Block not found"} ->
           %{}
         %BlockChainExplorer.Block{ block: %{"code" => -5, "message" => "Block not found"} } ->
+          %{}
+        %{} ->
           %{}
         _ ->
           Repo.insert block
@@ -55,8 +58,10 @@ defmodule BlockChainExplorer.Blockchain do
       "nextblockhash"     -> block.nextblockhash
       other -> raise "get_next_or_previous_block second argument is '#{other}' - it should be previousblockhash or nextblockhash"
     end
-
-    get_block_by_hash( hash )
+    case hash do
+      nil -> block
+      _ -> get_block_by_hash( hash )
+    end
   end
 
   def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do

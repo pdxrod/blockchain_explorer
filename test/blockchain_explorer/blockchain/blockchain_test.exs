@@ -59,7 +59,7 @@ defmodule BlockChainExplorer.BlockchainTest do
 
     test "hash works" do
       block = Blockchain.get_best_block()
-      hash = block[ "hash" ]
+      hash = block.hash
       block = Blockchain.get_block_by_hash( hash )
       new_hash = block.hash
       assert new_hash =~ Utils.env :base_16_hash_regex
@@ -159,14 +159,15 @@ defmodule BlockChainExplorer.BlockchainTest do
       assert second_block != first_block
       blocks = Blockchain.get_next_or_previous_n_blocks( second_block, 5, "nextblockhash", [second_block] )
       new_block = Enum.at( blocks, 0 )
-      assert new_block[ "hash" ] == first_block[ "hash" ]
+      assert new_block.hash == first_block.hash
       blocks = Blockchain.get_next_or_previous_n_blocks( new_block, 5, "nextblockhash", [new_block] )
       another_block = Enum.at( blocks, 0 )
       assert another_block == original_block
       blocks = Blockchain.get_next_or_previous_n_blocks( another_block, 5, "nextblockhash", [another_block] )
-      assert blocks == [ another_block ]
+      assert length( blocks ) == 5
+      assert List.first(blocks).hash == another_block.hash
       blocks = Blockchain.get_next_or_previous_n_blocks( another_block, 5, "nextblockhash" )
-      assert blocks == [ another_block ]
+      assert List.first(blocks).hash == another_block.hash
     end
 
     test "get blocks functions don't need [ block ] as an argument" do
