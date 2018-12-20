@@ -103,4 +103,17 @@ defmodule BlockChainExplorer.Block do
     end
   end
 
+  def convert_block_str_to_map( block_str ) do
+    String.split( block_str, "," )
+    |> convert_to_map()
+  end
+
+  def convert_struct( block_map ) do
+    block = Map.delete( block_map, :__meta__ )
+    block = Map.delete( block, :block )
+    block = Map.delete( block, :id )
+    block = Map.delete( block, :inserted_at )
+    Map.delete( block, :updated_at )
+  end
+
 end
