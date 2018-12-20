@@ -20,9 +20,9 @@ defmodule BlockChainExplorer.Blockchain do
     if length( result ) == 0 do
       result = Rpc.getblock( hash )
       block_map = elem( result, 1 )
-      Block.convert_to_struct block_map
+      block_map
     else
-      Block.convert_to_struct List.first( result )
+      List.first( result )
     end
   end
 
