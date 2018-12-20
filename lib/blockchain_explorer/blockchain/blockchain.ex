@@ -11,6 +11,21 @@ defmodule BlockChainExplorer.Blockchain do
     |> get_block_by_hash()
   end
 
+  def get_from_db_or_bitcoind_by_hash( hash ) do
+    result = Repo.all(
+      from b in Block,
+      select: b,
+      where: b.hash == ^hash
+    )
+    if length( result ) == 0 do
+      result = Rpc.getblock( hash )
+      block_map = elem( result, 1 )
+      Block.convert_to_struct block_map
+    else
+      Block.convert_to_struct List.first( result )
+    end
+  end
+
   def get_block_by_hash( hash ) do
     result = Repo.all(
       from b in Block,
