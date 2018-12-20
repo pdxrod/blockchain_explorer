@@ -55,7 +55,7 @@ defmodule BlockChainExplorer.Block do
     end
   end
 
-  def decode_block( block ) do
+  def convert_to_struct( block ) do
     case block do
       %{"code" => -5, "message" => "Block not found"} ->
         %{}

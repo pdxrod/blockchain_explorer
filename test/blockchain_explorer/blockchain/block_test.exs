@@ -6,12 +6,12 @@ defmodule BlockChainExplorer.BlockTest do
 
   describe "blocks" do
 
-    test "decode_block works" do
+    test "convert_to_struct works" do
       block = Blockchain.get_best_block()
       blocks = Blockchain.get_n_blocks( block, 30 )
       for num <- 20..29 do
         tuple = Enum.at( blocks, num )
-        block = Block.decode_block tuple
+        block = Block.convert_to_struct tuple
         assert Utils.notmt? block.weight
         assert Utils.notmt? block.versionhex
         assert Utils.notmt? block.version

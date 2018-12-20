@@ -35,7 +35,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp render_index_page( conn, blocks, latest ) do
-    decoded = Enum.map( blocks, &Block.decode_block( &1 ) )
+    decoded = Enum.map( blocks, &Block.convert_to_struct( &1 ) )
     render( conn, "index.html", blocks: decoded, latest: latest )
   end
 
@@ -99,7 +99,7 @@ defmodule BlockChainExplorerWeb.BlockController do
 
     case tuple do
       {:ok, block} ->
-        decoded = Block.decode_block block
+        decoded = Block.convert_to_struct block
         render(conn, "show.html", block: decoded, address_str: "n4ME4" )
       other ->
         show_error(conn, "show.html", other)
@@ -111,7 +111,7 @@ defmodule BlockChainExplorerWeb.BlockController do
 
     case tuple do
       {:ok, block} ->
-        decoded = Block.decode_block block
+        decoded = Block.convert_to_struct block
         render(conn, "show.html", block: decoded, address_str: "n4ME4" )
 
       other ->
@@ -161,7 +161,7 @@ defmodule BlockChainExplorerWeb.BlockController do
         a_transaction = Transaction.get_a_useful_transaction()
         address_str = Transaction.get_an_address a_transaction["vout"]
         address_str = String.slice address_str, 0..4
-        decoded = Blockchain.get_best_block() |> Block.decode_block
+        decoded = Blockchain.get_best_block() |> Block.convert_to_struct
         render( conn, "show.html", block: decoded, address_str: address_str )
     end
   end

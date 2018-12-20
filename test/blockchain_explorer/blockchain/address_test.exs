@@ -34,7 +34,7 @@ defmodule BlockChainExplorer.AddressTest do
     end
 
     defp show_transactions( blocks ) do
-      decoded = Enum.map( blocks, &Block.decode_block/1 )
+      decoded = Enum.map( blocks, &Block.convert_to_struct/1 )
       for block <- decoded do
         transaction_tuples = Enum.map( block.tx, &Transaction.get_transaction_tuple/1 )
         for transaction_tuple <- transaction_tuples do

@@ -41,7 +41,7 @@ config :blockchain_explorer, BlockChainExplorerWeb.Endpoint,
 
 config :blockchain_explorer, BlockChainExplorer.Repo,
   adapter: Ecto.Adapters.MySQL,
-  database: "blockchain_explorer",
+  database: "blockchain_explorer_dev",
   username: "root",
   password: "",
   hostname: "localhost"
@@ -52,4 +52,3 @@ config :logger, :console, format: "[$level] $message\n"
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
-

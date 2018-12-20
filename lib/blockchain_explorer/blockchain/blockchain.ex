@@ -21,7 +21,7 @@ defmodule BlockChainExplorer.Blockchain do
       result = Rpc.getblock( hash )
       block_map = elem( result, 1 )
 
-      block = Block.decode_block block_map
+      block = Block.convert_to_struct block_map
       case block do
         %{"code" => -5, "message" => "Block not found"} ->
           %{}
@@ -34,7 +34,7 @@ defmodule BlockChainExplorer.Blockchain do
           block
       end
     else
-      Block.decode_block List.first( result )
+      Block.convert_to_struct List.first( result )
     end
   end
 
