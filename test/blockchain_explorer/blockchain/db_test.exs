@@ -23,6 +23,28 @@ defmodule BlockChainExplorer.DbTest do
       )
     end
 
+    defp get_blocks_from_bitcoind( num, hash \\ nil ) do
+      case num do
+        0 -> []
+        _ ->
+          case hash do
+            nil ->
+              tuple =
+                Rpc.getbestblockhash()
+                |> elem( 1 )
+                |> Rpc.getblock()
+              if elem( tuple, 0 ) != :ok, do: raise "Error getting block"
+              block = elem( tuple, 1 )
+              [ block ] ++ get_blocks_from_bitcoind( num - 1, block[ "previousblockhash" ] )
+            _ ->
+              tuple = Rpc.getblock( hash )
+              if elem( tuple, 0 ) != :ok, do: raise "Error getting block"
+              block = elem( tuple, 1 )
+              [ block ] ++ get_blocks_from_bitcoind( num - 1, block[ "previousblockhash" ] )
+          end
+      end
+    end
+
     test "inserting into database" do
       blocks = read_all_blocks_from_database
       assert length(blocks) == 0
@@ -38,7 +60,21 @@ defmodule BlockChainExplorer.DbTest do
       assert length(blocks) == 1
     end
 
+    test "trying to insert the same block into the database twice" do
+
+    end
+
     test "reading from database" do
+      blocks = read_all_blocks_from_database
+      assert length( blocks ) == 0
+      blocks = get_blocks_from_bitcoind 5
+      assert length( blocks ) == 5
+      decoded = Enum.map( blocks, &Block.convert_to_struct/1 )
+      for block <- decoded do
+        Db.insert( block )
+      end
+      blocks = read_all_blocks_from_database
+      assert length( blocks ) == 5
     end
 
     test "trying to read from database, reading from bitcoind instead" do
