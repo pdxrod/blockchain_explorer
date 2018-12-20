@@ -46,12 +46,12 @@ defmodule BlockChainExplorer.Block do
     end
   end
 
-  defp join_with_commas( list_of_strings ) do
+  defp join_with_spaces( list_of_strings ) do
     case list_of_strings do
       [] ->
         ""
       [ head | tail ] ->
-        head <> if length(tail) < 1, do: "", else: "," <> join_with_commas( tail )
+        head <> if length(tail) < 1, do: "", else: " " <> join_with_spaces( tail )
     end
   end
 
@@ -67,12 +67,40 @@ defmodule BlockChainExplorer.Block do
           hash: block[ "hash" ], height: block[ "height" ],
           previousblockhash: block[ "previousblockhash" ], nextblockhash: block[ "nextblockhash" ],
           weight: block[ "weight" ], versionhex: block[ "versionHex" ],
-          version: block[ "version" ], tx: join_with_commas( block["tx"] ),
+          version: block[ "version" ], tx: join_with_spaces( block["tx"] ),
           time: block[ "time" ], strippedsize: block[ "strippedsize" ],
           size: block[ "size" ], nonce: block[ "nonce" ],
           merkleroot: block[ "merkleroot" ], mediantime: block[ "mediantime" ],
           difficulty: block[ "difficulty" ], confirmations: block[ "confirmations" ],
           chainwork: block[ "chainwork" ], bits: block[ "bits" ] }
+      end
+  end
+
+  @floats [ "difficulty" ]
+  @integers ["confirmations", "height", "mediantime", "nonce", "size", "strippedsize", "time", "version", "weight"]
+
+  def strip_extra_quotes( str ) do
+    if String.starts_with?( str, "\"" ) && String.ends_with?( str, "\"" ) do
+      String.slice( str, 1..-2 )
+    else
+      str
     end
   end
+
+  def convert_to_map( list_of_strs ) do
+    case list_of_strs do
+      [] ->
+        []
+      [head | tail ] ->
+        key_val = String.split( head, "=" )
+        key = List.first key_val
+        val = List.last key_val
+        val = strip_extra_quotes( val )
+        val = if Enum.member?( @floats, key ), do: elem(:string.to_float( val ), 0), else: val
+        val = if Enum.member?( @integers, key ), do: elem(:string.to_integer( val ), 0), else: val
+        key = String.to_atom key
+        [ {key, val} ] ++ convert_to_map( tail )
+    end
+  end
+
 end
