@@ -63,10 +63,9 @@ defmodule BlockChainExplorer.TransactionTest do
 
     test "get the transactions on a block" do
       block = Blockchain.get_highest_block_from_db_or_bitcoind()
-      hash = block[ "previousblockhash" ]
+      hash = block.previousblockhash
       result = Blockchain.get_from_db_or_bitcoind_by_hash( hash )
-      assert :ok == elem( result, 0 )
-      transactions = Transaction.get_transaction_strs( block )
+      transactions = Transaction.get_transaction_strs( result )
       assert length( transactions ) > 0
     end
 

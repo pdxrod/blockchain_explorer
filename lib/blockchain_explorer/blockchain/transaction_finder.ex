@@ -75,8 +75,9 @@ defmodule BlockChainExplorer.TransactionFinder do
     end
   end
 
-  defp block_contains_address( block_json, address_str ) do
-    transactions_contain_address block_json[ "tx" ], address_str
+  defp block_contains_address( block_struct, address_str ) do
+    transactions = Transaction.get_transaction_strs block_struct
+    transactions_contain_address transactions, address_str
   end
 
   defp debug do

@@ -1,5 +1,6 @@
 defmodule BlockChainExplorer.Transaction do
   alias BlockChainExplorer.Blockchain
+  alias BlockChainExplorer.Block
   alias BlockChainExplorer.Utils
   alias BlockChainExplorer.Rpc
 
@@ -18,7 +19,9 @@ defmodule BlockChainExplorer.Transaction do
   defstruct vsize: 0, outputs: [], inputs: [], version: 0, txid: "", size: 0, locktime: 0, hash: ""
 
   def get_transaction_strs( block_map ) do
-    block_map[ "tx" ]
+    block = block_map.block
+    map = Block.convert_block_str_to_map block
+    transactions = String.split( map[ :tx ], " " )
   end
 
   def outputs_total_value( decoded_transaction ) do

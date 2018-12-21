@@ -95,28 +95,13 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp show_block_by_height( conn, height ) do
-    tuple = Blockchain.get_block_by_height height
-
-    case tuple do
-      {:ok, block} ->
-        decoded = Block.convert_to_struct block
-        render(conn, "show.html", block: decoded, address_str: "n4ME4" )
-      other ->
-        show_error(conn, "show.html", other)
-    end
+    block = Blockchain.get_from_db_or_bitcoind_by_height height
+    render(conn, "show.html", block: block, address_str: "n4ME4" )
   end
 
   defp show_block_by_hash( conn, hash ) do
-    tuple = Blockchain.get_from_db_or_bitcoind_by_hash hash
-
-    case tuple do
-      {:ok, block} ->
-        decoded = Block.convert_to_struct block
-        render(conn, "show.html", block: decoded, address_str: "n4ME4" )
-
-      other ->
-        show_error(conn, "show.html", other)
-    end
+    block = Blockchain.get_from_db_or_bitcoind_by_hash hash
+    render(conn, "show.html", block: block, address_str: "n4ME4" )
   end
 
   defp analyse_params( params ) do
