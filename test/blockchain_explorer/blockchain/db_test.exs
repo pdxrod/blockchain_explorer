@@ -46,7 +46,7 @@ defmodule BlockChainExplorer.DbTest do
     end
 
     test "inserting into database" do
-      blocks = read_all_blocks_from_database
+      blocks = read_all_blocks_from_database()
       assert length(blocks) == 0
       tuple =
         Rpc.getbestblockhash()
@@ -56,7 +56,7 @@ defmodule BlockChainExplorer.DbTest do
       block = elem( tuple, 1 )
       decoded = Block.convert_to_struct block
       Repo.insert ( decoded )
-      blocks = read_all_blocks_from_database
+      blocks = read_all_blocks_from_database()
       assert length(blocks) == 1
     end
 
@@ -79,7 +79,7 @@ defmodule BlockChainExplorer.DbTest do
     end
 
     test "reading from database" do
-      blocks = read_all_blocks_from_database
+      blocks = read_all_blocks_from_database()
       assert length( blocks ) == 0
       blocks = get_blocks_from_bitcoind 5
       assert length( blocks ) == 5
@@ -87,14 +87,14 @@ defmodule BlockChainExplorer.DbTest do
       for block <- decoded do
         Repo.insert ( block )
       end
-      blocks = read_all_blocks_from_database
+      blocks = read_all_blocks_from_database()
       assert length( blocks ) == 5
     end
 
 # There are potentially three types of 'block' - a map from bitcoind, a struct from module Block, and a struct from the db
 # This test may be ugly, but it shows how to convert from one block format to another
     test "trying to read from database, reading from bitcoind instead" do
-      blocks = read_all_blocks_from_database
+      blocks = read_all_blocks_from_database()
       assert length(blocks) == 0
       blocks = get_blocks_from_bitcoind 5
       assert length( blocks ) == 5
@@ -166,7 +166,7 @@ defmodule BlockChainExplorer.DbTest do
       assert insertable_block.hash == bitcoind_block[ "hash" ]
       Repo.insert( insertable_block )
 
-      blocks = read_all_blocks_from_database
+      blocks = read_all_blocks_from_database()
       db_block = List.first blocks
       db_block = Block.convert_to_struct db_block
       assert insertable_block.hash == db_block.hash

@@ -124,9 +124,8 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       assert ! at_least_one_output_has_at_least_one_address( @a_transaction_without_addresses["vout"] )
     end
 
-    # Should be the same as LOOP and TIME in the Javascript
-    @loop 12
-    @time 12_000
+    @loop 5
+    @time 10_000
 
     @tag timeout: :infinity
     test "two simultaneous puts and finds" do
