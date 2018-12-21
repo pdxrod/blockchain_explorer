@@ -11,6 +11,8 @@ defmodule BlockChainExplorer.Output do
     field :input_id, :integer
     field :value, :float
     field :n, :integer
+    field :asm, :string
+    field :hex, :string
   end
 
 end

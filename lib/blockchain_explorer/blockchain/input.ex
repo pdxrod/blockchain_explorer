@@ -7,10 +7,12 @@ defmodule BlockChainExplorer.Input do
   alias BlockChainExplorer.Rpc
 
   schema "inputs" do
-    add :transaction_id, :integer
-    add :sequence, :integer
-    add :scriptsig, :string
-    add :coinbase, :string
+    field :transaction_id, :integer
+    field :sequence, :integer
+    field :scriptsig, :string
+    field :coinbase, :string
+    field :asm, :string
+    field :hex, :string
   end
 
 end
