@@ -2,14 +2,15 @@ defmodule BlockChainExplorer.HashStackTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.HashStack
+  alias BlockChainExplorer.Rpc
 
   describe "hash stack" do
 
     test "push & pop" do
-      result = Blockchain.getbestblockhash()
+      result = Rpc.getbestblockhash()
       if elem( result, 0 ) == :ok do
         hash = elem( result, 1 )
-        case Blockchain.get_block_by_hash( hash ) do
+        case Blockchain.get_from_db_or_bitcoind_by_hash( hash ) do
           {:ok, block} ->
             HashStack.push( block )
             new_block = HashStack.pop()
@@ -24,10 +25,10 @@ defmodule BlockChainExplorer.HashStackTest do
     end
 
     test "attempt to push anything but a block fails" do
-      result = Blockchain.getbestblockhash()
+      result = Rpc.getbestblockhash()
       if elem( result, 0 ) == :ok do
         hash = elem( result, 1 )
-        case Blockchain.get_block_by_hash( hash ) do
+        case Blockchain.get_from_db_or_bitcoind_by_hash( hash ) do
           {:ok, block} ->
             blocks = Blockchain.get_n_blocks( block, 2 )
             err = try do
@@ -56,10 +57,10 @@ defmodule BlockChainExplorer.HashStackTest do
 
     test "push & pop twice" do
       HashStack.pop_til_empty()
-      result = Blockchain.getbestblockhash()
+      result = Rpc.getbestblockhash()
       if elem( result, 0 ) == :ok do
         hash = elem( result, 1 )
-        case Blockchain.get_block_by_hash( hash ) do
+        case Blockchain.get_from_db_or_bitcoind_by_hash( hash ) do
           {:ok, block} ->
             first_blocks = Blockchain.get_n_blocks( block, 2 )
             [first_block | _] = first_blocks
@@ -83,10 +84,10 @@ defmodule BlockChainExplorer.HashStackTest do
     end
 
     test "empty" do
-      result = Blockchain.getbestblockhash()
+      result = Rpc.getbestblockhash()
       if elem( result, 0 ) == :ok do
         hash = elem( result, 1 )
-        case Blockchain.get_block_by_hash( hash ) do
+        case Blockchain.get_from_db_or_bitcoind_by_hash( hash ) do
           {:ok, block} ->
             HashStack.push block
             blocks = Blockchain.get_n_blocks( block, 2 )
@@ -104,10 +105,10 @@ defmodule BlockChainExplorer.HashStackTest do
     end
 
     test "push & peek" do
-      result = Blockchain.getbestblockhash()
+      result = Rpc.getbestblockhash()
       if elem( result, 0 ) == :ok do
         hash = elem( result, 1 )
-        case Blockchain.get_block_by_hash( hash ) do
+        case Blockchain.get_from_db_or_bitcoind_by_hash( hash ) do
           {:ok, block} ->
             HashStack.push( block )
             assert block == HashStack.peek()

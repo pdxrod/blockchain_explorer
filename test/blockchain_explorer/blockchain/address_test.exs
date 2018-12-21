@@ -4,6 +4,7 @@ defmodule BlockChainExplorer.AddressTest do
   alias BlockChainExplorer.Transaction
   alias BlockChainExplorer.Block
   alias BlockChainExplorer.Utils
+  alias BlockChainExplorer.Rpc
 
   describe "addresses" do
 
@@ -91,7 +92,7 @@ defmodule BlockChainExplorer.AddressTest do
         assert length( uniq ) > 0
         for address <- uniq do
           amount = :rand.uniform( 3 ) + 1
-          Blockchain.sendtoaddress(address, amount)
+          Rpc.sendtoaddress(address, amount)
         end
       end
     end

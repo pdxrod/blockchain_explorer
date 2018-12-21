@@ -8,7 +8,7 @@ defmodule BlockChainExplorer.Blockchain do
   def get_best_block do
     Rpc.getbestblockhash()
     |> elem( 1 )
-    |> get_block_by_hash()
+    |> get_from_db_or_bitcoind_by_hash()
   end
 
   def get_from_db_or_bitcoind_by_hash( hash ) do
@@ -19,49 +19,32 @@ defmodule BlockChainExplorer.Blockchain do
     )
     if length( result ) == 0 do
       result = Rpc.getblock( hash )
-      block_map = elem( result, 1 )
-      block_map
+      if result == {:error, %{"code" => -5, "message" => "Block not found"}} do
+        %{}
+      else
+        block_map = elem( result, 1 )
+        insertable_block = Block.convert_to_struct block_map
+        Repo.insert insertable_block
+        insertable_block
+      end
     else
       List.first( result )
     end
   end
 
-  def get_block_by_hash( hash ) do
-    result = Repo.all(
-      from b in Block,
-      select: b,
-      where: b.hash == ^hash
-    )
-    if length( result ) == 0 do
-      result = Rpc.getblock( hash )
-      block_map = elem( result, 1 )
-
-      block = Block.convert_to_struct block_map
-      case block do
-        %{"code" => -5, "message" => "Block not found"} ->
-          %{}
-        %BlockChainExplorer.Block{ block: %{"code" => -5, "message" => "Block not found"} } ->
-          %{}
-        %{} ->
-          %{}
-        _ ->
-          Repo.insert block
-          block
-      end
-    else
-      Block.convert_to_struct List.first( result )
-    end
-  end
-
-  def get_block_by_height( height ) do
+  def get_from_db_or_bitcoind_by_height( height ) do
     result = Repo.all(
       from b in Block,
       select: b,
       where: b.height == ^height
     )
     if length( result ) == 0 do
-      Rpc.getblockhash( height )
-      |> get_block_by_hash()
+      hash = Rpc.getblockhash( height )
+      result = Rpc.getblock( hash )
+      block_map = elem( result, 1 )
+      insertable_block = Block.convert_to_struct block_map
+      Repo.insert insertable_block
+      insertable_block
     else
       List.first( result )
     end
@@ -78,7 +61,7 @@ defmodule BlockChainExplorer.Blockchain do
       end
       case hash do
         nil -> block
-        _ -> get_block_by_hash( hash )
+        _ -> get_from_db_or_bitcoind_by_hash( hash )
       end
     end
   end
