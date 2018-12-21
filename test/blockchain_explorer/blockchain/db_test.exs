@@ -98,7 +98,6 @@ defmodule BlockChainExplorer.DbTest do
       assert length(blocks) == 0
       blocks = get_blocks_from_bitcoind 5
       assert length( blocks ) == 5
-      first_block = List.first blocks
       bitcoind_block = List.last blocks
 
 # %{"bits" => "207fffff", "chainwork" => "confirmations" => 5, "tx" => ["6c19eb77fc79b459046b9f62492fcdf9eff85eb005b15cd9ccd49529b9c58ce3"]...

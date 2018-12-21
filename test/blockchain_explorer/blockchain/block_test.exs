@@ -1,21 +1,24 @@
 defmodule BlockChainExplorer.BlockTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Blockchain
+  alias BlockChainExplorer.Transaction
   alias BlockChainExplorer.Block
   alias BlockChainExplorer.Utils
 
   describe "blocks" do
 
     test "convert_to_struct works" do
-      block = Blockchain.get_highest_block_from_db_or_bitcoind()
-      blocks = Blockchain.get_n_blocks( block, 30 )
-      for num <- 20..29 do
-        tuple = Enum.at( blocks, num )
-        block = Block.convert_to_struct tuple
+      result = Blockchain.get_highest_block_from_db_or_bitcoind()
+      block = Block.convert_to_struct result # though it already is converted
+      blocks = Blockchain.get_n_blocks( block, 20 )
+      for num <- 10..19 do
+        block = Enum.at( blocks, num )
+        assert String.length( block.block ) > 0
+        tx = Transaction.get_transaction_strs( block )
+        assert length( tx ) > 0
         assert Utils.notmt? block.weight
         assert Utils.notmt? block.versionhex
         assert Utils.notmt? block.version
-        assert length( block.tx ) > 0
       	assert block.time > 0
         assert block.strippedsize > 0
         assert block.size > 0
