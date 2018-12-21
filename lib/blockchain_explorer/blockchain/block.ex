@@ -55,6 +55,10 @@ defmodule BlockChainExplorer.Block do
     end
   end
 
+  defp make_float( num ) do
+    num / 1
+  end
+
   def convert_to_struct( block ) do
     case block do
       %{"code" => -5, "message" => "Block not found"} ->
@@ -71,7 +75,7 @@ defmodule BlockChainExplorer.Block do
           time: block[ "time" ], strippedsize: block[ "strippedsize" ],
           size: block[ "size" ], nonce: block[ "nonce" ],
           merkleroot: block[ "merkleroot" ], mediantime: block[ "mediantime" ],
-          difficulty: block[ "difficulty" ], confirmations: block[ "confirmations" ],
+          difficulty: make_float( block[ "difficulty" ] ), confirmations: block[ "confirmations" ],
           chainwork: block[ "chainwork" ], bits: block[ "bits" ] }
       end
   end
