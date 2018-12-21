@@ -111,10 +111,11 @@ defmodule BlockChainExplorer.DbTest do
       assert ! Enum.member?( keys, :block )
       assert Enum.member?( keys, "hash" )
       not_db_block = Blockchain.get_from_db_or_bitcoind_by_hash( bitcoind_block["hash"] )
-      assert not_db_block == bitcoind_block
 
 # This doesn't work:      Repo.insert ( bitcoind_block )
       insertable_block = Block.convert_to_struct bitcoind_block
+      assert not_db_block == insertable_block
+
 # %BlockChainExplorer.Block{__meta__: #Ecto.Schema.Metadata<:built, "blocks">, bits: "207fffff", block: "bits=\"207fffff\"..."...}
       keys = Map.keys insertable_block
       assert Enum.member?( keys, :__meta__ )
@@ -124,7 +125,6 @@ defmodule BlockChainExplorer.DbTest do
       assert Enum.member?( keys, :updated_at )
       assert insertable_block.id == nil
       assert insertable_block.block != nil
-      Repo.insert ( insertable_block )
 
       map = Block.convert_to_map( ["bits=\"207fffff\"",  "mediantime=1545168218", "inserted_at=", "difficulty=9.4"] )
       assert map == [               bits: "207fffff",     mediantime: 1545168218,  inserted_at: "",difficulty: 9.4]
@@ -143,7 +143,7 @@ defmodule BlockChainExplorer.DbTest do
 # These four blocks are closely related
       assert block_map[ :hash ] == bitcoind_block["hash"]
       assert block_map[ :previousblockhash ] == db_block.previousblockhash
-      assert block_map[ :difficulty ] == not_db_block["difficulty"]
+      assert block_map[ :difficulty ] == not_db_block.difficulty
       assert block_map[ :mediantime ] == insertable_block.mediantime
 
       assert db_block != insertable_block
