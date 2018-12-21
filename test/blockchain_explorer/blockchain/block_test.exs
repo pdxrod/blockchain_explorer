@@ -7,7 +7,7 @@ defmodule BlockChainExplorer.BlockTest do
   describe "blocks" do
 
     test "convert_to_struct works" do
-      block = Blockchain.get_best_block()
+      block = Blockchain.get_highest_block_from_db_or_bitcoind()
       blocks = Blockchain.get_n_blocks( block, 30 )
       for num <- 20..29 do
         tuple = Enum.at( blocks, num )

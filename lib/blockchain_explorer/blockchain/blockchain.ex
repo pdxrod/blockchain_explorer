@@ -5,7 +5,7 @@ defmodule BlockChainExplorer.Blockchain do
   alias BlockChainExplorer.Rpc
   import Ecto.Query
 
-  def get_best_block do
+  def get_highest_block_from_db_or_bitcoind do
     Rpc.getbestblockhash()
     |> elem( 1 )
     |> get_from_db_or_bitcoind_by_hash()
@@ -67,7 +67,7 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
-    block = if block == nil, do: get_best_block(), else: block
+    block = if block == nil, do: get_highest_block_from_db_or_bitcoind(), else: block
     blocks = if length( blocks ) < 1, do: [ block ], else: blocks
     cond do
       n <= 1 ->
@@ -88,7 +88,7 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   defp get_next_or_previous_n_blocks_empty( block, n, direction, blocks ) do
-    block = if block == nil, do: get_best_block(), else: block
+    block = if block == nil, do: get_highest_block_from_db_or_bitcoind(), else: block
     blocks = if length( blocks ) < 1, do: [ block ], else: blocks
     if n <= 1 do
       blocks

@@ -85,7 +85,7 @@ defmodule BlockChainExplorer.AddressTest do
     test "sending coins" do
       if Utils.mode == "regtest" do
         num = 400
-        block = Blockchain.get_best_block()
+        block = Blockchain.get_highest_block_from_db_or_bitcoind()
         blocks = Blockchain.get_n_blocks( block, num )
        # show_transactions( blocks )
         uniq = Enum.uniq( block_list( blocks ))

@@ -1,6 +1,7 @@
 defmodule BlockChainExplorer.BlockchainTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Blockchain
+  alias BlockChainExplorer.Block
   alias BlockChainExplorer.Utils
 
   describe "blocks" do
@@ -37,13 +38,13 @@ defmodule BlockChainExplorer.BlockchainTest do
     end
 
     test "return block with a valid id" do
-      block = Blockchain.get_best_block()
+      block = Blockchain.get_highest_block_from_db_or_bitcoind()
       hash = block.hash
       assert hash =~ Utils.env :base_16_hash_regex
     end
 
     test "next block works" do
-      block = Blockchain.get_best_block()
+      block = Blockchain.get_highest_block_from_db_or_bitcoind()
       hash = block.nextblockhash
       assert nil == hash
       previous = Blockchain.get_next_or_previous_block( block, "previousblockhash" )
@@ -52,13 +53,13 @@ defmodule BlockChainExplorer.BlockchainTest do
     end
 
     test "previous block works" do
-      block = Blockchain.get_best_block()
+      block = Blockchain.get_highest_block_from_db_or_bitcoind()
       hash = block.previousblockhash
       assert hash =~ Utils.env :base_16_hash_regex
     end
 
     test "hash works" do
-      block = Blockchain.get_best_block()
+      block = Blockchain.get_highest_block_from_db_or_bitcoind()
       hash = block.hash
       block = Blockchain.get_from_db_or_bitcoind_by_hash( hash )
       new_hash = block.hash
@@ -77,7 +78,7 @@ defmodule BlockChainExplorer.BlockchainTest do
     end
 
     test "get n blocks backward works" do
-      block = Blockchain.get_best_block()
+      block = Blockchain.get_highest_block_from_db_or_bitcoind()
       old_hash = block.hash
       blocks = Blockchain.get_n_blocks(block, 3, "previousblockhash")
       assert length( blocks ) == 3
@@ -100,7 +101,7 @@ defmodule BlockChainExplorer.BlockchainTest do
     end
 
     test "get n blocks blows up given an inappropriate direction" do
-      block = Blockchain.get_best_block()
+      block = Blockchain.get_highest_block_from_db_or_bitcoind()
       err = try do
         Blockchain.get_n_blocks(block, 2, "foobar")
         raise "We should not have reached this line"
@@ -111,7 +112,7 @@ defmodule BlockChainExplorer.BlockchainTest do
     end
 
     test "get next or previous n blocks works with small values and nil" do
-      block = Blockchain.get_best_block()
+      block = Blockchain.get_highest_block_from_db_or_bitcoind()
       blocks = Blockchain.get_next_or_previous_n_blocks(block, 0)
       assert length( blocks ) == 1
       blocks = Blockchain.get_next_or_previous_n_blocks(nil, 0)
@@ -127,7 +128,7 @@ defmodule BlockChainExplorer.BlockchainTest do
     end
 
     test "get next n blocks backward works" do
-      block = Blockchain.get_best_block()
+      block = Blockchain.get_highest_block_from_db_or_bitcoind()
       hash = block.hash
       blocks = Blockchain.get_next_or_previous_n_blocks(block, 20, "previousblockhash")
       assert length( blocks ) == 20
@@ -145,13 +146,15 @@ defmodule BlockChainExplorer.BlockchainTest do
 
     test "get next n blocks with a nil block works" do
       one = Blockchain.get_n_blocks( nil, 4 )
-      block = Blockchain.get_best_block()
+      block = Blockchain.get_highest_block_from_db_or_bitcoind()
       two = Blockchain.get_next_or_previous_n_blocks( block, 4 )
-      assert one == two
+      a_block = Block.convert_struct List.last( one )
+      a_nother_block = Block.convert_struct List.last( two )
+      assert a_block == a_nother_block
     end
 
     test "get next n blocks forward works" do
-      original_block = Blockchain.get_best_block()
+      original_block = Blockchain.get_highest_block_from_db_or_bitcoind()
       blocks = Blockchain.get_next_or_previous_n_blocks(original_block, 5, "previousblockhash", [original_block])
       first_block = Enum.at( blocks, 4 )
       blocks = Blockchain.get_next_or_previous_n_blocks(first_block, 5, "previousblockhash", [first_block])
@@ -171,7 +174,7 @@ defmodule BlockChainExplorer.BlockchainTest do
     end
 
     test "get blocks functions don't need [ block ] as an argument" do
-      block = Blockchain.get_best_block()
+      block = Blockchain.get_highest_block_from_db_or_bitcoind()
       one = Blockchain.get_n_blocks(block, 4, "previousblockhash", [ block ])
       two = Blockchain.get_n_blocks(block, 4, "previousblockhash", [])
       assert one == two
