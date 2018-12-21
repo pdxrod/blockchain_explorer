@@ -7,7 +7,7 @@ defmodule BlockChainExplorerWeb.BlockControllerTest do
       block = Blockchain.get_highest_block_from_db_or_bitcoind()
       blocks = Blockchain.get_n_blocks( block, 2 )
       block = List.first blocks
-      conn = get conn, block_path(conn, :show, id: block[ "hash" ] )
+      conn = get conn, block_path(conn, :show, id: block.hash )
       assert html_response(conn, 200) =~ ~r/Height:.*[0-9]+/
     end
   end

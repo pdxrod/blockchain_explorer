@@ -31,7 +31,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp latest?( block ) do
-    block[ "nextblockhash" ] == nil
+    block.nextblockhash == nil
   end
 
   defp render_index_page( conn, blocks, latest ) do
@@ -40,21 +40,16 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   defp show_index_page( conn, hash, more \\ false ) do
-    case Blockchain.get_from_db_or_bitcoind_by_hash( hash ) do
-      {:ok, block} ->
-        HashStack.push block
-        blocks = Blockchain.get_n_blocks( block, 50, "previousblockhash" )
-        if more do
-          block = List.last blocks
-          HashStack.push block
-          blocks = Blockchain.get_n_blocks( block, 50, "previousblockhash" )
-          render_index_page( conn, blocks, false )
-        else
-          render_index_page( conn, blocks, latest?( block ))
-        end
-
-      other ->
-        show_error(conn, "index.html", other)
+    block = Blockchain.get_from_db_or_bitcoind_by_hash( hash )
+    HashStack.push block
+    blocks = Blockchain.get_n_blocks( block, 50, "previousblockhash" )
+    if more do
+      block = List.last blocks
+      HashStack.push block
+      blocks = Blockchain.get_n_blocks( block, 50, "previousblockhash" )
+      render_index_page( conn, blocks, false )
+    else
+      render_index_page( conn, blocks, latest?( block ))
     end
   end
 
