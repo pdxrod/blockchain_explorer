@@ -46,15 +46,6 @@ defmodule BlockChainExplorer.Block do
     end
   end
 
-  defp join_with_spaces( list_of_strings ) do
-    case list_of_strings do
-      [] ->
-        ""
-      [ head | tail ] ->
-        head <> if length(tail) < 1, do: "", else: " " <> join_with_spaces( tail )
-    end
-  end
-
   defp make_float( num ) do
     num / 1
   end
@@ -71,7 +62,7 @@ defmodule BlockChainExplorer.Block do
           hash: block[ "hash" ], height: block[ "height" ],
           previousblockhash: block[ "previousblockhash" ], nextblockhash: block[ "nextblockhash" ],
           weight: block[ "weight" ], versionhex: block[ "versionHex" ],
-          version: block[ "version" ], tx: join_with_spaces( block["tx"] ),
+          version: block[ "version" ], tx: Utils.join_with_spaces( block["tx"] ),
           time: block[ "time" ], strippedsize: block[ "strippedsize" ],
           size: block[ "size" ], nonce: block[ "nonce" ],
           merkleroot: block[ "merkleroot" ], mediantime: block[ "mediantime" ],

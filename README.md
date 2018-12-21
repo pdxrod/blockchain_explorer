@@ -66,7 +66,4 @@ unless you've specified a datadir (see start-bitcoind.sh)
 
 You can turn it into a soft link pointing to a large (500 Gb+) external
 drive - which you probably will have to do if using testnet or mainnet,
-as the blockchain just keeps getting bigger. And this blockchain explorer
-keeps getting slower, causing tests to time out. A real production version
-would use a database, inserting each new block as its minted. Since the number
-of blocks is only in the millions, finding addresses etc. would be very fast.
+as the blockchain just keeps getting bigger.

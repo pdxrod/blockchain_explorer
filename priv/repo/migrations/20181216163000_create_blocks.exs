@@ -5,7 +5,7 @@ defmodule BlockChainExplorer.Repo.Migrations.CreateBlocks do
     create table(:blocks) do
       add :block, :text
       add :hash, :string
-      add :height, :integer, primary_key: true
+      add :height, :integer
       add :previousblockhash, :string
       add :nextblockhash, :string
       add :weight, :integer
@@ -25,5 +25,5 @@ defmodule BlockChainExplorer.Repo.Migrations.CreateBlocks do
     end
     create unique_index(:blocks, [:height])
   end
-  
+
 end

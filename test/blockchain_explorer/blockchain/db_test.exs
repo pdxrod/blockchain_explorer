@@ -1,6 +1,7 @@
 defmodule BlockChainExplorer.DbTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Blockchain
+  alias BlockChainExplorer.Transaction
   alias BlockChainExplorer.Block
   alias BlockChainExplorer.Repo
   alias BlockChainExplorer.Rpc
@@ -12,7 +13,11 @@ defmodule BlockChainExplorer.DbTest do
 
     setup do
       Repo.delete_all(Block)
-      {:ok, hello: "world"} # setup has to return something, for some reason
+      Repo.delete_all(Transaction)
+      Repo.delete_all(Address)
+      Repo.delete_all(Output)
+      Repo.delete_all(Input)
+      {:ok, hello: "world"} # setup has to return an :ok tuple, it doesn't matter what
     end
 
     defp read_all_blocks_from_database do
@@ -20,6 +25,14 @@ defmodule BlockChainExplorer.DbTest do
         from b in Block,
         select: b,
         where: b.id > -1
+      )
+    end
+
+    defp read_a_transaction_from_database( hash ) do
+      Repo.all(
+        from t in Transaction,
+        select: t,
+        where: t.hash == ^hash
       )
     end
 
@@ -171,6 +184,23 @@ defmodule BlockChainExplorer.DbTest do
       assert insertable_block.hash == db_block.hash
       double_conversion = Block.convert_to_struct insertable_block
       assert insertable_block.hash == double_conversion.hash
+    end
+
+    defp get_a_useful_transaction do
+      blocks = Blockchain.get_n_blocks( nil, 50 )
+      trans = Transaction.transaction_with_everything_in_it_from_list( blocks )
+    end
+
+    test "finding transactions inserts them in the db" do
+      transaction = get_a_useful_transaction()
+      assert transaction["inserted_at"] == nil
+      hash = transaction["hash"]
+      list = read_a_transaction_from_database hash
+      db_transaction = List.first list
+      assert db_transaction.hash == hash
+      transaction = get_a_useful_transaction()
+      assert transaction["hash"] == hash
+      assert transaction["inserted_at"] != nil
     end
 
   end

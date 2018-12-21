@@ -91,4 +91,13 @@ defmodule BlockChainExplorer.Utils do
     end
   end
 
+  def join_with_spaces( list_of_strings ) do
+    case list_of_strings do
+      [] ->
+        ""
+      [ head | tail ] ->
+        head <> if length(tail) < 1, do: "", else: " " <> join_with_spaces( tail )
+    end
+  end
+
 end
