@@ -10,7 +10,6 @@ defmodule BlockChainExplorer.Repo.Migrations.CreateOutputs do
       add :asm, :string
       add :hex, :string
     end
-    create unique_index(:outputs, [:transaction_id])
   end
 
 end

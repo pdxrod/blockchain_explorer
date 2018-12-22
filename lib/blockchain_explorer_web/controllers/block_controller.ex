@@ -138,11 +138,11 @@ defmodule BlockChainExplorerWeb.BlockController do
       :adr ->
         find_transactions_in_background( conn, elem( status, 1 ) )
       _ ->
-        a_transaction = Transaction.get_a_useful_transaction()
-        address_str = Transaction.get_an_address a_transaction["vout"]
-        address_str = String.slice address_str, 0..4
-        decoded = Blockchain.get_highest_block_from_db_or_bitcoind() |> Block.convert_to_struct
-        render( conn, "show.html", block: decoded, address_str: address_str )
+        # a_transaction = Transaction.get_a_useful_transaction()
+        # address_str = Transaction.get_an_address a_transaction["vout"]
+        # address_str = String.slice address_str, 0..4
+        # decoded = Blockchain.get_highest_block_from_db_or_bitcoind() |> Block.convert_to_struct
+        # render( conn, "show.html", block: decoded, address_str: address_str )
     end
   end
 end

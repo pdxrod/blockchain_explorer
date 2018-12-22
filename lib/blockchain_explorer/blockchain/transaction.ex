@@ -52,20 +52,34 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  defp output_has_addresses?( output_id ) do
-    addresses = Repo.all(
-      from a in Address,
-      select: a,
-      where: a.output_id == ^output_id
-    )
-    length( addresses ) > 0
+  defp output_has_addresses?( output ) do
+    output_id = output.id
+    addresses = if output_id == nil do
+                  []
+                else
+                  Repo.all(
+                    from a in Address,
+                    select: a,
+                    where: a.output_id == ^output_id
+                  )
+                end
+    if length( addresses ) == 0 do
+      if output.addresses != nil and String.length( output.addresses ) > 0 do
+        save_addresses output
+        true
+      else
+        false
+      end
+    else
+      true
+    end
   end
 
   defp outputs_has_everything?( outputs_list_of_maps ) do
     Utils.recurse( false, true, outputs_list_of_maps, fn(output) ->
                    output.value > 0.0 && output.hex &&
                    output.asm && String.contains?( output.asm, "OP_" )
-                   && output_has_addresses?( output.id ) end)
+                   && output_has_addresses?( output ) end)
   end
 
   defp useful_input?( input ) do
@@ -181,7 +195,73 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
+  defp save_output( output, transaction ) do
+    if output.id == nil do
+      db_output = %Output{transaction_id: transaction.id,
+                          input_id: nil,
+                          value: output["value"],
+                          n: output["n"],
+                          asm: output["asm"],
+                          hex: output["hex"],
+                          addresses: "" }
+      Repo.insert db_output
+    end
+    List.first get_outputs( transaction.id )
+  end
+
+  defp get_addresses( address_str, output_id ) do
+    Repo.all(
+      from a in BlockChainExplorer.Address,
+      select: a,
+      where: a.address == ^address_str and a.output_id == ^output_id
+    )
+  end
+
+  defp save_address( address_str, output_id ) do
+    address = %Address{ address: address_str, output_id: output_id }
+    Repo.insert address
+    List.first get_addresses( address_str, output_id )
+  end
+
+  defp save_addresses( output ) do
+    for address_str <- output.addresses do
+      save_address( address_str, output.id )
+    end
+  end
+
+  defp save_input( input, transaction ) do
+    if input.id == nil do
+      db_input = %Input{ transaction_id: transaction.id,
+                  sequence: input["sequence"],
+                  scriptsig: input["scriptSig"],
+                  coinbase: input["coinbase"],
+                  asm: input["asm"], hex: input["hex"] }
+      Repo.insert db_input
+    end
+    List.first get_inputs( transaction.id )
+  end
+
+  defp save_outputs( outputs, transaction ) do
+    for output <- outputs do
+      db_output = save_output output, transaction
+      addresses = output["scriptPubKey"]["addresses"]
+      for address <- addresses do
+        save_address address, db_output.id
+      end
+    end
+  end
+
+  defp save_inputs( inputs, transaction ) do
+    for input <- inputs do
+      save_input input, transaction
+    end
+  end
+
   def save_transaction( transaction, block_id ) do
+    outputs = transaction["vout"]
+    inputs = transaction["vin"]
+    save_outputs outputs, transaction
+    save_inputs inputs, transaction
     decoded = Transaction.decode transaction, block_id
     Repo.insert decoded
     decoded

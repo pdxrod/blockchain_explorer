@@ -6,8 +6,8 @@ defmodule BlockChainExplorerWeb.TransactionController do
 
     def show(conn, %{"id" => hash}) do
       conn = assign(conn, :error, "")
-      trans = Transaction.get_transaction hash
-      render( conn, "show.html", transaction: trans )
+      # trans = Transaction.get_transaction hash
+      # render( conn, "show.html", transaction: trans )
     end
 
 # This may be called when a user enters a partial address on the /blocks page, or when they click on an address in a transaction

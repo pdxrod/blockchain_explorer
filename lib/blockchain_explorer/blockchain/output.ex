@@ -13,6 +13,7 @@ defmodule BlockChainExplorer.Output do
     field :n, :integer
     field :asm, :string
     field :hex, :string
+    field :addresses, :string
   end
 
 end
