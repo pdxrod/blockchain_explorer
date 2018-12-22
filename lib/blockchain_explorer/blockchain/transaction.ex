@@ -32,19 +32,6 @@ defmodule BlockChainExplorer.Transaction do
     field :hash, :string
   end
 
-  def get_transaction_with_txid( transaction_address_str, block_id ) do
-    result = Repo.all(
-      from t in Transaction,
-      select: t,
-      where: t.txid == ^transaction_address_str and t.block_id == ^block_id
-    )
-    if length( result ) == 0 do
-      %{}
-    else
-      List.first( result )
-    end
-  end
-
   def get_transaction_with_hash( transaction_str, block_id ) do
     result = Repo.all(
       from t in Transaction,
@@ -56,17 +43,24 @@ defmodule BlockChainExplorer.Transaction do
       tuple = Rpc.decoderawtransaction hex
       if elem( tuple, 0 ) == :ok do
         transaction = elem( tuple, 1 )
-        save_transaction transaction, block_id
-        transaction
+        db_transaction = save_transaction transaction, block_id
+
+IO.puts "\nget_transaction_with_hash 1 db_transaction.id #{db_transaction.id}"
+
+        db_transaction
       else
         %{}
       end
     else
-      List.first( result )
+      db_transaction = List.first( result )
+
+IO.puts "\nget_transaction_with_hash 2 db_transaction.id #{db_transaction.id}"
+
+      db_transaction
     end
   end
 
-  def get_from_db_or_insert( transaction_str, block_id ) do
+  def get_transaction_with_txid( transaction_str, block_id ) do
     result = Repo.all(
       from t in BlockChainExplorer.Transaction,
       select: t,
@@ -86,7 +80,7 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  def get_transaction_strs( block_map ) do
+  def get_tx_ids( block_map ) do
     block = block_map.block
     map = Block.convert_block_str_to_map block
     String.split( map[ :tx ], " " )
@@ -157,20 +151,20 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp has_everything?( transaction_str, block_id ) do
-    transaction = get_from_db_or_insert( transaction_str, block_id )
+    transaction = get_transaction_with_hash( transaction_str, block_id )
     inputs = get_inputs( transaction.id  )
     outputs = get_outputs( transaction.id )
     inputs_has_everything?( inputs ) &&
      outputs_has_everything?( outputs )
   end
 
-  defp transaction_with_everything_in_it_from_transactions( list_of_transaction_strs, block_id ) do
-    case list_of_transaction_strs do
+  defp transaction_with_everything_in_it_from_transactions( list_of_tx_ids, block_id ) do
+    case list_of_tx_ids do
       [] -> nil
       _ ->
-        [hd | tl] = list_of_transaction_strs
+        [hd | tl] = list_of_tx_ids
         cond do
-          has_everything?( hd, block_id ) -> get_from_db_or_insert( hd, block_id )
+          has_everything?( hd, block_id ) -> get_transaction_with_txid( hd, block_id )
           true -> transaction_with_everything_in_it_from_transactions( tl, block_id )
         end
     end
@@ -178,11 +172,11 @@ defmodule BlockChainExplorer.Transaction do
 
   defp transaction_with_everything_in_it_from_block( block_map ) do
     db_block =  Blockchain.get_from_db_or_bitcoind_by_hash( block_map.hash ) # inserts it if it's not there
-    list_of_transaction_strs = get_transaction_strs( block_map )
+    list_of_tx_ids = get_tx_ids( block_map )
 
-IO.puts "\ntransaction_with_everything_in_it_from_block #{ List.first list_of_transaction_strs }"
+IO.puts "\ntransaction_with_everything_in_it_from_block #{ IO.inspect list_of_tx_ids }"
 
-    transaction_with_everything_in_it_from_transactions( list_of_transaction_strs, db_block.id )
+    transaction_with_everything_in_it_from_transactions( list_of_tx_ids, db_block.id )
   end
 
   def transaction_with_everything_in_it_from_list( blocks_list ) do
@@ -298,17 +292,12 @@ IO.puts "\nsave input #{input["sequence"]}"
 
   def save_transaction( transaction, block_id ) do
     decoded = Transaction.decode transaction, block_id
-    db_transaction = get_from_db_or_insert( transaction["txid"], block_id )
-
+    db_transaction = get_transaction_with_txid( transaction["txid"], block_id )
     outputs = transaction["vout"]
-
-IO.puts "outputs #{block_id}"
-IO.inspect outputs
-
     inputs = transaction["vin"]
     save_outputs outputs, db_transaction
     save_inputs inputs, db_transaction
-    decoded
+    db_transaction
   end
 
 end
