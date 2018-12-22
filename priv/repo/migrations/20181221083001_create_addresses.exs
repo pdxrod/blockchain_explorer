@@ -6,7 +6,6 @@ defmodule BlockChainExplorer.Repo.Migrations.CreateAddresses do
       add :output_id, :integer
       add :input_id, :integer
       add :address, :string
-      timestamps()
     end
   end
 

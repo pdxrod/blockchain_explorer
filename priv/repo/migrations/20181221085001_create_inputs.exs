@@ -9,7 +9,6 @@ defmodule BlockChainExplorer.Repo.Migrations.CreateInputs do
       add :coinbase, :string
       add :asm, :string
       add :hex, :string
-      timestamps()
     end
     create unique_index(:inputs, [:transaction_id])
   end

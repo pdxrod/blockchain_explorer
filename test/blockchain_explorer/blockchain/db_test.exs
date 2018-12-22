@@ -2,6 +2,9 @@ defmodule BlockChainExplorer.DbTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.Transaction
+  alias BlockChainExplorer.Address
+  alias BlockChainExplorer.Output
+  alias BlockChainExplorer.Input
   alias BlockChainExplorer.Block
   alias BlockChainExplorer.Repo
   alias BlockChainExplorer.Rpc
@@ -186,21 +189,14 @@ defmodule BlockChainExplorer.DbTest do
       assert insertable_block.hash == double_conversion.hash
     end
 
-    defp get_a_useful_transaction do
-      blocks = Blockchain.get_n_blocks( nil, 50 )
-      trans = Transaction.transaction_with_everything_in_it_from_list( blocks )
-    end
-
     test "finding transactions inserts them in the db" do
-      transaction = get_a_useful_transaction()
-      assert transaction["inserted_at"] == nil
+      transaction = Transaction.get_a_useful_transaction()
       hash = transaction["hash"]
       list = read_a_transaction_from_database hash
       db_transaction = List.first list
       assert db_transaction.hash == hash
-      transaction = get_a_useful_transaction()
+      transaction = Transaction.get_a_useful_transaction()
       assert transaction["hash"] == hash
-      assert transaction["inserted_at"] != nil
     end
 
   end

@@ -12,9 +12,9 @@ defmodule BlockChainExplorer.Repo.Migrations.CreateTransactions do
       add :size, :string
       add :locktime, :integer
       add :hash, :string
-      timestamps()
     end
     create unique_index(:transactions, [:hash])
+    create unique_index(:transactions, [:txid])
   end
 
 end

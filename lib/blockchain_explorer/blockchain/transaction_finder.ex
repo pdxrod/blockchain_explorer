@@ -53,8 +53,7 @@ defmodule BlockChainExplorer.TransactionFinder do
   end
 
   defp transaction_containing_address( transaction_address_str, address_str ) do
-    transaction_tuple = Transaction.get_transaction_tuple transaction_address_str
-    transaction = elem transaction_tuple, 1
+    transaction = Transaction.get_transaction_by_address transaction_address_str
     if transaction?( transaction ) && is_in_transaction_outputs? transaction, transaction["vout"], address_str do
       transaction
     else
