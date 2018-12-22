@@ -4,7 +4,7 @@ defmodule BlockChainExplorer.Repo.Migrations.CreateInputs do
   def change do
     create table(:inputs) do
       add :transaction_id, :integer
-      add :sequence, :integer
+      add :sequence, :bigint
       add :scriptsig, :string
       add :coinbase, :string
       add :asm, :string

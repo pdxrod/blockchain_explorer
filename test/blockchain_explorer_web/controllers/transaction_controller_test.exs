@@ -5,7 +5,7 @@ defmodule BlockChainExplorerWeb.TransactionControllerTest do
   describe "transaction" do
 
     test "shows transactions" do
-      transaction = Transaction.get_a_useful_transaction()
+      transaction = Transaction.seed_db_and_get_a_useful_transaction()
       address_str = Transaction.get_an_address transaction["vout"]
       conn = build_conn()
       conn = get conn, "/transactions/#{ address_str }"
@@ -13,7 +13,7 @@ defmodule BlockChainExplorerWeb.TransactionControllerTest do
     end
 
     test "shows a transaction" do
-      transaction = Transaction.get_a_useful_transaction()
+      transaction = Transaction.seed_db_and_get_a_useful_transaction()
       conn = build_conn()
       conn = get conn, transaction_path(conn, :show,  transaction["txid"])
       page = html_response(conn, 200)
@@ -22,7 +22,7 @@ defmodule BlockChainExplorerWeb.TransactionControllerTest do
     end
 
     test "ajax" do
-      transaction = Transaction.get_a_useful_transaction()
+      transaction = Transaction.seed_db_and_get_a_useful_transaction()
       address_str = Transaction.get_an_address transaction["vout"]
       address_str = String.slice address_str, 0..5
       conn = build_conn()

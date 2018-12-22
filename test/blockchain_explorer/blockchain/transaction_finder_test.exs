@@ -96,7 +96,7 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       TransactionFinder.put "2Mud", @a_transaction
       tuple = TransactionFinder.peek( "2Mud" )
       assert elem( tuple, 0 ) == @a_transaction
-      a_transaction = Transaction.get_a_useful_transaction()
+      a_transaction = Transaction.seed_db_and_get_a_useful_transaction()
       if (Utils.mt? a_transaction) do
         raise "Unable to find a transaction with inputs and outputs"
       end
@@ -129,7 +129,7 @@ defmodule BlockChainExplorer.TransactionFinderTest do
 
     @tag timeout: :infinity
     test "two simultaneous puts and finds" do
-      a_transaction = Transaction.get_a_useful_transaction()
+      a_transaction = Transaction.seed_db_and_get_a_useful_transaction()
       if (Utils.mt? a_transaction) do
         raise "Unable to find a transaction with inputs and outputs"
       end

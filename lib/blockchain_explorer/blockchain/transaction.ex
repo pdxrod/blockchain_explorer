@@ -25,19 +25,65 @@ defmodule BlockChainExplorer.Transaction do
     field :vsize, :integer
     field :outputs, :string
     field :inputs, :string
-    field :version, :string
+    field :version, :integer
     field :txid, :string
-    field :size, :string
+    field :size, :integer
     field :locktime, :integer
     field :hash, :string
   end
 
-  def get_transaction_from_db( transaction_address_str, block_id ) do
-    Repo.all(
+  def get_transaction_with_txid( transaction_address_str, block_id ) do
+    result = Repo.all(
       from t in Transaction,
       select: t,
       where: t.txid == ^transaction_address_str and t.block_id == ^block_id
     )
+    if length( result ) == 0 do
+      %{}
+    else
+      List.first( result )
+    end
+  end
+
+  def get_transaction_with_hash( transaction_str, block_id ) do
+    result = Repo.all(
+      from t in Transaction,
+      select: t,
+      where: t.hash == ^transaction_str and t.block_id == ^block_id
+    )
+    if length( result ) == 0 do
+      hex = get_hex transaction_str
+      tuple = Rpc.decoderawtransaction hex
+      if elem( tuple, 0 ) == :ok do
+        transaction = elem( tuple, 1 )
+        save_transaction transaction, block_id
+        transaction
+      else
+        %{}
+      end
+    else
+      List.first( result )
+    end
+  end
+
+  def get_from_db_or_insert( transaction_str, block_id ) do
+    result = Repo.all(
+      from t in BlockChainExplorer.Transaction,
+      select: t,
+      where: t.txid == ^transaction_str and t.block_id == ^block_id
+    )
+    if length( result ) == 0 do
+      insertable_transaction = %BlockChainExplorer.Transaction{
+        block_id: block_id, txid: transaction_str }
+      tuple = Repo.insert insertable_transaction
+      if elem( tuple, 0 ) == :ok do
+        elem( tuple, 1 )
+      else
+        %{}
+      end
+    else
+      List.first result
+    end
   end
 
   def get_transaction_strs( block_map ) do
@@ -118,23 +164,6 @@ defmodule BlockChainExplorer.Transaction do
      outputs_has_everything?( outputs )
   end
 
-  def get_from_db_or_insert( transaction_str, block_id ) do
-    result = Repo.all(
-      from t in BlockChainExplorer.Transaction,
-      select: t,
-      where: t.txid == ^transaction_str and t.block_id == ^block_id
-    )
-    if length( result ) == 0 do
-      insertable_transaction = %BlockChainExplorer.Transaction{
-        block_id: block_id, txid: transaction_str }
-      Repo.insert insertable_transaction
-      result = get_transaction_from_db( transaction_str, block_id )
-      List.first result
-    else
-      List.first result
-    end
-  end
-
   defp transaction_with_everything_in_it_from_transactions( list_of_transaction_strs, block_id ) do
     case list_of_transaction_strs do
       [] -> nil
@@ -150,6 +179,9 @@ defmodule BlockChainExplorer.Transaction do
   defp transaction_with_everything_in_it_from_block( block_map ) do
     db_block =  Blockchain.get_from_db_or_bitcoind_by_hash( block_map.hash ) # inserts it if it's not there
     list_of_transaction_strs = get_transaction_strs( block_map )
+
+IO.puts "\ntransaction_with_everything_in_it_from_block #{ List.first list_of_transaction_strs }"
+
     transaction_with_everything_in_it_from_transactions( list_of_transaction_strs, db_block.id )
   end
 
@@ -166,13 +198,19 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-# This is mostly for testing, but it's also used to show an example search string on a page, so it belongs here
-  def get_a_useful_transaction do
+  def seed_db_and_get_a_useful_transaction do
     Blockchain.get_n_blocks( nil, 100 )
     |> transaction_with_everything_in_it_from_list()
   end
 
   def decode( transaction, block_id ) do
+    outputs = transaction[ "vout" ]
+    inputs = transaction[ "vin" ]
+    outputs = if outputs == nil, do: [], else: outputs
+# [%{"n" => 0, "scriptPubKey" => %{"addresses" => ["mweuYxnDidLJyeLADMTskSPBx5sFP7a3VA"], "asm" => "03275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0 OP_CHECKSIG", "hex" => "2103275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0ac", "reqSigs" => 1, "type" => "pubkey"}, "value" => 0.390625},
+#  %{"n" => 1, "scriptPubKey" => %{"asm" => "OP_RETURN aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "hex" => "6a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "type" => "nulldata"}, "value" => 0.0}]
+    inputs = if inputs == nil, do: [], else: inputs
+
     %BlockChainExplorer.Transaction{
       block_id: block_id,
       version: transaction[ "version" ],
@@ -181,8 +219,8 @@ defmodule BlockChainExplorer.Transaction do
       hash: transaction[ "hash" ],
       vsize: transaction[ "vsize" ],
       locktime: transaction[ "locktime" ],
-      outputs: Utils.join_with_spaces( transaction["vout"] ),
-      inputs: Utils.join_with_spaces( transaction["vin"] ) }
+      outputs: "",
+      inputs: "" }
   end
 
   defp get_hex( transaction_str ) do
@@ -196,16 +234,14 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp save_output( output, transaction ) do
-    if output.id == nil do
-      db_output = %Output{transaction_id: transaction.id,
-                          input_id: nil,
-                          value: output["value"],
-                          n: output["n"],
-                          asm: output["asm"],
-                          hex: output["hex"],
-                          addresses: "" }
-      Repo.insert db_output
-    end
+    db_output = %Output{transaction_id: transaction.id,
+                        input_id: nil,
+                        value: output["value"],
+                        n: output["n"],
+                        asm: output["asm"],
+                        hex: output["hex"],
+                        addresses: "" }
+    Repo.insert db_output
     List.first get_outputs( transaction.id )
   end
 
@@ -230,14 +266,15 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp save_input( input, transaction ) do
-    if input.id == nil do
-      db_input = %Input{ transaction_id: transaction.id,
-                  sequence: input["sequence"],
-                  scriptsig: input["scriptSig"],
-                  coinbase: input["coinbase"],
-                  asm: input["asm"], hex: input["hex"] }
-      Repo.insert db_input
-    end
+    db_input = %Input{ transaction_id: transaction.id,
+                sequence: input["sequence"],
+                scriptsig: input["scriptSig"],
+                coinbase: input["coinbase"],
+                asm: input["asm"], hex: input["hex"] }
+
+IO.puts "\nsave input #{input["sequence"]}"
+
+    Repo.insert db_input
     List.first get_inputs( transaction.id )
   end
 
@@ -245,8 +282,10 @@ defmodule BlockChainExplorer.Transaction do
     for output <- outputs do
       db_output = save_output output, transaction
       addresses = output["scriptPubKey"]["addresses"]
-      for address <- addresses do
-        save_address address, db_output.id
+      if addresses != nil do
+        for address <- addresses do
+          save_address address, db_output.id
+        end
       end
     end
   end
@@ -258,34 +297,18 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   def save_transaction( transaction, block_id ) do
-    outputs = transaction["vout"]
-    inputs = transaction["vin"]
-    save_outputs outputs, transaction
-    save_inputs inputs, transaction
     decoded = Transaction.decode transaction, block_id
-    Repo.insert decoded
-    decoded
-  end
+    db_transaction = get_from_db_or_insert( transaction["txid"], block_id )
 
-  def get_transaction( transaction_str, block_id ) do
-    result = Repo.all(
-      from t in Transaction,
-      select: t,
-      where: t.hash == ^transaction_str
-    )
-    if length( result ) == 0 do
-      hex = get_hex transaction_str
-      tuple = Rpc.decoderawtransaction hex
-      if elem( tuple, 0 ) == :ok do
-        transaction = elem( tuple, 1 )
-        save_transaction transaction, block_id
-        transaction
-      else
-        %{}
-      end
-    else
-      List.first( result )
-    end
+    outputs = transaction["vout"]
+
+IO.puts "outputs #{block_id}"
+IO.inspect outputs
+
+    inputs = transaction["vin"]
+    save_outputs outputs, db_transaction
+    save_inputs inputs, db_transaction
+    decoded
   end
 
 end

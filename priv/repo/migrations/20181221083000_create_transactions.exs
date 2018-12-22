@@ -7,9 +7,9 @@ defmodule BlockChainExplorer.Repo.Migrations.CreateTransactions do
       add :vsize, :integer
       add :outputs, :string
       add :inputs, :string
-      add :version, :string
+      add :version, :integer
       add :txid, :string
-      add :size, :string
+      add :size, :integer
       add :locktime, :integer
       add :hash, :string
     end

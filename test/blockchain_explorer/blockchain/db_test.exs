@@ -190,12 +190,12 @@ defmodule BlockChainExplorer.DbTest do
     end
 
     test "finding transactions inserts them in the db" do
-      transaction = Transaction.get_a_useful_transaction()
+      transaction = Transaction.seed_db_and_get_a_useful_transaction()
       hash = transaction.hash
       list = read_a_transaction_from_database hash
       db_transaction = List.first list
       assert db_transaction.hash == hash
-      transaction = Transaction.get_a_useful_transaction()
+      transaction = Transaction.seed_db_and_get_a_useful_transaction()
       assert transaction["hash"] == hash
     end
 
