@@ -13,8 +13,8 @@ defmodule BlockChainExplorer.AddressTest do
         [] -> []
         _ ->
           [hd | tl] = outputs
-          if hd && hd.scriptpubkey && hd.scriptpubkey.addresses && length( hd.scriptpubkey.addresses ) > 0 do
-            [Enum.at( hd.scriptpubkey.addresses, 0 )] ++ address_list( tl )
+          if hd && hd.scriptpubkey && hd.addresses && length( hd.addresses ) > 0 do
+            [Enum.at( hd.addresses, 0 )] ++ address_list( tl )
           else
             address_list( tl )
           end
@@ -44,8 +44,8 @@ defmodule BlockChainExplorer.AddressTest do
           if decoded_trans.outputs do
             for output <- decoded_trans.outputs do
               if output.scriptpubkey &&
-                output.scriptpubkey.addresses do
-                  for address <- output.scriptpubkey.addresses do
+                output.addresses do
+                  for address <- output.addresses do
                     IO.puts "  Output address #{address}"
                   end
                end

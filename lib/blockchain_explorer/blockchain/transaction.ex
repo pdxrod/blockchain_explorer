@@ -3,8 +3,8 @@ defmodule BlockChainExplorer.Transaction do
   alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.Address
   alias BlockChainExplorer.Output
-  alias BlockChainExplorer.Block
   alias BlockChainExplorer.Input
+  alias BlockChainExplorer.Block
   alias BlockChainExplorer.Utils
   alias BlockChainExplorer.Repo
   alias BlockChainExplorer.Rpc
@@ -20,14 +20,6 @@ defmodule BlockChainExplorer.Transaction do
     defstruct type: nil, reqsigs: 0, hex: nil, asm: nil, addresses: nil
   end
 
-  defmodule Output do
-    defstruct value: -1.0, n: -1
-  end
-
-  defmodule Input do # scriptsig is unlocking key for inputs
-    defstruct vout: nil, txid: nil, sequence: 0, scriptsig: nil, coinbase: nil
-  end
-
   schema "transactions" do
     field :block_id, :integer
     field :vsize, :integer
@@ -40,8 +32,12 @@ defmodule BlockChainExplorer.Transaction do
     field :hash, :string
   end
 
-  def get_transaction_by_address( transaction_address_str ) do
-
+  def get_transaction_from_db( transaction_address_str, block_id ) do
+    Repo.all(
+      from t in Transaction,
+      select: t,
+      where: t.txid == ^transaction_address_str and t.block_id == ^block_id
+    )
   end
 
   def get_transaction_strs( block_map ) do
@@ -62,7 +58,7 @@ defmodule BlockChainExplorer.Transaction do
       select: a,
       where: a.output_id == ^output_id
     )
-    List.size( addresses ) > 0
+    length( addresses ) > 0
   end
 
   defp outputs_has_everything?( outputs_list_of_maps ) do
@@ -86,7 +82,7 @@ defmodule BlockChainExplorer.Transaction do
 
   defp get_outputs( transaction_id ) do
     Repo.all(
-      from o in BlockChainExplorer.Output,
+      from o in Output,
       select: o,
       where: o.transaction_id == ^transaction_id
     )
@@ -94,7 +90,7 @@ defmodule BlockChainExplorer.Transaction do
 
   defp get_inputs( transaction_id ) do
     Repo.all(
-      from i in BlockChainExplorer.Input,
+      from i in Input,
       select: i,
       where: i.transaction_id == ^transaction_id
     )
@@ -102,7 +98,7 @@ defmodule BlockChainExplorer.Transaction do
 
   defp has_everything?( transaction_str, block_id ) do
     transaction = get_from_db_or_insert( transaction_str, block_id )
-    inputs = get_inputs( transaction.id )
+    inputs = get_inputs( transaction.id  )
     outputs = get_outputs( transaction.id )
     inputs_has_everything?( inputs ) &&
      outputs_has_everything?( outputs )
@@ -110,7 +106,7 @@ defmodule BlockChainExplorer.Transaction do
 
   def get_from_db_or_insert( transaction_str, block_id ) do
     result = Repo.all(
-      from t in Transaction,
+      from t in BlockChainExplorer.Transaction,
       select: t,
       where: t.txid == ^transaction_str and t.block_id == ^block_id
     )
@@ -118,9 +114,10 @@ defmodule BlockChainExplorer.Transaction do
       insertable_transaction = %BlockChainExplorer.Transaction{
         block_id: block_id, txid: transaction_str }
       Repo.insert insertable_transaction
-      insertable_transaction
+      result = get_transaction_from_db( transaction_str, block_id )
+      List.first result
     else
-      List.first( result )
+      List.first result
     end
   end
 
@@ -157,7 +154,7 @@ defmodule BlockChainExplorer.Transaction do
 
 # This is mostly for testing, but it's also used to show an example search string on a page, so it belongs here
   def get_a_useful_transaction do
-    tuple = Blockchain.get_n_blocks( nil, 100 )
+    Blockchain.get_n_blocks( nil, 100 )
     |> transaction_with_everything_in_it_from_list()
   end
 
@@ -184,35 +181,31 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-    def save_transaction( transaction, block_id ) do
-      decoded = Transaction.decode transaction, block_id
-      Repo.insert decoded
-      decoded
-    end
+  def save_transaction( transaction, block_id ) do
+    decoded = Transaction.decode transaction, block_id
+    Repo.insert decoded
+    decoded
+  end
 
-    def get_a_useful_transaction do
-      Transaction.get_a_useful_transaction()
-    end
-
-    def get_transaction( transaction_str, block_id ) do
-      result = Repo.all(
-        from t in Transaction,
-        select: t,
-        where: t.hash == ^transaction_str
-      )
-      if length( result ) == 0 do
-        hex = Transaction.get_hex transaction_str
-        tuple = Rpc.decoderawtransaction hex
-        if elem( tuple, 0 ) == :ok do
-          transaction = elem( tuple, 1 )
-          save_transaction transaction, block_id
-          transaction
-        else
-          %{}
-        end
+  def get_transaction( transaction_str, block_id ) do
+    result = Repo.all(
+      from t in Transaction,
+      select: t,
+      where: t.hash == ^transaction_str
+    )
+    if length( result ) == 0 do
+      hex = get_hex transaction_str
+      tuple = Rpc.decoderawtransaction hex
+      if elem( tuple, 0 ) == :ok do
+        transaction = elem( tuple, 1 )
+        save_transaction transaction, block_id
+        transaction
       else
-        List.first( result )
+        %{}
       end
+    else
+      List.first( result )
     end
+  end
 
 end

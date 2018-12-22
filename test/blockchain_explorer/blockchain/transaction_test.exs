@@ -85,12 +85,12 @@ defmodule BlockChainExplorer.TransactionTest do
       assert at_least_one_output_has_a_valid_address?( trans["vout"] )
       decoded = Transaction.decode trans
       for output <- decoded.outputs do
-  #      assert has_a_valid_address?( output.scriptpubkey.addresses )
+  #      assert has_a_valid_address?( output.addresses )
         assert output.value >= 0.0
-        assert Utils.notmt? output.scriptpubkey.type
-        assert Utils.notmt? output.scriptpubkey.hex
-        assert Utils.notmt? output.scriptpubkey.asm
-        assert String.contains?( output.scriptpubkey.asm, "OP_" )
+        assert Utils.notmt? output.type
+        assert Utils.notmt? output.hex
+        assert Utils.notmt? output.asm
+        assert String.contains?( output.asm, "OP_" )
         assert output.n > -1
       end
     end

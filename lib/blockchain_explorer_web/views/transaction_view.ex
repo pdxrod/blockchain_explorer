@@ -45,10 +45,10 @@ defmodule BlockChainExplorerWeb.TransactionView do
         #{ output.n }<br />
         Value: #{ output.value }<br />
         Asm:
-        <span id="#{ transaction.txid }_output_asm" style="display :none">#{ output.scriptpubkey.asm }</span>
-        &nbsp;&nbsp;#{ asm_truncate output.scriptpubkey.asm }<br />
+        <span id="#{ transaction.txid }_output_asm" style="display :none">#{ output.asm }</span>
+        &nbsp;&nbsp;#{ asm_truncate output.asm }<br />
         Addresses: <br />
-    """ <> mark_up_addresses( output.scriptpubkey.addresses )
+    """ <> mark_up_addresses( output.addresses )
   end
 
   defp mark_up_addresses( addresses_list ) do

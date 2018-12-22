@@ -7,6 +7,8 @@ defmodule BlockChainExplorer.Repo.Migrations.CreateOutputs do
       add :input_id, :integer
       add :value, :float
       add :n, :integer
+      add :asm, :string
+      add :hex, :string
     end
     create unique_index(:outputs, [:transaction_id])
   end

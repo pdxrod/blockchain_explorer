@@ -3,5 +3,5 @@
   - if @transactions != nil && @transactions != [] do
     - for transaction <- @transactions do
       #transaction_block{ class: "transaction_block" }
-        - decoded = Transaction.decode transaction
+        - decoded = Transaction.decode transaction, 1
         = decoded |> mark_up_transaction |> raw
