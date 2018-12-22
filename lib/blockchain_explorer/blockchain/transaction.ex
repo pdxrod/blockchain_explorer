@@ -44,9 +44,6 @@ defmodule BlockChainExplorer.Transaction do
       if elem( tuple, 0 ) == :ok do
         transaction = elem( tuple, 1 )
         db_transaction = save_transaction transaction, block_id
-
-IO.puts "\nget_transaction_with_hash 1 db_transaction.id #{db_transaction.id}"
-
         db_transaction
       else
         %{}
@@ -93,6 +90,9 @@ IO.puts "\nget_transaction_with_hash 2 db_transaction.id #{db_transaction.id}"
   end
 
   defp output_has_addresses?( output ) do
+
+IO.puts "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{output.asm}"
+
     output_id = output.id
     addresses = if output_id == nil do
                   []
@@ -103,23 +103,14 @@ IO.puts "\nget_transaction_with_hash 2 db_transaction.id #{db_transaction.id}"
                     where: a.output_id == ^output_id
                   )
                 end
-    if length( addresses ) == 0 do
-      if output.addresses != nil and String.length( output.addresses ) > 0 do
-        save_addresses output
-        true
-      else
-        false
-      end
-    else
-      true
-    end
+    length( addresses ) > 0
   end
 
   defp outputs_has_everything?( outputs_list_of_maps ) do
     Utils.recurse( false, true, outputs_list_of_maps, fn(output) ->
-                   output.value > 0.0 && output.hex &&
-                   output.asm && String.contains?( output.asm, "OP_" )
-                   && output_has_addresses?( output ) end)
+                   output_has_addresses?( output ) && output.value > 0.0
+                   && output.hex && output.asm
+                   && String.contains?( output.asm, "OP_" ) end)
   end
 
   defp useful_input?( input ) do
@@ -173,9 +164,6 @@ IO.puts "\nget_transaction_with_hash 2 db_transaction.id #{db_transaction.id}"
   defp transaction_with_everything_in_it_from_block( block_map ) do
     db_block =  Blockchain.get_from_db_or_bitcoind_by_hash( block_map.hash ) # inserts it if it's not there
     list_of_tx_ids = get_tx_ids( block_map )
-
-IO.puts "\ntransaction_with_everything_in_it_from_block #{ IO.inspect list_of_tx_ids }"
-
     transaction_with_everything_in_it_from_transactions( list_of_tx_ids, db_block.id )
   end
 
@@ -232,11 +220,17 @@ IO.puts "\ntransaction_with_everything_in_it_from_block #{ IO.inspect list_of_tx
                         input_id: nil,
                         value: output["value"],
                         n: output["n"],
-                        asm: output["asm"],
-                        hex: output["hex"],
+                        asm: output["scriptPubKey"]["asm"],
+                        hex: output["scriptPubKey"]["hex"],
                         addresses: "" }
-    Repo.insert db_output
-    List.first get_outputs( transaction.id )
+IO.puts "\nsave_output #{transaction.id}, #{db_output.value}, asm: #{db_output.asm}"
+
+    tuple = Repo.insert db_output
+    if elem( tuple, 0 ) == :ok do
+      elem( tuple, 1 )
+    else
+      %{}
+    end
   end
 
   defp get_addresses( address_str, output_id ) do
@@ -248,6 +242,10 @@ IO.puts "\ntransaction_with_everything_in_it_from_block #{ IO.inspect list_of_tx
   end
 
   defp save_address( address_str, output_id ) do
+
+
+IO.puts "\nsave_address #{address_str} #{output_id}"
+
     address = %Address{ address: address_str, output_id: output_id }
     Repo.insert address
     List.first get_addresses( address_str, output_id )
@@ -265,9 +263,6 @@ IO.puts "\ntransaction_with_everything_in_it_from_block #{ IO.inspect list_of_tx
                 scriptsig: input["scriptSig"],
                 coinbase: input["coinbase"],
                 asm: input["asm"], hex: input["hex"] }
-
-IO.puts "\nsave input #{input["sequence"]}"
-
     Repo.insert db_input
     List.first get_inputs( transaction.id )
   end
@@ -276,6 +271,9 @@ IO.puts "\nsave input #{input["sequence"]}"
     for output <- outputs do
       db_output = save_output output, transaction
       addresses = output["scriptPubKey"]["addresses"]
+
+IO.puts "\nsave_outputs addresses #{addresses}"
+
       if addresses != nil do
         for address <- addresses do
           save_address address, db_output.id
@@ -294,6 +292,9 @@ IO.puts "\nsave input #{input["sequence"]}"
     decoded = Transaction.decode transaction, block_id
     db_transaction = get_transaction_with_txid( transaction["txid"], block_id )
     outputs = transaction["vout"]
+# [%{"n" => 0, "scriptPubKey" => %{"addresses" => ["mweuYxnDidLJyeLADMTskSPBx5sFP7a3VA"], "asm" => "03275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0 OP_CHECKSIG", "hex" => "2103275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0ac", "reqSigs" => 1, "type" => "pubkey"}, "value" => 0.390625},
+#  %{"n" => 1, "scriptPubKey" => %{"asm" => "OP_RETURN aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "hex" => "6a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "type" => "nulldata"}, "value" => 0.0}]
+
     inputs = transaction["vin"]
     save_outputs outputs, db_transaction
     save_inputs inputs, db_transaction
