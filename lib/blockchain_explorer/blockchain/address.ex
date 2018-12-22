@@ -6,6 +6,11 @@ defmodule BlockChainExplorer.Address do
   alias BlockChainExplorer.Utils
   alias BlockChainExplorer.Rpc
 
+  def changeset(address, params \\ %{}) do
+    address
+    |> Ecto.Changeset.cast(params, ~w(address))
+  end
+
   schema "addresses" do
     field :output_id, :integer
     field :address, :string
