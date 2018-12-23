@@ -32,19 +32,45 @@ defmodule BlockChainExplorer.Transaction do
     field :hash, :string
   end
 
-  def get_transaction_with_hash( transaction_str, block_id ) do
-    result = Repo.all(
+  def get_transactions do
+    Repo.all(
       from t in Transaction,
       select: t,
-      where: t.hash == ^transaction_str and t.block_id == ^block_id
+      where: t.block_id > -1
     )
+  end
+
+  def get_transactions_with_block_id( block_id ) do
+    Repo.all(
+      from t in Transaction,
+      select: t,
+      where: t.block_id == ^block_id
+    )
+  end
+
+  def get_transaction_with_hash( transaction_str, block_id \\ nil ) do
+    result = case block_id do
+      nil ->
+        Repo.all(
+          from t in Transaction,
+          select: t,
+          where: t.hash == ^transaction_str
+        )
+      _ ->
+        Repo.all(
+          from t in Transaction,
+          select: t,
+          where: t.hash == ^transaction_str and t.block_id == ^block_id
+        )
+    end
+
     if length( result ) == 0 do
       hex = get_hex transaction_str
       tuple = Rpc.decoderawtransaction hex
       if elem( tuple, 0 ) == :ok do
         transaction = elem( tuple, 1 )
-        db_transaction = save_transaction transaction, block_id
-        db_transaction
+        transaction = if block_id != nil, do: save_transaction( transaction, block_id ), else: transaction
+        transaction
       else
         %{}
       end
@@ -138,6 +164,25 @@ debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{o
     end
   end
 
+  defp get_addresses_from_outputs( outputs ) do
+    case outputs do
+      [] ->
+        []
+      [ hd | tl ] ->
+        get_addresses( nil, hd.id ) ++ get_addresses_from_outputs( tl )
+    end
+  end
+
+  def get_addresses( transaction_id ) do
+    outputs = get_outputs( transaction_id )
+    case outputs do
+      [] ->
+        []
+      [ hd | tl ] ->
+        get_addresses( nil, hd.id ) ++ get_addresses_from_outputs( tl )
+    end
+  end
+
   def get_outputs( transaction_id ) do
     Repo.all(
       from o in Output,
@@ -204,25 +249,37 @@ debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{o
     map = Block.convert_block_str_to_map block
     transactions = String.split( map[ :tx ], " " )
   end
-  
-  def convert_to_struct( transaction, block_id ) do
-    outputs = transaction[ "vout" ]
-    inputs = transaction[ "vin" ]
-    outputs = if outputs == nil, do: [], else: outputs
+
+  def convert_to_struct( transaction, block_id \\ nil ) do
+    case block_id do
+      nil ->
+        transaction
+      _ ->
+        case transaction do
+          %{"code" => -5, "message" => "Block not found"} ->
+            %{}
+          %BlockChainExplorer.Transaction{} ->
+            transaction
+          _ ->
+            outputs = transaction[ "vout" ]
+            inputs = transaction[ "vin" ]
+            outputs = if outputs == nil, do: [], else: outputs
 # [%{"n" => 0, "scriptPubKey" => %{"addresses" => ["mweuYxnDidLJyeLADMTskSPBx5sFP7a3VA"], "asm" => "03275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0 OP_CHECKSIG", "hex" => "2103275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0ac", "reqSigs" => 1, "type" => "pubkey"}, "value" => 0.390625},
 #  %{"n" => 1, "scriptPubKey" => %{"asm" => "OP_RETURN aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "hex" => "6a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "type" => "nulldata"}, "value" => 0.0}]
 
-    inputs = if inputs == nil, do: [], else: inputs
-    %BlockChainExplorer.Transaction{
-      block_id: block_id,
-      version: transaction[ "version" ],
-      txid: transaction[ "txid" ],
-      size: transaction[ "size" ],
-      hash: transaction[ "hash" ],
-      vsize: transaction[ "vsize" ],
-      locktime: transaction[ "locktime" ],
-      outputs: "",
-      inputs: "" }
+            inputs = if inputs == nil, do: [], else: inputs
+            %BlockChainExplorer.Transaction{
+              block_id: block_id,
+              version: transaction[ "version" ],
+              txid: transaction[ "txid" ],
+              size: transaction[ "size" ],
+              hash: transaction[ "hash" ],
+              vsize: transaction[ "vsize" ],
+              locktime: transaction[ "locktime" ],
+              outputs: "",
+              inputs: "" }
+        end
+    end
   end
 
   defp get_hex( transaction_str ) do
