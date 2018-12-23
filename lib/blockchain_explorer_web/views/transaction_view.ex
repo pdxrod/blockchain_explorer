@@ -63,13 +63,13 @@ defmodule BlockChainExplorerWeb.TransactionView do
     """
     Sequence: #{ input.sequence           }<br />
     Coinbase: #{ input.coinbase           }<br />
-    Txid:     #{ trans_link input.txid    }
+    Txid:     #{ transaction.txid  }
     Asm:
-    <span id="#{ transaction.txid }_input_asm" style="display: none">#{ input.scriptsig["asm"] }</span>
-    &nbsp;&nbsp;#{ asm_truncate input.scriptsig["asm"] }<br />
+    <span id="#{ transaction.txid }_input_asm" style="display: none">#{ input.asm }</span>
+    &nbsp;&nbsp;#{ asm_truncate input.asm }<br />
     Hex:
-    <span id-"#{ transaction.txid }_input_hex" style="display :none">#{ input.scriptsig["hex"] }</span>
-    &nbsp;&nbsp;#{ asm_truncate input.scriptsig["hex"] }<br /><br />
+    <span id-"#{ transaction.txid }_input_hex" style="display :none">#{ input.hex }</span>
+    &nbsp;&nbsp;#{ asm_truncate input.hex }<br /><br />
     """
   end
 end
