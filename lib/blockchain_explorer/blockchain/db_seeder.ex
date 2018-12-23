@@ -10,10 +10,10 @@ defmodule BlockChainExplorer.DbSeeder do
   def init(state) do
     BlockChainExplorer.Transaction.seed_db_and_get_a_useful_transaction()
 
-    Process.sleep(10_000)
+    Process.sleep(100_000)
 
-    # Process will send :timeout to self after 1 second
-    {:ok, state, 1_000}
+    # Process will send :timeout to self after 100 seconds
+    {:ok, state, 100_000}
   end
 
   @impl true
