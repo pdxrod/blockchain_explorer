@@ -13,8 +13,9 @@ defmodule BlockChainExplorer.AddressTest do
         [] -> []
         _ ->
           [hd | tl] = outputs
-          if hd && hd.scriptpubkey && hd.addresses && length( hd.addresses ) > 0 do
-            [Enum.at( hd.addresses, 0 )] ++ address_list( tl )
+          addresses = Transaction.get_addresses nil, hd.id
+          if length( addresses ) > 0 do
+            [ Enum.at( addresses, 0 ) ] ++ address_list( tl )
           else
             address_list( tl )
           end
@@ -28,9 +29,8 @@ defmodule BlockChainExplorer.AddressTest do
           [head | tail] = blocks
           tx_hash = head.tx
           assert tx_hash =~ Utils.env :base_16_hash_regex
-          tx_tuple = Transaction.get_transaction_tuple tx_hash
-          decoded = Transaction.decode_transaction_tuple tx_tuple
-          address_list( decoded.outputs ) ++ block_list( tail )
+          transaction = Transaction.get_transaction_with_hash tx_hash, head.id
+          address_list( Transaction.get_outputs( transaction.id )) ++ block_list( tail )
       end
     end
 

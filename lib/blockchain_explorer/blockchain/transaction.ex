@@ -88,7 +88,7 @@ defmodule BlockChainExplorer.Transaction do
 
   defp output_has_addresses?( output ) do
 
-IO.puts "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{output.asm}"
+debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{output.asm}"
 
     output_id = output.id
     addresses = if output_id == nil do
@@ -122,7 +122,23 @@ IO.puts "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #
     Utils.recurse( false, true, inputs_list_of_maps, &useful_input?/1 )
   end
 
-  defp get_outputs( transaction_id ) do
+  def get_addresses( address_str, output_id ) do
+    if address_str == nil do
+      Repo.all(
+        from a in BlockChainExplorer.Address,
+        select: a,
+        where: a.output_id == ^output_id
+      )
+    else
+      Repo.all(
+        from a in BlockChainExplorer.Address,
+        select: a,
+        where: a.address == ^address_str and a.output_id == ^output_id
+      )
+    end
+  end
+
+  def get_outputs( transaction_id ) do
     Repo.all(
       from o in Output,
       select: o,
@@ -189,8 +205,8 @@ IO.puts "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #
     outputs = if outputs == nil, do: [], else: outputs
 # [%{"n" => 0, "scriptPubKey" => %{"addresses" => ["mweuYxnDidLJyeLADMTskSPBx5sFP7a3VA"], "asm" => "03275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0 OP_CHECKSIG", "hex" => "2103275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0ac", "reqSigs" => 1, "type" => "pubkey"}, "value" => 0.390625},
 #  %{"n" => 1, "scriptPubKey" => %{"asm" => "OP_RETURN aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "hex" => "6a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "type" => "nulldata"}, "value" => 0.0}]
-    inputs = if inputs == nil, do: [], else: inputs
 
+    inputs = if inputs == nil, do: [], else: inputs
     %BlockChainExplorer.Transaction{
       block_id: block_id,
       version: transaction[ "version" ],
@@ -221,7 +237,8 @@ IO.puts "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #
                         asm: output["scriptPubKey"]["asm"],
                         hex: output["scriptPubKey"]["hex"],
                         addresses: "" }
-IO.puts "\nsave_output #{transaction.id}, #{db_output.value}, asm: #{db_output.asm}"
+
+debug "\nsave_output #{transaction.id}, #{db_output.value}, asm: #{db_output.asm}"
 
     tuple = Repo.insert db_output
     if elem( tuple, 0 ) == :ok do
@@ -231,18 +248,9 @@ IO.puts "\nsave_output #{transaction.id}, #{db_output.value}, asm: #{db_output.a
     end
   end
 
-  defp get_addresses( address_str, output_id ) do
-    Repo.all(
-      from a in BlockChainExplorer.Address,
-      select: a,
-      where: a.address == ^address_str and a.output_id == ^output_id
-    )
-  end
-
   defp save_address( address_str, output_id ) do
 
-
-IO.puts "\nsave_address #{address_str} #{output_id}"
+debug "\nsave_address #{address_str} #{output_id}"
 
     address = %Address{ address: address_str, output_id: output_id }
     Repo.insert address
@@ -270,7 +278,7 @@ IO.puts "\nsave_address #{address_str} #{output_id}"
       db_output = save_output output, transaction
       addresses = output["scriptPubKey"]["addresses"]
 
-IO.puts "\nsave_outputs addresses #{addresses}"
+debug "\nsave_outputs addresses #{addresses}"
 
       if addresses != nil do
         for address <- addresses do
@@ -312,6 +320,10 @@ IO.puts "\nsave_outputs addresses #{addresses}"
     else
       List.first result
     end
+  end
+
+  def debug str do
+    if false, do: IO.puts str
   end
 
 end
