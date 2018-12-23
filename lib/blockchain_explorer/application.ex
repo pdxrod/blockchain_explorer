@@ -10,6 +10,7 @@ defmodule BlockChainExplorer.Application do
       supervisor( BlockChainExplorerWeb.Endpoint, [] ),
       worker( BlockChainExplorer.Repo, [] ),
       worker( BlockChainExplorer.HashStack, [] ),
+      worker( BlockChainExplorer.DbSeeder, [] ),
       worker( BlockChainExplorer.TransactionFinder, [] )
     ]
 
