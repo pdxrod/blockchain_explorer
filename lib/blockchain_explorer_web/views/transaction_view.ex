@@ -1,5 +1,6 @@
 defmodule BlockChainExplorerWeb.TransactionView do
   use BlockChainExplorerWeb, :view
+  alias BlockChainExplorer.Transaction
 
 # IF transaction vin has coinbase, it's the first transaction in this block
 # "vin": [  %{

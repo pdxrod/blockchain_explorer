@@ -75,7 +75,7 @@ defmodule BlockChainExplorerWeb.BlockController do
               show_error( conn, "index.html", other )
           end
         else
-          hash = block[ "hash" ]
+          hash = block.hash
           show_index_page( conn, hash, true )
         end
 

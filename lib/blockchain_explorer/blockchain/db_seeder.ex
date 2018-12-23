@@ -1,5 +1,6 @@
 defmodule BlockChainExplorer.DbSeeder do
   use GenServer
+# Thanks https://stackoverflow.com/questions/51293467/calling-function-on-phoenix-app-start
 
   def start_link do
     GenServer.start_link(__MODULE__, %{})
@@ -18,7 +19,7 @@ defmodule BlockChainExplorer.DbSeeder do
   @impl true
   def handle_info(:timeout, state) do
     # Stop this process, because it's temporary it will not be restarted
-    IO.inspect "Terminating DoSomething"
+    # IO.puts "\nTerminating DbSeeder"
     {:stop, :normal, state}
   end
 end
