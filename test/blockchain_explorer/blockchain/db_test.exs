@@ -196,7 +196,7 @@ defmodule BlockChainExplorer.DbTest do
       db_transaction = List.first list
       assert db_transaction.hash == hash
       transaction = Transaction.seed_db_and_get_a_useful_transaction()
-      assert transaction["hash"] == hash
+      assert transaction.hash == hash
     end
 
   end

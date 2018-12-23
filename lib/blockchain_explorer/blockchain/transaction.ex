@@ -49,11 +49,7 @@ defmodule BlockChainExplorer.Transaction do
         %{}
       end
     else
-      db_transaction = List.first( result )
-
-IO.puts "\nget_transaction_with_hash 2 db_transaction.id #{db_transaction.id}"
-
-      db_transaction
+      List.first( result )
     end
   end
 
@@ -64,11 +60,12 @@ IO.puts "\nget_transaction_with_hash 2 db_transaction.id #{db_transaction.id}"
       where: t.txid == ^transaction_str and t.block_id == ^block_id
     )
     if length( result ) == 0 do
-      insertable_transaction = %BlockChainExplorer.Transaction{
-        block_id: block_id, txid: transaction_str }
-      tuple = Repo.insert insertable_transaction
+      hex = get_hex transaction_str
+      tuple = Rpc.decoderawtransaction hex
       if elem( tuple, 0 ) == :ok do
-        elem( tuple, 1 )
+        transaction = elem( tuple, 1 )
+        db_transaction = save_transaction transaction, block_id
+        db_transaction
       else
         %{}
       end
@@ -151,7 +148,8 @@ IO.puts "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #
 
   defp transaction_with_everything_in_it_from_transactions( list_of_tx_ids, block_id ) do
     case list_of_tx_ids do
-      [] -> nil
+      [] ->
+        %{}
       _ ->
         [hd | tl] = list_of_tx_ids
         cond do
@@ -185,7 +183,7 @@ IO.puts "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #
     |> transaction_with_everything_in_it_from_list()
   end
 
-  def decode( transaction, block_id ) do
+  def convert_to_struct( transaction, block_id ) do
     outputs = transaction[ "vout" ]
     inputs = transaction[ "vin" ]
     outputs = if outputs == nil, do: [], else: outputs
@@ -289,16 +287,31 @@ IO.puts "\nsave_outputs addresses #{addresses}"
   end
 
   def save_transaction( transaction, block_id ) do
-    decoded = Transaction.decode transaction, block_id
-    db_transaction = get_transaction_with_txid( transaction["txid"], block_id )
-    outputs = transaction["vout"]
+    txid = transaction["txid"]
+    result = Repo.all(
+      from t in BlockChainExplorer.Transaction,
+      select: t,
+      where: t.txid == ^txid and t.block_id == ^block_id
+    )
+    if length( result ) == 0 do
+      converted = Transaction.convert_to_struct transaction, block_id
+      tuple = Repo.insert converted
+      if elem( tuple, 0 ) == :ok do
+        db_transaction = elem( tuple, 1 )
+        outputs = transaction["vout"]
 # [%{"n" => 0, "scriptPubKey" => %{"addresses" => ["mweuYxnDidLJyeLADMTskSPBx5sFP7a3VA"], "asm" => "03275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0 OP_CHECKSIG", "hex" => "2103275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0ac", "reqSigs" => 1, "type" => "pubkey"}, "value" => 0.390625},
 #  %{"n" => 1, "scriptPubKey" => %{"asm" => "OP_RETURN aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "hex" => "6a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "type" => "nulldata"}, "value" => 0.0}]
 
-    inputs = transaction["vin"]
-    save_outputs outputs, db_transaction
-    save_inputs inputs, db_transaction
-    db_transaction
+        inputs = transaction["vin"]
+        save_outputs outputs, db_transaction
+        save_inputs inputs, db_transaction
+        db_transaction
+      else
+        %{}
+      end
+    else
+      List.first result
+    end
   end
 
 end
