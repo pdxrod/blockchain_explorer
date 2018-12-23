@@ -49,7 +49,7 @@ defmodule BlockChainExplorerWeb.TransactionView do
         <span id="#{ transaction.txid }_output_asm" style="display :none">#{ output.asm }</span>
         &nbsp;&nbsp;#{ asm_truncate output.asm }<br />
         Addresses: <br />
-    """ <> mark_up_addresses( output.addresses )
+    """ <> mark_up_addresses( Transaction.get_address_strs transaction.id )
   end
 
   defp mark_up_addresses( addresses_list ) do

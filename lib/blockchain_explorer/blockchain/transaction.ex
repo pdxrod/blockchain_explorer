@@ -185,6 +185,11 @@ debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{o
     end
   end
 
+  def get_address_strs( transaction_id ) do
+    addresses = get_addresses( transaction_id )
+    Enum.map( addresses, fn( a ) -> a.address end)
+  end
+
   def get_outputs( transaction_id ) do
     Repo.all(
       from o in Output,
