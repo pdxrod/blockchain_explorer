@@ -199,6 +199,12 @@ debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{o
     |> transaction_with_everything_in_it_from_list()
   end
 
+  def get_transaction_strs( block_map ) do
+    block = block_map.block
+    map = Block.convert_block_str_to_map block
+    transactions = String.split( map[ :tx ], " " )
+  end
+  
   def convert_to_struct( transaction, block_id ) do
     outputs = transaction[ "vout" ]
     inputs = transaction[ "vin" ]
