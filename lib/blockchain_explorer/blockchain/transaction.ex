@@ -107,7 +107,8 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   def outputs_total_value( decoded_transaction ) do
-    Enum.reduce decoded_transaction.outputs, 0.0, fn( output, acc ) ->
+    outputs = get_outputs decoded_transaction.id
+    Enum.reduce outputs, 0.0, fn( output, acc ) ->
       output.value + acc
     end
   end
@@ -191,7 +192,7 @@ debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{o
     )
   end
 
-  defp get_inputs( transaction_id ) do
+  def get_inputs( transaction_id ) do
     Repo.all(
       from i in Input,
       select: i,
