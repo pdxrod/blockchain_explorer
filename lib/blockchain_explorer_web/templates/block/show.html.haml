@@ -3,7 +3,7 @@
     %input#_csrf_token{name: "_csrf_token", type: "hidden", value: "#{Plug.CSRFProtection.get_csrf_token()}"}
     #form_contents
       %span.instructions
-        = "Enter a block height, e.g. 1325614, or the start of a bitcoin address, e.g. #{ @address_str }"
+        = "Enter a block height, e.g. 1325, or the start of a bitcoin address, e.g. #{ @address_str }"
       = text_input :blocks, :num, value: @address_str
       = submit "submit", id: "blocks_show_submit_button", class: "btn btn-primary"
       %br

@@ -69,8 +69,9 @@ defmodule BlockChainExplorer.Transaction do
       tuple = Rpc.decoderawtransaction hex
       if elem( tuple, 0 ) == :ok do
         transaction = elem( tuple, 1 )
-        transaction = if block_id != nil, do: save_transaction( transaction, block_id ), else: transaction
-        transaction
+        block_id = if block_id == nil, do: 1, else: block_id
+        transaction = save_transaction( transaction, block_id )
+        Transaction.convert_to_struct transaction
       else
         %{}
       end
@@ -251,35 +252,27 @@ debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{o
     transactions = String.split( map[ :tx ], " " )
   end
 
+  defp make_struct( transaction, block_id ) do
+    %BlockChainExplorer.Transaction{
+      block_id: block_id,
+      version: transaction[ "version" ],
+      txid: transaction[ "txid" ],
+      size: transaction[ "size" ],
+      hash: transaction[ "hash" ],
+      vsize: transaction[ "vsize" ],
+      locktime: transaction[ "locktime" ],
+      outputs: "",
+      inputs: "" }
+    end
+
   def convert_to_struct( transaction, block_id \\ nil ) do
-    case block_id do
-      nil ->
+    case transaction do
+      %{"code" => -5, "message" => "Block not found"} ->
+        %{}
+      %BlockChainExplorer.Transaction{txid: _} ->
         transaction
       _ ->
-        case transaction do
-          %{"code" => -5, "message" => "Block not found"} ->
-            %{}
-          %BlockChainExplorer.Transaction{} ->
-            transaction
-          _ ->
-            outputs = transaction[ "vout" ]
-            inputs = transaction[ "vin" ]
-            outputs = if outputs == nil, do: [], else: outputs
-# [%{"n" => 0, "scriptPubKey" => %{"addresses" => ["mweuYxnDidLJyeLADMTskSPBx5sFP7a3VA"], "asm" => "03275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0 OP_CHECKSIG", "hex" => "2103275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0ac", "reqSigs" => 1, "type" => "pubkey"}, "value" => 0.390625},
-#  %{"n" => 1, "scriptPubKey" => %{"asm" => "OP_RETURN aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "hex" => "6a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "type" => "nulldata"}, "value" => 0.0}]
-
-            inputs = if inputs == nil, do: [], else: inputs
-            %BlockChainExplorer.Transaction{
-              block_id: block_id,
-              version: transaction[ "version" ],
-              txid: transaction[ "txid" ],
-              size: transaction[ "size" ],
-              hash: transaction[ "hash" ],
-              vsize: transaction[ "vsize" ],
-              locktime: transaction[ "locktime" ],
-              outputs: "",
-              inputs: "" }
-        end
+       make_struct transaction, block_id
     end
   end
 
