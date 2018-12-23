@@ -116,6 +116,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   def index(conn, params) do
+    Transaction.seed_db_and_get_a_useful_transaction()
     direction = cond do # See index.html.haml for where params comes from
       params == %{} -> "latestblockhash"
       params[ "n" ] == "t" -> "previousblockhash"
@@ -126,6 +127,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   end
 
   def show( conn, params ) do
+    Transaction.seed_db_and_get_a_useful_transaction()
     status = analyse_params params
     conn = assign(conn, :error, "")
     conn = assign(conn, :block, %{})
