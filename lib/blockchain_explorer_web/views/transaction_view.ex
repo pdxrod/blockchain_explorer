@@ -18,8 +18,8 @@ defmodule BlockChainExplorerWeb.TransactionView do
     Version:     #{ transaction.version} <br />
     Size:        #{ transaction.size }   <br />
     Hash:        #{ transaction.hash }   <br /><br />
-    """ <> "Outputs:<br/>\n" <> mark_up_outputs( transaction, transaction.outputs ) <>
-           "Inputs:<br/>\n"  <> mark_up_inputs( transaction, transaction.inputs )
+    """ <> "Outputs:<br/>\n" <> mark_up_outputs( transaction, Transaction.get_outputs( transaction.id )) <>
+           "Inputs:<br/>\n"  <> mark_up_inputs( transaction, Transaction.get_inputs( transaction.id ))
   end
 
   defp mark_up_outputs( transaction, outputs ) do
