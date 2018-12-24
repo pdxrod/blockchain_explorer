@@ -69,7 +69,6 @@ defmodule BlockChainExplorer.Transaction do
       tuple = Rpc.decoderawtransaction hex
       if elem( tuple, 0 ) == :ok do
         transaction = elem( tuple, 1 )
-        block_id = if block_id == nil, do: 1, else: block_id
         transaction = save_transaction( transaction, block_id )
         Transaction.convert_to_struct transaction
       else
@@ -80,19 +79,26 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  def get_transaction_with_txid( transaction_str, block_id ) do
-    result = Db.all(
-      from t in BlockChainExplorer.Transaction,
-      select: t,
-      where: t.txid == ^transaction_str and t.block_id == ^block_id
-    )
+  def get_transaction_with_txid( txid, block_id \\ nil ) do
+    result = if block_id == nil do
+      result = Db.all(
+        from t in BlockChainExplorer.Transaction,
+        select: t,
+        where: t.txid == ^txid
+      )
+    else
+      result = Db.all(
+        from t in BlockChainExplorer.Transaction,
+        select: t,
+        where: t.txid == ^txid and t.block_id == ^block_id
+      )
+    end
     if length( result ) == 0 do
-      hex = get_hex transaction_str
+      hex = get_hex txid
       tuple = Rpc.decoderawtransaction hex
       if elem( tuple, 0 ) == :ok do
         transaction = elem( tuple, 1 )
-        db_transaction = save_transaction transaction, block_id
-        db_transaction
+        save_transaction transaction, block_id
       else
         %{}
       end
@@ -101,9 +107,9 @@ defmodule BlockChainExplorer.Transaction do
     end
   end
 
-  def get_tx_ids( block_map ) do
-    block = block_map.block
-    map = Block.convert_block_str_to_map block
+  def get_tx_ids( block_struct ) do
+    block_string = block_struct.block
+    map = Block.convert_block_str_to_map block_string
     String.split( map[ :tx ], " " )
   end
 
@@ -115,9 +121,6 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp output_has_addresses?( output ) do
-
-debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{output.asm}"
-
     output_id = output.id
     addresses = if output_id == nil do
                   []
@@ -228,7 +231,7 @@ debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{o
   end
 
   defp transaction_with_everything_in_it_from_block( block_map ) do
-    db_block =  Blockchain.get_from_db_or_bitcoind_by_hash( block_map.hash ) # inserts it if it's not there
+    db_block =  Blockchain.get_from_db_or_bitcoind_by_hash( block_map.hash ) # inserts it in db if it's not there
     list_of_tx_ids = get_tx_ids( block_map )
     transaction_with_everything_in_it_from_transactions( list_of_tx_ids, db_block.id )
   end
@@ -249,12 +252,6 @@ debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{o
   def seed_db_and_get_a_useful_transaction do
     Blockchain.get_n_blocks( nil, 100 )
     |> transaction_with_everything_in_it_from_list()
-  end
-
-  def get_transaction_strs( block_map ) do
-    block = block_map.block
-    map = Block.convert_block_str_to_map block
-    transactions = String.split( map[ :tx ], " " )
   end
 
   defp make_struct( transaction, block_id ) do
@@ -300,23 +297,14 @@ debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{o
                         hex: output["scriptPubKey"]["hex"],
                         addresses: "" }
 
-debug "\nsave_output #{transaction.id}, #{db_output.value}, asm: #{db_output.asm}"
-
     tuple = Db.insert db_output
-    if elem( tuple, 0 ) == :ok do
-      elem( tuple, 1 )
-    else
-      %{}
-    end
+    Db.get_db_result_from_tuple tuple
   end
 
   defp save_address( address_str, output_id ) do
-
-debug "\nsave_address #{address_str} #{output_id}"
-
     address = %Address{ address: address_str, output_id: output_id }
-    Db.insert address
-    List.first get_addresses( address_str, output_id )
+    tuple = Db.insert address
+    Db.get_db_result_from_tuple tuple
   end
 
   defp save_addresses( output ) do
@@ -331,17 +319,14 @@ debug "\nsave_address #{address_str} #{output_id}"
                 scriptsig: input["scriptSig"],
                 coinbase: input["coinbase"],
                 asm: input["asm"], hex: input["hex"] }
-    Db.insert db_input
-    List.first get_inputs( transaction.id )
+    tuple = Db.insert db_input
+    Db.get_db_result_from_tuple tuple
   end
 
   defp save_outputs( outputs, transaction ) do
     for output <- outputs do
       db_output = save_output output, transaction
       addresses = output["scriptPubKey"]["addresses"]
-
-debug "\nsave_outputs addresses #{addresses}"
-
       if addresses != nil do
         for address <- addresses do
           save_address address, db_output.id
@@ -356,23 +341,29 @@ debug "\nsave_outputs addresses #{addresses}"
     end
   end
 
-  def save_transaction( transaction, block_id ) do
-    txid = transaction["txid"]
-    result = Db.all(
-      from t in BlockChainExplorer.Transaction,
-      select: t,
-      where: t.txid == ^txid and t.block_id == ^block_id
-    )
+  def save_transaction( transaction_map, block_id ) do
+    txid = transaction_map["txid"]
+    result = if block_id == nil do
+      result = Db.all(
+        from t in BlockChainExplorer.Transaction,
+        select: t,
+        where: t.txid == ^txid )
+    else
+      result = Db.all(
+        from t in BlockChainExplorer.Transaction,
+        select: t,
+        where: t.txid == ^txid and t.block_id == ^block_id )
+    end
     if length( result ) == 0 do
-      converted = Transaction.convert_to_struct transaction, block_id
+      converted = Transaction.convert_to_struct transaction_map, block_id
       tuple = Db.insert converted
       if elem( tuple, 0 ) == :ok do
         db_transaction = elem( tuple, 1 )
-        outputs = transaction["vout"]
-# [%{"n" => 0, "scriptPubKey" => %{"addresses" => ["mweuYxnDidLJyeLADMTskSPBx5sFP7a3VA"], "asm" => "03275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0 OP_CHECKSIG", "hex" => "2103275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0ac", "reqSigs" => 1, "type" => "pubkey"}, "value" => 0.390625},
-#  %{"n" => 1, "scriptPubKey" => %{"asm" => "OP_RETURN aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "hex" => "6a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "type" => "nulldata"}, "value" => 0.0}]
+        outputs = transaction_map["vout"]
+# [%{"n" => 0, "scriptPubKey" => %{"addresses" => ["mweuYxnDidLJyeLADMTskSPBx5sFP7a3VA"], "asm" => "03275aeb962492a5512728e04dce96ca49a9126b069e7b26c45506c8908b047ad0 OP_CHECKSIG"...},
+#  %{"n" => 1, "scriptPubKey" => %{"asm" => "OP_RETURN aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf9", "type" => "nulldata"}, "value" => 0.0}]
 
-        inputs = transaction["vin"]
+        inputs = transaction_map["vin"]
         save_outputs outputs, db_transaction
         save_inputs inputs, db_transaction
         db_transaction
@@ -382,10 +373,6 @@ debug "\nsave_outputs addresses #{addresses}"
     else
       List.first result
     end
-  end
-
-  def debug str do
-    if false, do: IO.puts str
   end
 
 end

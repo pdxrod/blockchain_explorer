@@ -14,7 +14,7 @@ defmodule BlockChainExplorer.BlockTest do
       for num <- 10..19 do
         block = Enum.at( blocks, num )
         assert String.length( block.block ) > 0
-        tx = Transaction.get_transaction_strs( block )
+        tx = Transaction.get_tx_ids( block )
         assert length( tx ) > 0
         assert Utils.notmt? block.weight
         assert Utils.notmt? block.versionhex

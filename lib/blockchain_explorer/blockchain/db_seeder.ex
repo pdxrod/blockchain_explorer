@@ -19,7 +19,7 @@ defmodule BlockChainExplorer.DbSeeder do
   @impl true
   def handle_info(:timeout, state) do
     # Stop this process, because it's temporary it will not be restarted
-    # IO.puts "\nTerminating DbSeeder"
+    IO.puts "\nTerminating DbSeeder"
     {:stop, :normal, state}
   end
 end
