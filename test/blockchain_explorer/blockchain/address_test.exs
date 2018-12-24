@@ -2,7 +2,6 @@ defmodule BlockChainExplorer.AddressTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.Transaction
-  alias BlockChainExplorer.Block
   alias BlockChainExplorer.Utils
   alias BlockChainExplorer.Rpc
 
@@ -38,8 +37,7 @@ defmodule BlockChainExplorer.AddressTest do
       if Utils.mode == "regtest" do
         num = 400
         block = Blockchain.get_highest_block_from_db_or_bitcoind()
-        blocks = Blockchain.get_n_blocks( block, num )
-        blocks = Enum.map( blocks, &Blockchain.get_from_db_or_bitcoind_by_hash(&1.hash) )
+  #      blocks = Enum.map( blocks, &Blockchain.get_from_db_or_bitcoind_by_hash(&1.hash) )
         blocks = Blockchain.get_n_blocks( block, num )
         uniq = Enum.uniq( block_list( blocks ))
         assert length( uniq ) > 0
