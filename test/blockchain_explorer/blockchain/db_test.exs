@@ -6,7 +6,7 @@ defmodule BlockChainExplorer.DbTest do
   alias BlockChainExplorer.Output
   alias BlockChainExplorer.Input
   alias BlockChainExplorer.Block
-  alias BlockChainExplorer.Repo
+  alias BlockChainExplorer.Db
   alias BlockChainExplorer.Rpc
   import Ecto.Query
 
@@ -15,16 +15,16 @@ defmodule BlockChainExplorer.DbTest do
   describe "db" do
 
     setup do
-      Repo.delete_all(Block)
-      Repo.delete_all(Transaction)
-      Repo.delete_all(Address)
-      Repo.delete_all(Output)
-      Repo.delete_all(Input)
+      Db.delete_all(Block)
+      Db.delete_all(Transaction)
+      Db.delete_all(Address)
+      Db.delete_all(Output)
+      Db.delete_all(Input)
       {:ok, hello: "world"} # setup has to return an :ok tuple, it doesn't matter what
     end
 
     defp read_all_blocks_from_database do
-      Repo.all(
+      Db.all(
         from b in Block,
         select: b,
         where: b.id > -1
@@ -32,7 +32,7 @@ defmodule BlockChainExplorer.DbTest do
     end
 
     defp read_a_transaction_from_database( hash ) do
-      Repo.all(
+      Db.all(
         from t in Transaction,
         select: t,
         where: t.hash == ^hash
@@ -71,7 +71,7 @@ defmodule BlockChainExplorer.DbTest do
       if elem( tuple, 0 ) != :ok, do: raise "Error getting block"
       block = elem( tuple, 1 )
       decoded = Block.convert_to_struct block
-      Repo.insert ( decoded )
+      Db.insert ( decoded )
       blocks = read_all_blocks_from_database()
       assert length(blocks) == 1
     end
@@ -84,9 +84,9 @@ defmodule BlockChainExplorer.DbTest do
       if elem( tuple, 0 ) != :ok, do: raise "Error getting block"
       block = elem( tuple, 1 )
       decoded = Block.convert_to_struct block
-      Repo.insert ( decoded )
+      Db.insert ( decoded )
       err = try do
-        Repo.insert ( decoded )
+        Db.insert ( decoded )
         raise "We should not have reached this line, because the previous line should have blown up"
       rescue
         e in Ecto.ConstraintError -> e
@@ -101,7 +101,7 @@ defmodule BlockChainExplorer.DbTest do
       assert length( blocks ) == 5
       decoded = Enum.map( blocks, &Block.convert_to_struct/1 )
       for block <- decoded do
-        Repo.insert ( block )
+        Db.insert ( block )
       end
       blocks = read_all_blocks_from_database()
       assert length( blocks ) == 5
@@ -127,7 +127,7 @@ defmodule BlockChainExplorer.DbTest do
       assert Enum.member?( keys, "hash" )
       not_db_block = Blockchain.get_from_db_or_bitcoind_by_hash( bitcoind_block["hash"] )
 
-# This doesn't work:      Repo.insert ( bitcoind_block )
+# This doesn't work:      Db.insert ( bitcoind_block )
       insertable_block = Block.convert_to_struct bitcoind_block
       assert not_db_block == insertable_block
 
@@ -179,7 +179,7 @@ defmodule BlockChainExplorer.DbTest do
       bitcoind_block = elem( tuple, 1 )
       insertable_block = Block.convert_to_struct bitcoind_block
       assert insertable_block.hash == bitcoind_block[ "hash" ]
-      Repo.insert( insertable_block )
+      Db.insert( insertable_block )
 
       blocks = read_all_blocks_from_database()
       db_block = List.first blocks

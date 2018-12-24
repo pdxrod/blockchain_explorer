@@ -1,4 +1,4 @@
-defmodule BlockChainExplorer.Repo.Migrations.AddHashIndexToBlocks do
+defmodule BlockChainExplorer.Db.Migrations.AddHashIndexToBlocks do
   use Ecto.Migration
 
   def change do

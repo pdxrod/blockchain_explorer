@@ -6,7 +6,7 @@ config :blockchain_explorer, BlockChainExplorerWeb.Endpoint,
   http: [port: 4001],
   server: false
 
-config :blockchain_explorer, BlockChainExplorer.Repo,
+config :blockchain_explorer, BlockChainExplorer.Db,
   adapter: Ecto.Adapters.MySQL,
   database: "blockchain_explorer_test",
   username: "root",

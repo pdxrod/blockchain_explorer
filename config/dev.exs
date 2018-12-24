@@ -39,7 +39,7 @@ config :blockchain_explorer, BlockChainExplorerWeb.Endpoint,
     ]
   ]
 
-config :blockchain_explorer, BlockChainExplorer.Repo,
+config :blockchain_explorer, BlockChainExplorer.Db,
   adapter: Ecto.Adapters.MySQL,
   database: "blockchain_explorer_dev",
   username: "root",

@@ -38,11 +38,11 @@ Create a .bitcoin/ folder in your home directory
 
 Start the first instance like this
 
-`start-bitcoind.sh regtest 1`
+`start-bitcoind.sh regtest USERNAME PASSWORD 1`
 
 and the second like this
 
-`start-bitcoind.sh regtest 2`
+`start-bitcoind.sh regtest USERNAME PASSWORD 2`
 
 # further information
 

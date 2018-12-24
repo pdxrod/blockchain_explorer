@@ -18,7 +18,7 @@ config :blockchain_explorer, BlockChainExplorerWeb.Endpoint,
   url: [host: "example.com", port: 80],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
-config :blockchain_explorer, BlockChainExplorer.Repo,
+config :blockchain_explorer, BlockChainExplorer.Db,
   adapter: Ecto.Adapters.MySQL,
   database: "blockchain_explorer_prod",
   username: "",

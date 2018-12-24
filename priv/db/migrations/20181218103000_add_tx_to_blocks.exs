@@ -1,4 +1,4 @@
-defmodule BlockChainExplorer.Repo.Migrations.AddTxToBlocks do
+defmodule BlockChainExplorer.Db.Migrations.AddTxToBlocks do
   use Ecto.Migration
 
   def change do

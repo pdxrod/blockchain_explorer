@@ -1,4 +1,4 @@
-defmodule BlockChainExplorer.Repo.Migrations.CreateAddresses do
+defmodule BlockChainExplorer.Db.Migrations.CreateAddresses do
   use Ecto.Migration
 
   def change do

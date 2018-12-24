@@ -6,7 +6,7 @@ defmodule BlockChainExplorer.Transaction do
   alias BlockChainExplorer.Input
   alias BlockChainExplorer.Block
   alias BlockChainExplorer.Utils
-  alias BlockChainExplorer.Repo
+  alias BlockChainExplorer.Db
   alias BlockChainExplorer.Rpc
   use Ecto.Schema
   import Ecto.Query
@@ -33,7 +33,7 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   def get_transactions do
-    Repo.all(
+    Db.all(
       from t in Transaction,
       select: t,
       where: t.block_id > -1
@@ -41,7 +41,7 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   def get_transactions_with_block_id( block_id ) do
-    Repo.all(
+    Db.all(
       from t in Transaction,
       select: t,
       where: t.block_id == ^block_id
@@ -51,13 +51,13 @@ defmodule BlockChainExplorer.Transaction do
   def get_transaction_with_hash( transaction_str, block_id \\ nil ) do
     result = case block_id do
       nil ->
-        Repo.all(
+        Db.all(
           from t in Transaction,
           select: t,
           where: t.hash == ^transaction_str
         )
       _ ->
-        Repo.all(
+        Db.all(
           from t in Transaction,
           select: t,
           where: t.hash == ^transaction_str and t.block_id == ^block_id
@@ -81,7 +81,7 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   def get_transaction_with_txid( transaction_str, block_id ) do
-    result = Repo.all(
+    result = Db.all(
       from t in BlockChainExplorer.Transaction,
       select: t,
       where: t.txid == ^transaction_str and t.block_id == ^block_id
@@ -122,7 +122,7 @@ debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{o
     addresses = if output_id == nil do
                   []
                 else
-                  Repo.all(
+                  Db.all(
                     from a in Address,
                     select: a,
                     where: a.output_id == ^output_id
@@ -152,13 +152,13 @@ debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{o
 
   def get_addresses( address_str, output_id ) do
     if address_str == nil do
-      Repo.all(
+      Db.all(
         from a in BlockChainExplorer.Address,
         select: a,
         where: a.output_id == ^output_id
       )
     else
-      Repo.all(
+      Db.all(
         from a in BlockChainExplorer.Address,
         select: a,
         where: a.address == ^address_str and a.output_id == ^output_id
@@ -191,7 +191,7 @@ debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{o
   end
 
   def get_outputs( transaction_id ) do
-    Repo.all(
+    Db.all(
       from o in Output,
       select: o,
       where: o.transaction_id == ^transaction_id
@@ -199,7 +199,7 @@ debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{o
   end
 
   def get_inputs( transaction_id ) do
-    Repo.all(
+    Db.all(
       from i in Input,
       select: i,
       where: i.transaction_id == ^transaction_id
@@ -302,7 +302,7 @@ debug "\noutput_has_addresses? #{output.id}, #{output.value}, #{output.hex}, #{o
 
 debug "\nsave_output #{transaction.id}, #{db_output.value}, asm: #{db_output.asm}"
 
-    tuple = Repo.insert db_output
+    tuple = Db.insert db_output
     if elem( tuple, 0 ) == :ok do
       elem( tuple, 1 )
     else
@@ -315,7 +315,7 @@ debug "\nsave_output #{transaction.id}, #{db_output.value}, asm: #{db_output.asm
 debug "\nsave_address #{address_str} #{output_id}"
 
     address = %Address{ address: address_str, output_id: output_id }
-    Repo.insert address
+    Db.insert address
     List.first get_addresses( address_str, output_id )
   end
 
@@ -331,7 +331,7 @@ debug "\nsave_address #{address_str} #{output_id}"
                 scriptsig: input["scriptSig"],
                 coinbase: input["coinbase"],
                 asm: input["asm"], hex: input["hex"] }
-    Repo.insert db_input
+    Db.insert db_input
     List.first get_inputs( transaction.id )
   end
 
@@ -358,14 +358,14 @@ debug "\nsave_outputs addresses #{addresses}"
 
   def save_transaction( transaction, block_id ) do
     txid = transaction["txid"]
-    result = Repo.all(
+    result = Db.all(
       from t in BlockChainExplorer.Transaction,
       select: t,
       where: t.txid == ^txid and t.block_id == ^block_id
     )
     if length( result ) == 0 do
       converted = Transaction.convert_to_struct transaction, block_id
-      tuple = Repo.insert converted
+      tuple = Db.insert converted
       if elem( tuple, 0 ) == :ok do
         db_transaction = elem( tuple, 1 )
         outputs = transaction["vout"]

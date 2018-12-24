@@ -1,7 +1,7 @@
 defmodule BlockChainExplorer.Blockchain do
   alias BlockChainExplorer.Block
   alias BlockChainExplorer.Utils
-  alias BlockChainExplorer.Repo
+  alias BlockChainExplorer.Db
   alias BlockChainExplorer.Rpc
   import Ecto.Query
 
@@ -12,7 +12,7 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   def get_from_db_or_bitcoind_by_hash( hash ) do
-    result = Repo.all(
+    result = Db.all(
       from b in Block,
       select: b,
       where: b.hash == ^hash
@@ -24,7 +24,7 @@ defmodule BlockChainExplorer.Blockchain do
       else
         block_map = elem( result, 1 )
         insertable_block = Block.convert_to_struct block_map
-        Repo.insert insertable_block
+        Db.insert insertable_block
         insertable_block
       end
     else
@@ -33,7 +33,7 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   def get_from_db_or_bitcoind_by_height( height ) do
-    result = Repo.all(
+    result = Db.all(
       from b in Block,
       select: b,
       where: b.height == ^height
@@ -43,7 +43,7 @@ defmodule BlockChainExplorer.Blockchain do
       result = Rpc.getblock( hash )
       block_map = elem( result, 1 )
       insertable_block = Block.convert_to_struct block_map
-      Repo.insert insertable_block
+      Db.insert insertable_block
       insertable_block
     else
       List.first( result )

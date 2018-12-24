@@ -1,4 +1,4 @@
-defmodule BlockChainExplorer.Repo.Migrations.AddUniquenessConstraints do
+defmodule BlockChainExplorer.Db.Migrations.AddUniquenessConstraints do
   use Ecto.Migration
 
   def change do
