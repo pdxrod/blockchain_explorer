@@ -18,8 +18,8 @@ defmodule BlockChainExplorer.TransactionFinder do
   end
 
   @num_blocks 100
-  @find_wait (@num_blocks * 40)
-  @peek_wait (@num_blocks * 10)
+  @find_wait (@num_blocks * 20)
+  @peek_wait (@num_blocks * 8)
 
   defp find_blocks( address_str ) do
     blocks = Blockchain.get_n_blocks( nil, @num_blocks )

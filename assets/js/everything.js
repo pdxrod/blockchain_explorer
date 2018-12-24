@@ -14,8 +14,8 @@ if( form_number ) { // You're on the /blocks page
   } );
 }
 
-const LOOP = 12;
-const TIME = 12000;
+const LOOP = 9;
+const TIME = 8000;
 
 var transactions_please_wait_message = document.getElementById( "transactions_please_wait_message" );
 if( transactions_please_wait_message ) { // You're on the /transactions page

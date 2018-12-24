@@ -13,8 +13,8 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       Utils.notmt? addresses
     end
 
-    @loop 5
-    @time 5_000
+    @loop 9           # should correspond to LOOP and TIME in the Javascript
+    @time 8_000
 
     @tag timeout: :infinity
     test "two simultaneous puts and finds" do
@@ -27,7 +27,8 @@ defmodule BlockChainExplorer.TransactionFinderTest do
 
       TransactionFinder.put address_str, a_transaction
       transactions = Transaction.get_transactions
-      a_nother_transaction = List.first transactions
+      a_nother_transaction = List.last transactions
+      assert a_transaction.txid != a_nother_transaction.txid
       TransactionFinder.put "2Mud", a_nother_transaction
 
       TransactionFinder.find_transactions address_str
