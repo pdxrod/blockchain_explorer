@@ -14,7 +14,7 @@ defmodule BlockChainExplorer.TransactionFinderTest do
     end
 
     @loop 9           # should correspond to LOOP and TIME in the Javascript
-    @time 8_000
+    @time 5_000
 
     @tag timeout: :infinity
     test "two simultaneous puts and finds" do
