@@ -177,6 +177,8 @@ defmodule BlockChainExplorer.BlockchainTest do
       block = Blockchain.get_highest_block_from_db_or_bitcoind()
       one = Blockchain.get_n_blocks(block, 4, "previousblockhash", [ block ])
       two = Blockchain.get_n_blocks(block, 4, "previousblockhash", [])
+      one = Enum.map( one, &Block.convert_struct( &1 ))
+      two = Enum.map( two, &Block.convert_struct( &1 ))
       assert one == two
       one = Blockchain.get_next_or_previous_n_blocks(block, 4, "previousblockhash", [ block ])
       two = Blockchain.get_next_or_previous_n_blocks(block, 4, "previousblockhash", [])
