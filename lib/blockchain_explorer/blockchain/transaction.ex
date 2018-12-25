@@ -81,13 +81,13 @@ defmodule BlockChainExplorer.Transaction do
 
   def get_transaction_with_txid( txid, block_id \\ nil ) do
     result = if block_id == nil do
-      result = Db.all(
+      Db.all(
         from t in BlockChainExplorer.Transaction,
         select: t,
         where: t.txid == ^txid
       )
     else
-      result = Db.all(
+      Db.all(
         from t in BlockChainExplorer.Transaction,
         select: t,
         where: t.txid == ^txid and t.block_id == ^block_id
@@ -307,12 +307,6 @@ defmodule BlockChainExplorer.Transaction do
     Db.get_db_result_from_tuple tuple
   end
 
-  defp save_addresses( output ) do
-    for address_str <- output.addresses do
-      save_address( address_str, output.id )
-    end
-  end
-
   defp save_input( input, transaction ) do
     db_input = %Input{ transaction_id: transaction.id,
                 sequence: input["sequence"],
@@ -344,12 +338,12 @@ defmodule BlockChainExplorer.Transaction do
   def save_transaction( transaction_map, block_id ) do
     txid = transaction_map["txid"]
     result = if block_id == nil do
-      result = Db.all(
+      Db.all(
         from t in BlockChainExplorer.Transaction,
         select: t,
         where: t.txid == ^txid )
     else
-      result = Db.all(
+      Db.all(
         from t in BlockChainExplorer.Transaction,
         select: t,
         where: t.txid == ^txid and t.block_id == ^block_id )

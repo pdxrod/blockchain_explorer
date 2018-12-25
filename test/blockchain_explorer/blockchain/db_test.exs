@@ -107,8 +107,8 @@ defmodule BlockChainExplorer.DbTest do
       assert length( blocks ) == 5
     end
 
-# There are potentially three types of 'block' - a map from bitcoind, a struct from module Block, and a struct from the db
-# This test may be ugly, but it shows how to convert from one block format to another
+# There are potentially four types of 'block' - a map from bitcoind, a struct from module Block, a struct with id & inserted_at set to nil,
+# and a struct from the db. This test may be long & ugly, but it shows how to convert from one block format to another.
     test "trying to read from database, reading from bitcoind instead" do
       blocks = read_all_blocks_from_database()
       assert length(blocks) == 0
@@ -129,7 +129,10 @@ defmodule BlockChainExplorer.DbTest do
 
 # This doesn't work:      Db.insert ( bitcoind_block )
       insertable_block = Block.convert_to_struct bitcoind_block
-      assert not_db_block == insertable_block
+
+      insertable_converted = Block.convert_struct insertable_block
+      not_db_converted = Block.convert_struct not_db_block
+      assert not_db_converted == insertable_converted
 
 # %BlockChainExplorer.Block{__meta__: #Ecto.Schema.Metadata<:built, "blocks">, bits: "207fffff", block: "bits=\"207fffff\"..."...}
       keys = Map.keys insertable_block

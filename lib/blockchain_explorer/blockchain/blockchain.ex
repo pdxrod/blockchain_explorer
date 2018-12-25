@@ -24,8 +24,8 @@ defmodule BlockChainExplorer.Blockchain do
       else
         block_map = elem( result, 1 )
         insertable_block = Block.convert_to_struct block_map
-        Db.insert insertable_block
-        insertable_block
+        result = Db.insert insertable_block
+        Db.get_db_result_from_tuple result
       end
     else
       List.first( result )
@@ -43,8 +43,8 @@ defmodule BlockChainExplorer.Blockchain do
       result = Rpc.getblock( hash )
       block_map = elem( result, 1 )
       insertable_block = Block.convert_to_struct block_map
-      Db.insert insertable_block
-      insertable_block
+      result = Db.insert insertable_block
+      Db.get_db_result_from_tuple result
     else
       List.first( result )
     end

@@ -63,8 +63,8 @@ To start Phoenix:
 
 Now visit [`localhost:4000`](http://localhost:4000) in a browser
 
-On a Mac, your data is written in Library/Application Support/Bitcoin,
-unless you've specified a datadir (see start-bitcoind.sh)
+On a Mac, your data is written in ~/Library/Application Support/Bitcoin,
+unless you've specified a datadir (see start-bitcoind.sh). On Linux, ~/.bitcoin.
 
 You can turn it into a soft link pointing to a large (500 Gb+) external
 drive - which you probably will have to do if using testnet or mainnet,
