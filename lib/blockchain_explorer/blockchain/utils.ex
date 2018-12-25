@@ -1,5 +1,4 @@
 defmodule BlockChainExplorer.Utils do
-  alias BlockChainExplorer.Blockchain
   alias BlockChainExplorer.Rpc
 
   defmodule AsynchronousTask do

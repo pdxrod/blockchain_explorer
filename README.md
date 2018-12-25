@@ -3,7 +3,9 @@
 There are many already out there. I wrote this blockchain
 explorer to learn Elixir, Phoenix, and Blockchain.
 
-I couldn't have done it without https://github.com/pcorey/hello_blockchain
+I couldn't have done it without [github.com/pcorey/hello_blockchain](https://github.com/pcorey/hello_blockchain)
+
+It can be seen running at [http://subcryption.com/](http://subcryption.com/)
 
 3 December 2018 - tested with Elixir 1.7.2, Erlang/OTP 21 and bitcoind version 0.15.99.0
 
