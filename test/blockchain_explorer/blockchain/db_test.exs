@@ -130,8 +130,8 @@ defmodule BlockChainExplorer.DbTest do
 # This doesn't work:      Db.insert ( bitcoind_block )
       insertable_block = Block.convert_to_struct bitcoind_block
 
-      insertable_converted = Block.convert_struct insertable_block
-      not_db_converted = Block.convert_struct not_db_block
+      insertable_converted = Block.remove_db_specific_keys insertable_block
+      not_db_converted = Block.remove_db_specific_keys not_db_block
       assert not_db_converted == insertable_converted
 
 # %BlockChainExplorer.Block{__meta__: #Ecto.Schema.Metadata<:built, "blocks">, bits: "207fffff", block: "bits=\"207fffff\"..."...}
@@ -170,7 +170,7 @@ defmodule BlockChainExplorer.DbTest do
       db_block = Map.delete( db_block, :id )
       db_block = Map.delete( db_block, :inserted_at )
       db_block = Map.delete( db_block, :updated_at )
-      insertable_block = Block.convert_struct( insertable_block )
+      insertable_block = Block.remove_db_specific_keys( insertable_block )
       assert db_block == insertable_block
     end
 

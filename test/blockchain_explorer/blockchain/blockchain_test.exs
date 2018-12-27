@@ -148,8 +148,8 @@ defmodule BlockChainExplorer.BlockchainTest do
       one = Blockchain.get_n_blocks( nil, 4 )
       block = Blockchain.get_highest_block_from_db_or_bitcoind()
       two = Blockchain.get_next_or_previous_n_blocks( block, 4 )
-      a_block = Block.convert_struct List.last( one )
-      a_nother_block = Block.convert_struct List.last( two )
+      a_block = Block.remove_db_specific_keys List.last( one )
+      a_nother_block = Block.remove_db_specific_keys List.last( two )
       assert a_block == a_nother_block
     end
 
@@ -177,8 +177,8 @@ defmodule BlockChainExplorer.BlockchainTest do
       block = Blockchain.get_highest_block_from_db_or_bitcoind()
       one = Blockchain.get_n_blocks(block, 4, "previousblockhash", [ block ])
       two = Blockchain.get_n_blocks(block, 4, "previousblockhash", [])
-      one = Enum.map( one, &Block.convert_struct( &1 ))
-      two = Enum.map( two, &Block.convert_struct( &1 ))
+      one = Enum.map( one, &Block.remove_db_specific_keys( &1 ))
+      two = Enum.map( two, &Block.remove_db_specific_keys( &1 ))
       assert one == two
       one = Blockchain.get_next_or_previous_n_blocks(block, 4, "previousblockhash", [ block ])
       two = Blockchain.get_next_or_previous_n_blocks(block, 4, "previousblockhash", [])

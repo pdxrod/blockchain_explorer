@@ -103,7 +103,8 @@ defmodule BlockChainExplorer.Block do
     |> convert_to_map()
   end
 
-  def convert_struct( block_map ) do
+# This is used to compare what you put in the db with what you retrieve - inserting causes all these keys to be set and given values
+  def remove_db_specific_keys( block_map ) do
     block = Map.delete( block_map, :__meta__ )
     block = Map.delete( block, :block )
     block = Map.delete( block, :id )

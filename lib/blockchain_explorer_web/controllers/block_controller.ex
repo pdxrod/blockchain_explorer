@@ -8,26 +8,21 @@ defmodule BlockChainExplorerWeb.BlockController do
   alias BlockChainExplorer.Transaction
 
   defp show_error( conn, page, error ) do
-    case error do
-      {:error, :invalid, 0} ->
-        render(conn, page, error: "invalid request")
-      {:error, %HTTPoison.Error{id: nil, reason: :timeout}} ->
-        render(conn, page, error: "timeout")
-      {:error, %HTTPoison.Error{id: nil, reason: :econnrefused}} ->
-        render(conn, page, error: "connection refused")
-      {:error, %{"code" => -28, "message" => "Loading block index..."}} ->
-        render(conn, page, error: "bitcoind starting")
-      {:error, %{"code" => -5, "message" => "Block not found"}} ->
-        render(conn, page, error: "block not found")
-      {:error, %{"code" => -1, "message" => "JSON integer out of range"}} ->
-        render(conn, page, error: "no such block")
-      {:error, %{"code" => -8, "message" => "Block height out of range"}} ->
-        render(conn, page, error: "no such block")
-      %{} ->
-        render(conn, page, error: "no such block")
+    message = case error[:error] do
+      "0" ->
+        "invalid request"
+      "econnrefused" ->
+        "connection refused"
+      "Loading block index..." ->
+        "bitcoind starting"
+      "JSON integer out of range" ->
+        "no such block"
+      "Block height out of range" ->
+        "no such block"
       _ ->
-        render(conn, page, error: "unknown error")
+        error[:error]
     end
+    render( conn, page, error: message )
   end
 
   defp latest?( block ) do
@@ -62,7 +57,8 @@ defmodule BlockChainExplorerWeb.BlockController do
           ok == :ok ->
             show_index_page( conn, elem( result, 1 ))
           true ->
-            show_error( conn, "index.html", result )
+            error = Utils.error result
+            show_error( conn, "index.html", error )
         end
 
       "previousblockhash" ->
@@ -72,7 +68,8 @@ defmodule BlockChainExplorerWeb.BlockController do
             {:ok, hash} ->
               show_index_page( conn, hash, true )
             other ->
-              show_error( conn, "index.html", other )
+              error = Utils.error other
+              show_error( conn, "index.html", error )
           end
         else
           hash = block.hash
