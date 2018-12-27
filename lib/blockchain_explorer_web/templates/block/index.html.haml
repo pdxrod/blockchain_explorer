@@ -3,10 +3,13 @@
 %br
 %br
 
-.form-group
-  %form#navigate{:method => "post", :name => "navigate"}
-    - next = next_button @latest
-    = next |> raw
-    = previous_button |> raw
-  %br
-    = raw( mark_blocks @blocks )
+- if assigns[:latest] do
+  .form-group
+    %form#navigate{:method => "post", :name => "navigate"}
+      - next = next_button @latest
+      = next |> raw
+      = previous_button |> raw
+    %br
+      = raw( mark_blocks @blocks )
+- if assigns[:error] do
+  "Error: #{@error}"
