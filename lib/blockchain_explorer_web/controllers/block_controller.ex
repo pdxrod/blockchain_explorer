@@ -136,12 +136,16 @@ defmodule BlockChainExplorerWeb.BlockController do
         find_transactions_in_background( conn, elem( status, 1 ) )
       _ ->
         a_transaction = Transaction.seed_db_and_get_a_useful_transaction()
-        addresses = Transaction.get_addresses a_transaction.id
-        address = List.first addresses
-        address_str = address.address
-        address_str = String.slice address_str, 0..4
-        decoded = Blockchain.get_highest_block_from_db_or_bitcoind()
-        render( conn, "show.html", block: decoded, address_str: address_str )
+        if a_transaction[:error] do
+          show_error conn, "show.html", a_transaction
+        else
+          addresses = Transaction.get_addresses a_transaction.id
+          address = List.first addresses
+          address_str = address.address
+          address_str = String.slice address_str, 0..4
+          decoded = Blockchain.get_highest_block_from_db_or_bitcoind()
+          render( conn, "show.html", block: decoded, address_str: address_str )
+        end
     end
   end
 end

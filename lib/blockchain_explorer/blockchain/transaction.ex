@@ -231,9 +231,13 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp transaction_with_everything_in_it_from_block( block_map ) do
-    db_block =  Blockchain.get_from_db_or_bitcoind_by_hash( block_map.hash ) # inserts it in db if it's not there
-    list_of_tx_ids = get_tx_ids( block_map )
-    transaction_with_everything_in_it_from_transactions( list_of_tx_ids, db_block.id )
+    if block_map[:error] do
+      block_map
+    else
+      db_block =  Blockchain.get_from_db_or_bitcoind_by_hash( block_map.hash ) # inserts it in db if it's not there
+      list_of_tx_ids = get_tx_ids( block_map )
+      transaction_with_everything_in_it_from_transactions( list_of_tx_ids, db_block.id )
+    end
   end
 
   def transaction_with_everything_in_it_from_list( blocks_list ) do

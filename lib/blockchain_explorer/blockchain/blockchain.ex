@@ -6,9 +6,12 @@ defmodule BlockChainExplorer.Blockchain do
   import Ecto.Query
 
   def get_highest_block_from_db_or_bitcoind do
-    Rpc.getbestblockhash()
-    |> elem( 1 )
-    |> get_from_db_or_bitcoind_by_hash()
+    tuple = Rpc.getbestblockhash()
+    if elem( tuple, 0 ) == :ok do
+      get_from_db_or_bitcoind_by_hash( elem( tuple, 1 ))
+    else
+      Utils.error tuple
+    end
   end
 
   def get_from_db_or_bitcoind_by_hash( hash ) do
@@ -51,7 +54,7 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   def get_next_or_previous_block( block, direction ) do
-    if block == %{} do
+    if block == %{} or block[:error] do
       block
     else
       hash = case direction do

@@ -26,7 +26,7 @@
                 "regtest" -> "The explorer is running in 'regtest' mode. This saves disk space, but there is limited data."
                 "main" -> "The explorer is running as a full 'mainnet' node, communicating with the real blockchain."
                 "test" -> "The explorer is running in 'testnet' mode, which is like a full node, but without real money."
-                other -> "BlockChainExplorer.Utils.mode returned an invalid value - '#{other}'"
+                other -> "Error - '#{other[:error]}'"
               end
             %><br/>
               The code for this application can be found at <a class="link" href="https://github.com/pdxrod/blockchain_explorer">github.com/pdxrod/blockchain_explorer</a>.

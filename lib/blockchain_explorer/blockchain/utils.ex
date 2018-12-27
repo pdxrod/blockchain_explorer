@@ -67,8 +67,12 @@ defmodule BlockChainExplorer.Utils do
 
   def mode do # 'main', 'test' or 'regtest'
     result_tuple = Rpc.getmininginfo
-    info = elem( result_tuple, 1 )
-    info[ "chain" ]
+    if elem( result_tuple, 0 ) == :ok do
+      info = elem( result_tuple, 1 )
+      info[ "chain" ]
+    else
+      error result_tuple
+    end
   end
 
   def is_in_list?( list, item ) do
