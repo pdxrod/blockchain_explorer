@@ -13,6 +13,10 @@ defmodule BlockChainExplorer.UtilsTest do
       assert "binary" == Utils.typeof( "Hello" )
       assert "list" == Utils.typeof( 'Hello' )
       assert "list" == Utils.typeof( [:a, :b] )
+      assert "atom" == Utils.typeof( :foo )
+      assert "map" == Utils.typeof( %{} )
+      assert "map" == Utils.typeof( %{foo: :bar} )
+      assert "tuple" == Utils.typeof( {:foo, "Hello"} )
     end
 
     test "mt?" do
@@ -88,6 +92,36 @@ defmodule BlockChainExplorer.UtilsTest do
     test "bitcoin mode" do
       result = Utils.mode
       assert result == "main" || result == "test" || result == "regtest"
+    end
+
+# Some of these are IRL errors
+    @tests [ {  {:message, %{message: {:message, "message"}}},                       %{message: "message"} },
+             {  {:error, :invalid, 0},                                               %{error: "0"} },
+             {  {:error, %HTTPoison.Error{id: nil, reason: :timeout}} ,              %{error: "timeout"} },
+             {  {:error, %HTTPoison.Error{id: nil, reason: :econnrefused}},          %{error: "econnrefused"} },
+             {  {:error, %{"code" => -28, "message" => "Loading block index..."}},   %{error: "Loading block index..."} },
+             {  {:error, %{"code" => -5, "message" => "Block not found"}},           %{error: "Block not found"} },
+             {  {:error, %{"code" => -1, "message" => "JSON integer out of range"}}, %{error: "JSON integer out of range"} },
+             {  {:error, %{"code" => -8, "message" => "Block height out of range"}}, %{error: "Block height out of range"} },
+             {  {:error, %{connect: :econnrefused}},                                 %{error: "econnrefused"} },
+             {  {:error, %{connect: 'econnrefused'}},                                %{error: "100"} } # Can you work out why?
+           ]
+
+    test "flatten not-ok tuple" do
+      assert "#{[ 1, [1, "bar"], "baz"]}" == <<1, 1, 98, 97, 114, 98, 97, 122>>
+      err = try do
+        Utils.error {:ok, :this, "message"}
+        raise "We should not have reached this line - the previous line should have resulted in an exception"
+      rescue
+        r in RuntimeError -> r
+      end
+      assert err.message == "Utils.error should not be used with tuples beginning with :ok"
+
+      for pair <- @tests do
+        reality = Utils.error elem( pair, 0 )
+        desire = elem( pair, 1 )
+        assert reality == desire
+      end
     end
 
   end

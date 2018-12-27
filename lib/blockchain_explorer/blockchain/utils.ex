@@ -99,4 +99,28 @@ defmodule BlockChainExplorer.Utils do
     end
   end
 
+# Various functions produce a range of not-ok results - this reduces them to one simple form - %{error: "message"}
+  defp find_message( arg ) do
+    message = case typeof( arg ) do
+                "tuple" ->
+                  "#{ find_message( elem( arg, tuple_size( arg ) - 1 )) }"
+                "map" ->
+                  "#{ find_message( List.last( Map.values( arg )) ) }"
+                "list" ->
+                  "#{ find_message( List.last( arg ) ) }"
+                _ ->
+                  "#{ arg }"
+              end
+    message
+  end
+
+# {:error, %{"code" => -28, "message" => "Loading block index..."}} -> %{error: "Loading block index..."}
+# {:error, %HTTPoison.Error{id: nil, reason: :econnrefused}} -> %{error: "econnrefused"}
+  def error( tuple ) do
+    if elem( tuple, 0 ) == :ok, do: raise "Utils.error should not be used with tuples beginning with :ok"
+    atom = elem( tuple, 0 )
+    tail = Tuple.delete_at tuple, 0
+    Map.new [ {atom, find_message( tail )} ]
+  end
+
 end

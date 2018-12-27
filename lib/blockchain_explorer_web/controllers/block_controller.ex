@@ -143,7 +143,7 @@ defmodule BlockChainExplorerWeb.BlockController do
         address = List.first addresses
         address_str = address.address
         address_str = String.slice address_str, 0..4
-        decoded = Blockchain.get_highest_block_from_db_or_bitcoind() 
+        decoded = Blockchain.get_highest_block_from_db_or_bitcoind()
         render( conn, "show.html", block: decoded, address_str: address_str )
     end
   end
