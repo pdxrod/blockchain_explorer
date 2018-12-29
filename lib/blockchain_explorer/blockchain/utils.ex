@@ -121,10 +121,14 @@ defmodule BlockChainExplorer.Utils do
 # {:error, %{"code" => -28, "message" => "Loading block index..."}} -> %{error: "Loading block index..."}
 # {:error, %HTTPoison.Error{id: nil, reason: :econnrefused}} -> %{error: "econnrefused"}
   def error( tuple ) do
-    if elem( tuple, 0 ) == :ok, do: raise "Utils.error should not be used with tuples beginning with :ok"
-    atom = elem( tuple, 0 )
-    tail = Tuple.delete_at tuple, 0
-    Map.new [ {atom, find_message( tail )} ]
+    case typeof( tuple ) do
+      "tuple" ->
+        if elem( tuple, 0 ) == :ok, do: raise "Utils.error should not be used with tuples beginning with :ok"
+        atom = elem( tuple, 0 )
+        tail = Tuple.delete_at tuple, 0
+        Map.new [ {atom, find_message( tail )} ]
+      _ -> tuple
+    end
   end
 
 end

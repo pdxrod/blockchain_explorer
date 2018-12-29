@@ -63,10 +63,12 @@ defmodule BlockChainExplorer.Transaction do
           where: t.hash == ^transaction_str and t.block_id == ^block_id
         )
     end
-
     if length( result ) == 0 do
       hex = get_hex transaction_str
-      tuple = Rpc.decoderawtransaction hex
+      tuple = case hex do
+        %{error: _} -> hex
+        _ -> Rpc.decoderawtransaction hex
+      end
       if elem( tuple, 0 ) == :ok do
         transaction = elem( tuple, 1 )
         transaction = save_transaction( transaction, block_id )
@@ -231,12 +233,15 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp transaction_with_everything_in_it_from_block( block_map ) do
-    if block_map[:error] do
-      block_map
-    else
-      db_block =  Blockchain.get_from_db_or_bitcoind_by_hash( block_map.hash ) # inserts it in db if it's not there
-      list_of_tx_ids = get_tx_ids( block_map )
-      transaction_with_everything_in_it_from_transactions( list_of_tx_ids, db_block.id )
+
+# IO.puts "\ntransaction_with_everything_in_it_from_block"
+# IO.puts Utils.typeof( block_map )
+    case block_map do
+      %{error: _} -> block_map
+      _ ->
+        db_block =  Blockchain.get_from_db_or_bitcoind_by_hash( block_map.hash ) # inserts it in db if it's not there
+        list_of_tx_ids = get_tx_ids( block_map )
+        transaction_with_everything_in_it_from_transactions( list_of_tx_ids, db_block.id )
     end
   end
 

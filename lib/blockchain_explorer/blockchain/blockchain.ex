@@ -54,18 +54,18 @@ defmodule BlockChainExplorer.Blockchain do
   end
 
   def get_next_or_previous_block( block, direction ) do
-    if block == %{} or block[:error] do
-      block
-    else
-      hash = case direction do
-        "previousblockhash" -> block.previousblockhash
-        "nextblockhash"     -> block.nextblockhash
-        other -> raise "get_next_or_previous_block second argument is '#{other}' - it should be previousblockhash or nextblockhash"
-      end
-      case hash do
-        nil -> block
-        _ -> get_from_db_or_bitcoind_by_hash( hash )
-      end
+    case block do
+      %{error: _} -> block
+      _ ->
+        hash = case direction do
+          "previousblockhash" -> block.previousblockhash
+          "nextblockhash"     -> block.nextblockhash
+          other -> raise "get_next_or_previous_block second argument is '#{other}' - it should be previousblockhash or nextblockhash"
+        end
+        case hash do
+          nil -> block
+          _ -> get_from_db_or_bitcoind_by_hash( hash )
+        end
     end
   end
 

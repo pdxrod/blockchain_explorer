@@ -4,6 +4,24 @@ defmodule BlockChainExplorerWeb.TransactionController do
   alias BlockChainExplorer.Transaction
   alias BlockChainExplorer.TransactionFinder
 
+    defp show_error( conn, page, error ) do
+      message = case error[:error] do
+        "0" ->
+          "invalid request"
+        "econnrefused" ->
+          "connection refused"
+        "Loading block index..." ->
+          "bitcoind starting"
+        "JSON integer out of range" ->
+          "no such block"
+        "Block height out of range" ->
+          "no such block"
+        _ ->
+          error[:error]
+      end
+      render( conn, page, error: message )
+    end
+    
     def show(conn, %{"id" => hash}) do
       conn = assign(conn, :error, "")
       transaction = Transaction.get_transaction_with_hash hash

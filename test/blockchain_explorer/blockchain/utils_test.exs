@@ -104,6 +104,7 @@ defmodule BlockChainExplorer.UtilsTest do
              {  {:error, %{"code" => -1, "message" => "JSON integer out of range"}}, %{error: "JSON integer out of range"} },
              {  {:error, %{"code" => -8, "message" => "Block height out of range"}}, %{error: "Block height out of range"} },
              {  {:error, %{connect: :econnrefused}},                                 %{error: "econnrefused"} },
+             {  %{error: "econnrefused" },                                           %{error: "econnrefused"} },
              {  {:error, %{connect: 'econnrefused'}},                                %{error: "100"} } # Can you work out why?
            ]
 
