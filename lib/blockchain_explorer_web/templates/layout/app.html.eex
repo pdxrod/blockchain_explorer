@@ -17,7 +17,7 @@
    </head>
    <body>
       <div class="outer">
-        <span id="error"><%= @error %></span>
+        <span id="error" class="error"><%= @error %></span>
 
         <div class="container">
           <span class="topofpage">

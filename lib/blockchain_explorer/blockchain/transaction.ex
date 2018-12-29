@@ -72,7 +72,7 @@ defmodule BlockChainExplorer.Transaction do
         transaction = save_transaction( transaction, block_id )
         Transaction.convert_to_struct transaction
       else
-        %{}
+        Utils.error tuple
       end
     else
       List.first( result )
@@ -100,7 +100,7 @@ defmodule BlockChainExplorer.Transaction do
         transaction = elem( tuple, 1 )
         save_transaction transaction, block_id
       else
-        %{}
+        Utils.error tuple
       end
     else
       List.first result
@@ -274,7 +274,7 @@ defmodule BlockChainExplorer.Transaction do
   def convert_to_struct( transaction, block_id \\ nil ) do
     case transaction do
       %{"code" => -5, "message" => "Block not found"} ->
-        %{}
+        Utils.error transaction
       %BlockChainExplorer.Transaction{txid: _} ->
         transaction
       _ ->
@@ -286,9 +286,7 @@ defmodule BlockChainExplorer.Transaction do
     result = Rpc.getrawtransaction transaction_str
     case result do
       {:ok, hex } -> hex
-      {:invalid, {:ok, _ }} -> nil
-      {_, {:ok, hex }} -> hex
-      _ -> nil
+      _ -> Utils.error result
     end
   end
 
@@ -366,7 +364,7 @@ defmodule BlockChainExplorer.Transaction do
         save_inputs inputs, db_transaction
         db_transaction
       else
-        %{}
+        Utils.error tuple
       end
     else
       List.first result

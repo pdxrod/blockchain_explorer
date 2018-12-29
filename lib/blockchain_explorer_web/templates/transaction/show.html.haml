@@ -3,5 +3,6 @@
 %br
 %br
 
-%p.transaction_block
-  = @transaction |> mark_up_transaction |> raw
+- if assigns[:transaction] do
+  %p.transaction_block
+    = @transaction |> mark_up_transaction |> raw

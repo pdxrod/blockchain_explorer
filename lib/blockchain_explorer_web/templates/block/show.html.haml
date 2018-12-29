@@ -1,8 +1,8 @@
-.form-group
-  %form#number{method: "post", name: "number"}
-    %input#_csrf_token{name: "_csrf_token", type: "hidden", value: "#{Plug.CSRFProtection.get_csrf_token()}"}
-    #form_contents
-      - if assigns[:address_str] do
+- if assigns[:address_str] do
+  .form-group
+    %form#number{method: "post", name: "number"}
+      %input#_csrf_token{name: "_csrf_token", type: "hidden", value: "#{Plug.CSRFProtection.get_csrf_token()}"}
+      #form_contents
         %span.instructions
           = "Enter a block height, e.g. 1325, or the start of a bitcoin address, e.g. #{ @address_str }"
         = text_input :blocks, :num, value: @address_str
@@ -12,6 +12,3 @@
           = "Please wait..."
         %br
         = @block |> mark_up_block |> raw
-
-     - if assigns[:error] do
-       "Error: #{@error}"
