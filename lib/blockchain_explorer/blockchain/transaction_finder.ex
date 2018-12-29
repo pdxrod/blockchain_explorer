@@ -23,15 +23,22 @@ defmodule BlockChainExplorer.TransactionFinder do
 
   defp find_blocks( address_str ) do
     blocks = Blockchain.get_n_blocks( nil, @num_blocks )
-    for block <- blocks do
-      transactions = Transaction.get_transactions_with_block_id block.id
-      for transaction <- transactions do
-        addresses = Transaction.get_addresses transaction.id
-        for address <- addresses do
-          if String.starts_with?( address.address, address_str ) do
-            put address_str, transaction
+    if length( blocks ) > 0 do
+      block = List.first blocks
+      case block do
+        %{error: _} -> nil
+        _ ->
+          for block <- blocks do
+            transactions = Transaction.get_transactions_with_block_id block.id
+            for transaction <- transactions do
+              addresses = Transaction.get_addresses transaction.id
+              for address <- addresses do
+                if String.starts_with?( address.address, address_str ) do
+                  put address_str, transaction
+                end
+              end
+            end
           end
-        end
       end
     end
   end

@@ -21,11 +21,16 @@ defmodule BlockChainExplorerWeb.TransactionController do
       end
       render( conn, page, error: message )
     end
-    
+
     def show(conn, %{"id" => hash}) do
       conn = assign(conn, :error, "")
       transaction = Transaction.get_transaction_with_hash hash
-      render( conn, "show.html", transaction: transaction )
+      case transaction do
+        %{error: _} ->
+          show_error( conn, "show.html", transaction )
+        _ ->
+          render( conn, "show.html", transaction: transaction )
+      end
     end
 
 # This may be called when a user enters a partial address on the /blocks page, or when they click on an address in a transaction

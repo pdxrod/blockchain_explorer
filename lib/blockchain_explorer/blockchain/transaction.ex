@@ -69,12 +69,16 @@ defmodule BlockChainExplorer.Transaction do
         %{error: _} -> hex
         _ -> Rpc.decoderawtransaction hex
       end
-      if elem( tuple, 0 ) == :ok do
-        transaction = elem( tuple, 1 )
-        transaction = save_transaction( transaction, block_id )
-        Transaction.convert_to_struct transaction
-      else
-        Utils.error tuple
+      case tuple do
+        %{error: _} -> tuple
+        _ ->
+          if elem( tuple, 0 ) == :ok do
+            transaction = elem( tuple, 1 )
+            transaction = save_transaction( transaction, block_id )
+            Transaction.convert_to_struct transaction
+          else
+            Utils.error tuple
+          end
       end
     else
       List.first( result )

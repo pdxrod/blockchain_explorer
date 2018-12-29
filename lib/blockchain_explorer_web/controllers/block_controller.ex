@@ -36,15 +36,20 @@ defmodule BlockChainExplorerWeb.BlockController do
 
   defp show_index_page( conn, hash, more \\ false ) do
     block = Blockchain.get_from_db_or_bitcoind_by_hash( hash )
-    HashStack.push block
-    blocks = Blockchain.get_n_blocks( block, 50, "previousblockhash" )
-    if more do
-      block = List.last blocks
-      HashStack.push block
-      blocks = Blockchain.get_n_blocks( block, 50, "previousblockhash" )
-      render_index_page( conn, blocks, false )
-    else
-      render_index_page( conn, blocks, latest?( block ))
+    case block do
+      %{error: _} ->
+        show_error( conn, "index.html", block )
+      _ ->
+        HashStack.push block
+        blocks = Blockchain.get_n_blocks( block, 50, "previousblockhash" )
+        if more do
+          block = List.last blocks
+          HashStack.push block
+          blocks = Blockchain.get_n_blocks( block, 50, "previousblockhash" )
+          render_index_page( conn, blocks, false )
+        else
+          render_index_page( conn, blocks, latest?( block ))
+        end
     end
   end
 
@@ -136,15 +141,15 @@ defmodule BlockChainExplorerWeb.BlockController do
         find_transactions_in_background( conn, elem( status, 1 ) )
       _ ->
         a_transaction = Transaction.seed_db_and_get_a_useful_transaction()
-        if a_transaction[:error] do
-          show_error conn, "show.html", a_transaction
-        else
-          addresses = Transaction.get_addresses a_transaction.id
-          address = List.first addresses
-          address_str = address.address
-          address_str = String.slice address_str, 0..4
-          decoded = Blockchain.get_highest_block_from_db_or_bitcoind()
-          render( conn, "show.html", block: decoded, address_str: address_str )
+        case a_transaction do
+          %{error: _} -> show_error conn, "show.html", a_transaction
+          _ ->
+            addresses = Transaction.get_addresses a_transaction.id
+            address = List.first addresses
+            address_str = address.address
+            address_str = String.slice address_str, 0..4
+            decoded = Blockchain.get_highest_block_from_db_or_bitcoind()
+            render( conn, "show.html", block: decoded, address_str: address_str )
         end
     end
   end
