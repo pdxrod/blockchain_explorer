@@ -131,4 +131,12 @@ defmodule BlockChainExplorer.Utils do
     end
   end
 
+  def message do
+    case mode() do
+      "regtest" -> "The explorer is running in 'regtest' mode. This saves disk space, but there is limited data."
+      "main" -> "The explorer is running as a full 'mainnet' node, communicating with the real blockchain."
+      "test" -> "The explorer is running in 'testnet' mode, which is like a full node, but without real money."
+      other -> "Error - '#{other[:error]}'"
+    end
+  end
 end
