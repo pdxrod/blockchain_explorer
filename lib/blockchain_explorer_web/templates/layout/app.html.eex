@@ -20,12 +20,7 @@
 
         <div class="container">
           <span class="topofpage">
-            <% message = BlockChainExplorer.Utils.message()
-               if String.starts_with?( message, "Error" ) do %>
-              <span id="error" style: "color: #FF7F50"><%= message %></span>
-            <% else %>
-              <span><%= message %></span>
-            <% end %>
+            <%= raw BlockChainExplorer.Utils.message() %>
             <br/>
             The code for this application can be found at <a class="link" href="https://github.com/pdxrod/blockchain_explorer">github.com/pdxrod/blockchain_explorer</a>.
           </span>

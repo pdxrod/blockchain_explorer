@@ -132,11 +132,17 @@ defmodule BlockChainExplorer.Utils do
   end
 
   def message do
-    case mode() do
-      "regtest" -> "The explorer is running in 'regtest' mode. This saves disk space, but there is limited data."
-      "main" -> "The explorer is running as a full 'mainnet' node, communicating with the real blockchain."
-      "test" -> "The explorer is running in 'testnet' mode, which is like a full node, but without real money."
-      other -> "Error - '#{other[:error]}'"
+    msg =
+      case mode() do
+        "regtest" -> "The explorer is running in 'regtest' mode. This saves disk space, but there is limited data."
+        "main" -> "The explorer is running as a full 'mainnet' node, communicating with the real blockchain."
+        "test" -> "The explorer is running in 'testnet' mode, which is like a full node, but without real money."
+        other -> "Error - #{mode()[:error]}"
+      end
+    if String.starts_with? msg, "Error" do
+      "<span style: 'color: #FF1010'>#{ msg }</span>"
+    else
+      "<span>#{ msg }</span>"
     end
   end
 end
