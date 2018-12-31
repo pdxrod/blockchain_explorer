@@ -69,12 +69,12 @@ defmodule BlockChainExplorer.BlockchainTest do
 
     test "fail to return the block with an fake id" do
       result = Blockchain.get_from_db_or_bitcoind_by_hash "f0000000000000000000000000000000000000000000000000000000000000ba"
-      assert result == %{}
+      assert result == %{error: "Block not found in this blockchain"}
     end
 
     test "fail to return the block with a completely invalid id" do
       result = Blockchain.get_from_db_or_bitcoind_by_hash "Foo bar"
-      assert result == %{}
+      assert result == %{error: "Block not found in this blockchain"}
     end
 
     test "get n blocks backward works" do
