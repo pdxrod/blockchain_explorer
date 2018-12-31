@@ -39,6 +39,8 @@ defmodule BlockChainExplorer.Block do
 
   defp map_to_string( map ) do
     case map do
+      %HTTPoison.Error{} ->
+        Utils.error map
       %BlockChainExplorer.Block{} ->
         ""
       _ ->
@@ -52,8 +54,10 @@ defmodule BlockChainExplorer.Block do
 
   def convert_to_struct( block ) do
     case block do
+      %HTTPoison.Error{} ->
+        Utils.error block
       %{"code" => -5, "message" => "Block not found"} ->
-        %{}
+        Utils.error block
       %BlockChainExplorer.Block{} ->
         block
       _ ->

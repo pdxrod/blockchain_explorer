@@ -151,12 +151,12 @@ defmodule BlockChainExplorer.Utils do
         "regtest" -> "The explorer is running in 'regtest' mode. This saves disk space, but there is limited data."
         "main" -> "The explorer is running as a full 'mainnet' node, communicating with the real blockchain."
         "test" -> "The explorer is running in 'testnet' mode, which is like a full node, but without real money."
-        other -> "#{mode()[:error]}"
+        _ -> "#{mode()[:error]}"
       end
-    if ! String.starts_with? msg, "The explorer" do
-      "<span class='error'>#{ msg }</span>"
-    else
+    if String.starts_with? msg, "The explorer" do
       "<span>#{ msg }</span>"
+    else
+      "<span class='error'>#{ msg }</span>"
     end
   end
 end

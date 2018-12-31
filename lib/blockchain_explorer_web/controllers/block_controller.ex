@@ -98,7 +98,12 @@ defmodule BlockChainExplorerWeb.BlockController do
 
   defp show_block_by_hash( conn, hash ) do
     block = Blockchain.get_from_db_or_bitcoind_by_hash hash
-    render(conn, "show.html", block: block, address_str: "n4ME4" )
+    case block do
+      %{error: _} ->
+        show_error conn, "show.html", block
+      _ ->
+        render(conn, "show.html", block: block, address_str: "n4ME4" )
+    end
   end
 
   defp analyse_params( params ) do

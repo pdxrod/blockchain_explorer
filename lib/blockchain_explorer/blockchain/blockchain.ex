@@ -22,13 +22,13 @@ defmodule BlockChainExplorer.Blockchain do
     )
     if length( result ) == 0 do
       result = Rpc.getblock( hash )
-      if result == {:error, %{"code" => -5, "message" => "Block not found"}} do
-        %{}
-      else
+      if elem( result, 0 ) == :ok do
         block_map = elem( result, 1 )
         insertable_block = Block.convert_to_struct block_map
-        result = Db.insert insertable_block
-        Db.get_db_result_from_tuple result
+        tuple = Db.insert insertable_block
+        Db.get_db_result_from_tuple tuple
+      else
+        Utils.error result
       end
     else
       List.first( result )
