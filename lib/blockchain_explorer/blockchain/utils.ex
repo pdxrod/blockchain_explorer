@@ -154,7 +154,7 @@ defmodule BlockChainExplorer.Utils do
         other -> "#{mode()[:error]}"
       end
     if ! String.starts_with? msg, "The explorer" do
-      "<span style: 'color: #FF1010'>#{ msg }</span>"
+      "<span class='error'>#{ msg }</span>"
     else
       "<span>#{ msg }</span>"
     end
