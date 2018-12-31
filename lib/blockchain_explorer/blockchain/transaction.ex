@@ -237,9 +237,6 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp transaction_with_everything_in_it_from_block( block_map ) do
-
-# IO.puts "\ntransaction_with_everything_in_it_from_block"
-# IO.puts Utils.typeof( block_map )
     case block_map do
       %{error: _} -> block_map
       _ ->
