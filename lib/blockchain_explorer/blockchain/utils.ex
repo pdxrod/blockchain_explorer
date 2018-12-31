@@ -103,6 +103,22 @@ defmodule BlockChainExplorer.Utils do
     end
   end
 
+  defp translate_message msg do
+    case msg do
+      "econnrefused" ->
+        "Unable to connect to Bitcoin"
+      "timeout" ->
+        "Timed out connecting to Bitcoin"
+      "Loading block index..." ->
+        "Bitcoin is not up and running yet"
+      "Block not found" ->
+        "Block not found in this blockchain"
+      "JSON integer out of range" ->
+        "Invalid value for block"
+      _ -> msg
+    end
+  end
+
 # Various functions produce a range of not-ok results - this reduces them to one simple form - %{error: "message"}
   defp find_message( arg ) do
     message = case typeof( arg ) do
@@ -115,11 +131,9 @@ defmodule BlockChainExplorer.Utils do
                 _ ->
                   "#{ arg }"
               end
-    message
+    translate_message message
   end
 
-# {:error, %{"code" => -28, "message" => "Loading block index..."}} -> %{error: "Loading block index..."}
-# {:error, %HTTPoison.Error{id: nil, reason: :econnrefused}} -> %{error: "econnrefused"}
   def error( tuple ) do
     case typeof( tuple ) do
       "tuple" ->
@@ -127,7 +141,7 @@ defmodule BlockChainExplorer.Utils do
         atom = elem( tuple, 0 )
         tail = Tuple.delete_at tuple, 0
         Map.new [ {atom, find_message( tail )} ]
-      _ -> tuple
+      _ -> %{error: find_message( tuple )}
     end
   end
 
@@ -137,9 +151,9 @@ defmodule BlockChainExplorer.Utils do
         "regtest" -> "The explorer is running in 'regtest' mode. This saves disk space, but there is limited data."
         "main" -> "The explorer is running as a full 'mainnet' node, communicating with the real blockchain."
         "test" -> "The explorer is running in 'testnet' mode, which is like a full node, but without real money."
-        other -> "Error - #{mode()[:error]}"
+        other -> "#{mode()[:error]}"
       end
-    if String.starts_with? msg, "Error" do
+    if ! String.starts_with? msg, "The explorer" do
       "<span style: 'color: #FF1010'>#{ msg }</span>"
     else
       "<span>#{ msg }</span>"

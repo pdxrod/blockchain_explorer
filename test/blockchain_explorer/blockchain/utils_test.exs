@@ -95,17 +95,17 @@ defmodule BlockChainExplorer.UtilsTest do
     end
 
 # Some of these are IRL errors
-    @tests [ {  {:message, %{message: {:message, "message"}}},                       %{message: "message"} },
-             {  {:error, :invalid, 0},                                               %{error: "0"} },
-             {  {:error, %HTTPoison.Error{id: nil, reason: :timeout}} ,              %{error: "timeout"} },
-             {  {:error, %HTTPoison.Error{id: nil, reason: :econnrefused}},          %{error: "econnrefused"} },
-             {  {:error, %{"code" => -28, "message" => "Loading block index..."}},   %{error: "Loading block index..."} },
-             {  {:error, %{"code" => -5, "message" => "Block not found"}},           %{error: "Block not found"} },
-             {  {:error, %{"code" => -1, "message" => "JSON integer out of range"}}, %{error: "JSON integer out of range"} },
-             {  {:error, %{"code" => -8, "message" => "Block height out of range"}}, %{error: "Block height out of range"} },
-             {  {:error, %{connect: :econnrefused}},                                 %{error: "econnrefused"} },
-             {  %{error: "econnrefused" },                                           %{error: "econnrefused"} },
-             {  {:error, %{connect: 'econnrefused'}},                                %{error: "100"} } # Can you work out why?
+    @tests [ {  {:message, %{message: {:message, "message"}}},                       %{message: "message"}                          },
+             {  {:error, :invalid, 0},                                               %{error: "0"}                                  },
+             {  {:error, %HTTPoison.Error{id: nil, reason: :timeout}} ,              %{error: "Timed out connecting to Bitcoin"}    },
+             {  {:error, %HTTPoison.Error{id: nil, reason: :econnrefused}},          %{error: "Unable to connect to Bitcoin"}       },
+             {  {:error, %{"code" => -28, "message" => "Loading block index..."}},   %{error: "Bitcoin is not up and running yet"}  },
+             {  {:error, %{"code" => -5, "message" => "Block not found"}},           %{error: "Block not found in this blockchain"} },
+             {  {:error, %{"code" => -1, "message" => "JSON integer out of range"}}, %{error: "Invalid value for block"}            },
+             {  {:error, %{"code" => -8, "message" => "Block height out of range"}}, %{error: "Block height out of range"}          },
+             {  {:error, %{connect: :econnrefused}},                                 %{error: "Unable to connect to Bitcoin"}       },
+             {  %{error: "econnrefused" },                                           %{error: "Unable to connect to Bitcoin"}       },
+             {  {:error, %{connect: 'econnrefused'}},                                %{error: "100"}        } # Can you work out why?
            ]
 
     test "flatten not-ok tuple" do
