@@ -140,7 +140,8 @@ defmodule BlockChainExplorer.Utils do
         if elem( tuple, 0 ) == :ok, do: raise "Utils.error should not be used with tuples beginning with :ok"
         atom = elem( tuple, 0 )
         tail = Tuple.delete_at tuple, 0
-        Map.new [ {atom, find_message( tail )} ]
+        result = Map.new [ {:error, find_message( tail )} ]
+        if atom == :invalid, do: %{error: "invalid " <> result[:error]}, else: result
       _ -> %{error: find_message( tuple )}
     end
   end

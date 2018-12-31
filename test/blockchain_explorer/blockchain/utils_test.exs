@@ -95,7 +95,8 @@ defmodule BlockChainExplorer.UtilsTest do
     end
 
 # Some of these are IRL errors
-    @tests [ {  {:message, %{message: {:message, "message"}}},                       %{message: "message"}                          },
+    @tests [ {  {:message, %{message: {:message, "message"}}},                       %{error: "message"}                          },
+             {  {:invalid, "1"},                                                     %{error: "invalid 1"}                          },
              {  {:error, :invalid, 0},                                               %{error: "0"}                                  },
              {  {:error, %HTTPoison.Error{id: nil, reason: :timeout}} ,              %{error: "Timed out connecting to Bitcoin"}    },
              {  {:error, %HTTPoison.Error{id: nil, reason: :econnrefused}},          %{error: "Unable to connect to Bitcoin"}       },

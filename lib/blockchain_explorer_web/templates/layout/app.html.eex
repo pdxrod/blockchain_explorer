@@ -20,6 +20,8 @@
 
         <div class="container">
           <span class="topofpage">
+            <span class="error"><%= assigns[:error] %></span>
+            <br/>
             <%= raw BlockChainExplorer.Utils.message() %>
             <br/>
             The code for this application can be found at <a class="link" href="https://github.com/pdxrod/blockchain_explorer">github.com/pdxrod/blockchain_explorer</a>.

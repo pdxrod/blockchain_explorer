@@ -8,21 +8,7 @@ defmodule BlockChainExplorerWeb.BlockController do
   alias BlockChainExplorer.Transaction
 
   defp show_error( conn, page, error ) do
-    message = case error[:error] do
-      "0" ->
-        "invalid request"
-      "econnrefused" ->
-        "connection refused"
-      "Loading block index..." ->
-        "bitcoind starting"
-      "JSON integer out of range" ->
-        "no such block"
-      "Block height out of range" ->
-        "no such block"
-      _ ->
-        error[:error]
-    end
-    render( conn, page, error: message )
+    render( conn, page, error: error[:error]  )
   end
 
   defp latest?( block ) do
@@ -93,7 +79,12 @@ defmodule BlockChainExplorerWeb.BlockController do
 
   defp show_block_by_height( conn, height ) do
     block = Blockchain.get_from_db_or_bitcoind_by_height height
-    render(conn, "show.html", block: block, address_str: "n4ME4" )
+    case block do
+      %{error: _} ->
+        show_error conn, "show.html", block
+      _ ->
+        render(conn, "show.html", block: block, address_str: "n4ME4" )
+    end
   end
 
   defp show_block_by_hash( conn, hash ) do
