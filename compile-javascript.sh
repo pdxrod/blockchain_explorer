@@ -1,9 +1,12 @@
 if [[ ! -f assets/node_modules/brunch/bin/brunch ]] ; then
-	echo "You need to get brunch"
+	echo "You need to get brunch - try 'cd assets && npm install'"
 	exit 1
 fi
 
-rm priv/static/js/*
+if [[ -d priv/static/js ]] ; then
+      rm priv/static/js/*
+fi
+
 cd assets
 ./node_modules/brunch/bin/brunch build
 cd ..
