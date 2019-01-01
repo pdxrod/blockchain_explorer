@@ -141,7 +141,7 @@ defmodule BlockChainExplorer.Utils do
         atom = elem( tuple, 0 )
         tail = Tuple.delete_at tuple, 0
         result = Map.new [ {:error, find_message( tail )} ]
-        if atom == :invalid, do: %{error: "invalid " <> result[:error]}, else: result
+        if atom != :error, do: %{error: "#{ atom } " <> result[:error]}, else: result
       _ -> %{error: find_message( tuple )}
     end
   end
