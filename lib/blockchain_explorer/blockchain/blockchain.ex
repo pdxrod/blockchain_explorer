@@ -3,6 +3,7 @@ defmodule BlockChainExplorer.Blockchain do
   alias BlockChainExplorer.Utils
   alias BlockChainExplorer.Db
   alias BlockChainExplorer.Rpc
+  alias BlockChainExplorer.Address
   import Ecto.Query
 
   def get_highest_block_from_db_or_bitcoind do
@@ -122,6 +123,19 @@ defmodule BlockChainExplorer.Blockchain do
       num = if direction == "previousblockhash", do: size - 1, else: 0
       new_block = Enum.at( blocks, num )
       get_next_or_previous_n_blocks_empty( new_block, n, direction, [new_block] )
+    end
+  end
+
+  def get_address_str do
+    result = Db.all(
+      from a in Address,
+      select: a,
+      where: a.output_id > 0
+    )
+    if length( result ) == 0 do
+      "n4ME4"
+    else
+      String.slice( List.first( result ).address, 0..4 )
     end
   end
 

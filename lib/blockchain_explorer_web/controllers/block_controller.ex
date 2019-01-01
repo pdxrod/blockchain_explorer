@@ -83,7 +83,7 @@ defmodule BlockChainExplorerWeb.BlockController do
       %{error: _} ->
         show_error conn, "show.html", block
       _ ->
-        render(conn, "show.html", block: block, address_str: "n4ME4" )
+        render(conn, "show.html", block: block, address_str: Blockchain.get_address_str() )
     end
   end
 
@@ -93,7 +93,7 @@ defmodule BlockChainExplorerWeb.BlockController do
       %{error: _} ->
         show_error conn, "show.html", block
       _ ->
-        render(conn, "show.html", block: block, address_str: "n4ME4" )
+        render(conn, "show.html", block: block, address_str: Blockchain.get_address_str() )
     end
   end
 
