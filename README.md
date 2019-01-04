@@ -69,3 +69,13 @@ unless you've specified a datadir (see start-bitcoind.sh). On Linux, ~/.bitcoin.
 You can turn it into a soft link pointing to a large (500 Gb+) external
 drive - which you probably will have to do if using testnet or mainnet,
 as the blockchain just keeps getting bigger.
+
+# production
+
+To run this app in production mode, look at `start-phoenix-in-background.sh`
+
+You need to enter a 'secret key base' and a mysql username and password in config/prod.exs. DO NOT
+check this file into Git after you've changed it, as it contains critical production data -
+do `git reset --hard` to undo your changes to prod.exs.
+
+`mix phx.gen.secret` will generate a new 'secret key base'.
