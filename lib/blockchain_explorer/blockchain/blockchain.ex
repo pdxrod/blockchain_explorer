@@ -35,9 +35,6 @@ defmodule BlockChainExplorer.Blockchain do
       if elem( result, 0 ) == :ok do
         block_map = elem( result, 1 )
         insertable_block = Block.convert_to_struct block_map
-
-IO.puts "\ntx #{insertable_block.tx}"
-
         tuple = Db.insert insertable_block
         Db.get_db_result_from_tuple tuple
       else
@@ -86,7 +83,11 @@ IO.puts "\ntx #{insertable_block.tx}"
     end
   end
 
-  def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
+  defp genesis?( blocks ) do
+    length( blocks ) > 1 && Enum.at( blocks, 0 ).height < 1 && Enum.at( blocks, 1 ).height < 1
+  end
+
+  defp get_blocks( block, n, direction, blocks ) do
     block = if block == nil, do: get_highest_block_from_db_or_bitcoind(), else: block
     blocks = if length( blocks ) < 1, do: [ block ], else: blocks
     cond do
@@ -104,6 +105,15 @@ IO.puts "\ntx #{insertable_block.tx}"
         else
           blocks
         end
+    end
+  end
+
+  def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
+    result = get_blocks( block, n, direction, blocks )
+    if genesis? result do
+      [ List.first( result ) ]
+    else
+      result
     end
   end
 
