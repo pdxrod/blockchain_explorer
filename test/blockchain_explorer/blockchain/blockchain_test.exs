@@ -111,6 +111,13 @@ defmodule BlockChainExplorer.BlockchainTest do
       assert err.message == "direction should be previousblockhash or nextblockhash, not foobar"
     end
 
+    test "get next or previous n blocks returns only genesis block if given genesis block" do
+      block = Blockchain.get_lowest_block_from_db_or_bitcoind()
+      blocks = Blockchain.get_next_or_previous_n_blocks(block, 5, "previousblockhash")
+      assert length( blocks ) == 1
+      assert List.first( blocks ).height == 0
+    end
+
     test "get next or previous n blocks works with small values and nil" do
       block = Blockchain.get_highest_block_from_db_or_bitcoind()
       blocks = Blockchain.get_next_or_previous_n_blocks(block, 0)

@@ -15,9 +15,13 @@ defmodule BlockChainExplorerWeb.BlockController do
     block.nextblockhash == nil
   end
 
-  defp render_index_page( conn, blocks, latest ) do
+  defp last?( block ) do
+    block.height == 0
+  end
+
+  defp render_index_page( conn, blocks, latest, last ) do
     decoded = Enum.map( blocks, &Block.convert_to_struct( &1 ) )
-    render( conn, "index.html", blocks: decoded, latest: latest )
+    render( conn, "index.html", blocks: decoded, latest: latest, last: last )
   end
 
   defp show_index_page( conn, hash, more \\ false ) do
@@ -32,9 +36,9 @@ defmodule BlockChainExplorerWeb.BlockController do
           block = List.last blocks
           HashStack.push block
           blocks = Blockchain.get_n_blocks( block, 50, "previousblockhash" )
-          render_index_page( conn, blocks, false )
+          render_index_page( conn, blocks, false, last?( block ))
         else
-          render_index_page( conn, blocks, latest?( block ))
+          render_index_page( conn, blocks, latest?( block ), last?( block ))
         end
     end
   end
@@ -70,8 +74,9 @@ defmodule BlockChainExplorerWeb.BlockController do
       "nextblockhash" ->
         block = HashStack.pop()
         blocks = Blockchain.get_n_blocks( block, 50, "nextblockhash" )
-        latest = List.first blocks
-        render_index_page( conn, blocks, latest?( latest ))
+        latest = latest?( List.first blocks )
+        last = last?( List.last blocks )
+        render_index_page( conn, blocks, latest, last)
 
       _ -> raise "This should never happen - direction is #{ direction }"
     end

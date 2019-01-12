@@ -15,6 +15,15 @@ defmodule BlockChainExplorer.Blockchain do
     end
   end
 
+  def get_lowest_block_from_db_or_bitcoind do
+    tuple = Rpc.getblockhash( 0 )
+    if elem( tuple, 0 ) == :ok do
+      get_from_db_or_bitcoind_by_hash( elem( tuple, 1 ))
+    else
+      Utils.error tuple
+    end
+  end
+
   def get_from_db_or_bitcoind_by_hash( hash ) do
     result = Db.all(
       from b in Block,
@@ -98,21 +107,25 @@ defmodule BlockChainExplorer.Blockchain do
   defp get_next_or_previous_n_blocks_empty( block, n, direction, blocks ) do
     block = if block == nil, do: get_highest_block_from_db_or_bitcoind(), else: block
     blocks = if length( blocks ) < 1, do: [ block ], else: blocks
-    if n <= 1 do
-      blocks
-    else
-      if direction != "previousblockhash" && direction != "nextblockhash", do: raise "direction should be previousblockhash or nextblockhash, not #{ direction }"
-      new_block = get_next_or_previous_block( block, direction )
-      if map_size( new_block ) > 0 do
-        blocks = case direction do
-          "previousblockhash" -> blocks ++ [ new_block ]
-          "nextblockhash"     -> [ new_block ] ++ blocks
+    case block.height do
+      0 -> [ block ]
+      _ ->
+        if n <= 1 do
+          blocks
+        else
+          if direction != "previousblockhash" && direction != "nextblockhash", do: raise "direction should be previousblockhash or nextblockhash, not #{ direction }"
+          new_block = get_next_or_previous_block( block, direction )
+          if map_size( new_block ) > 0 do
+            blocks = case direction do
+              "previousblockhash" -> blocks ++ [ new_block ]
+              "nextblockhash"     -> [ new_block ] ++ blocks
+            end
+            get_next_or_previous_n_blocks_empty( new_block, n - 1, direction, blocks )
+          else
+            blocks
+          end
         end
-        get_next_or_previous_n_blocks_empty( new_block, n - 1, direction, blocks )
-      else
-        blocks
-      end
-    end
+    end    
   end
 
   def get_next_or_previous_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
