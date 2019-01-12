@@ -8,7 +8,7 @@
     %form#navigate{:method => "post", :name => "navigate"}
       - next = next_button @latest
       = next |> raw
-      = previous = previous_button @last
+      - previous = previous_button @last
       = previous |> raw
     %br
       = raw( mark_blocks @blocks )

@@ -35,6 +35,9 @@ defmodule BlockChainExplorer.Blockchain do
       if elem( result, 0 ) == :ok do
         block_map = elem( result, 1 )
         insertable_block = Block.convert_to_struct block_map
+
+IO.puts "\ntx #{insertable_block.tx}"
+
         tuple = Db.insert insertable_block
         Db.get_db_result_from_tuple tuple
       else
@@ -125,7 +128,7 @@ defmodule BlockChainExplorer.Blockchain do
             blocks
           end
         end
-    end    
+    end
   end
 
   def get_next_or_previous_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
