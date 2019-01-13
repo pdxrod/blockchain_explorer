@@ -52,15 +52,20 @@ defmodule BlockChainExplorer.Blockchain do
       where: b.height == ^height
     )
     if length( result ) == 0 do
-      hash = Rpc.getblockhash( height )
-      result = Rpc.getblock( hash )
-      if elem( result, 0 ) == :ok do
-        block_map = elem( result, 1 )
-        insertable_block = Block.convert_to_struct block_map
-        tuple = Db.insert insertable_block
-        Db.get_db_result_from_tuple tuple
+      tuple = Rpc.getblockhash( height )
+      if elem( tuple, 0 ) == :ok do
+        hash = elem( tuple, 1 )
+        result = Rpc.getblock( hash )
+        if elem( result, 0 ) == :ok do
+          block_map = elem( result, 1 )
+          insertable_block = Block.convert_to_struct block_map
+          tuple = Db.insert insertable_block
+          Db.get_db_result_from_tuple tuple
+        else
+          Utils.error result
+        end
       else
-        Utils.error result
+        Utils.error tuple
       end
     else
       List.first( result )
@@ -83,15 +88,13 @@ defmodule BlockChainExplorer.Blockchain do
     end
   end
 
-  defp genesis?( blocks ) do
-    length( blocks ) > 1 && Enum.at( blocks, 0 ).height < 1 && Enum.at( blocks, 1 ).height < 1
-  end
-
-  defp get_blocks( block, n, direction, blocks ) do
+  def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
     block = if block == nil, do: get_highest_block_from_db_or_bitcoind(), else: block
     blocks = if length( blocks ) < 1, do: [ block ], else: blocks
     cond do
       n <= 1 ->
+        blocks
+      List.last( blocks ).height == 0 ->
         blocks
       true ->
         if direction != "previousblockhash" && direction != "nextblockhash", do: raise "direction should be previousblockhash or nextblockhash, not #{ direction }"
@@ -108,36 +111,23 @@ defmodule BlockChainExplorer.Blockchain do
     end
   end
 
-  def get_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
-    result = get_blocks( block, n, direction, blocks )
-    if genesis? result do
-      [ List.first( result ) ]
-    else
-      result
-    end
-  end
-
   defp get_next_or_previous_n_blocks_empty( block, n, direction, blocks ) do
     block = if block == nil, do: get_highest_block_from_db_or_bitcoind(), else: block
     blocks = if length( blocks ) < 1, do: [ block ], else: blocks
-    case block.height do
-      0 -> [ block ]
-      _ ->
-        if n <= 1 do
-          blocks
-        else
-          if direction != "previousblockhash" && direction != "nextblockhash", do: raise "direction should be previousblockhash or nextblockhash, not #{ direction }"
-          new_block = get_next_or_previous_block( block, direction )
-          if map_size( new_block ) > 0 do
-            blocks = case direction do
-              "previousblockhash" -> blocks ++ [ new_block ]
-              "nextblockhash"     -> [ new_block ] ++ blocks
-            end
-            get_next_or_previous_n_blocks_empty( new_block, n - 1, direction, blocks )
-          else
-            blocks
-          end
+    if n <= 1 || List.last( blocks ).height == 0 do
+      blocks
+    else
+      if direction != "previousblockhash" && direction != "nextblockhash", do: raise "direction should be previousblockhash or nextblockhash, not #{ direction }"
+      new_block = get_next_or_previous_block( block, direction )
+      if map_size( new_block ) > 0 do
+        blocks = case direction do
+          "previousblockhash" -> blocks ++ [ new_block ]
+          "nextblockhash"     -> [ new_block ] ++ blocks
         end
+        get_next_or_previous_n_blocks_empty( new_block, n - 1, direction, blocks )
+      else
+        blocks
+      end
     end
   end
 

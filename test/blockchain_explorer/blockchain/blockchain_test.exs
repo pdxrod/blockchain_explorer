@@ -118,6 +118,15 @@ defmodule BlockChainExplorer.BlockchainTest do
       assert List.first( blocks ).height == 0
     end
 
+    test "get next or previous n blocks returns genesis block only once if given low block" do
+      block = Blockchain.get_from_db_or_bitcoind_by_height 5
+      blocks = Blockchain.get_next_or_previous_n_blocks(block, 10, "previousblockhash")
+      assert length( blocks ) == 6
+      assert List.first( blocks ).height == 5
+      assert Enum.at( blocks, 4 ).height == 1
+      assert List.last( blocks ).height == 0
+    end
+
     test "get next or previous n blocks works with small values and nil" do
       block = Blockchain.get_highest_block_from_db_or_bitcoind()
       blocks = Blockchain.get_next_or_previous_n_blocks(block, 0)
