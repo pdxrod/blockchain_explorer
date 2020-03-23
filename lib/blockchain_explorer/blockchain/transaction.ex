@@ -217,10 +217,15 @@ defmodule BlockChainExplorer.Transaction do
 
   defp has_everything?( transaction_str, block_id ) do
     transaction = get_transaction_with_hash( transaction_str, block_id )
-    inputs = get_inputs( transaction.id  )
-    outputs = get_outputs( transaction.id )
-    inputs_has_everything?( inputs ) &&
-     outputs_has_everything?( outputs )
+    case transaction do
+      %{error: _} ->
+        Utils.error transaction
+      _ ->
+        inputs = get_inputs( transaction.id  )
+        outputs = get_outputs( transaction.id )
+        inputs_has_everything?( inputs ) &&
+         outputs_has_everything?( outputs )
+    end
   end
 
   defp transaction_with_everything_in_it_from_transactions( list_of_tx_ids, block_id ) do

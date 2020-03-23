@@ -7,7 +7,7 @@ I couldn't have done it without [github.com/pcorey/hello_blockchain](https://git
 
 It can be seen running at [http://subcryption.com/](http://subcryption.com/)
 
-3 December 2018 - tested with Elixir 1.7.2, Erlang/OTP 21 and bitcoind version 0.15.99.0
+23 March 2020 - tested with Elixir 1.10, Erlang/OTP 22 and bitcoind version v0.19.99.0-97b068750
 
 You need to be running bitcoind:
 
