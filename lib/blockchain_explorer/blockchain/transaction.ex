@@ -107,20 +107,24 @@ defmodule BlockChainExplorer.Transaction do
 
     if length( result ) == 0 do
 
-      IO.puts "\n∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑\n107 get_transaction_with_txid #{Utils.typeof result} "
+      IO.puts "\n∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑\n get_transaction_with_txid #{Utils.typeof result} "
 
       hex = get_hex txid
+
+      IO.puts "\nªªªªªªªªªªªªªªªªªªªªªªªªªªªªª\n get_transaction_with_txid #{Utils.typeof hex} "
+
+
       tuple = Rpc.decoderawtransaction hex
 
-      IO.puts "\n††††††††††††††††††††††††††††††\n107 get_transaction_with_txid #{Utils.typeof tuple} "
+      IO.puts "\n††††††††††††††††††††††††††††††\n get_transaction_with_txid #{Utils.typeof tuple} "
 
       if elem( tuple, 0 ) == :ok do
         transaction = elem( tuple, 1 )
-        IO.puts "\nπππππππππππππππππππππππππ\n115 get_transaction_with_txid #{Utils.typeof transaction} "
+        IO.puts "\nπππππππππππππππππππππππππ\n get_transaction_with_txid #{Utils.typeof transaction} "
 
         save_transaction transaction, block_id
       else
-        IO.puts "\nççççççççççççççççççççççççç\n119 get_transaction_with_txid #{elem(tuple, 0)} "
+        IO.puts "\nççççççççççççççççççççççççç\n get_transaction_with_txid #{elem(tuple, 0)} "
 
         Utils.error tuple
       end
@@ -360,7 +364,12 @@ IO.puts "\n&&&&&&&&&&&&&&&&&&&&&&&&\nseed_db_and_get_a_useful_transaction #{Util
   end
 
   defp get_hex( transaction_str ) do
+    IO.puts "\n…………………………………………………………\nget_hex #{transaction_str}"
+
     result = Rpc.getrawtransaction transaction_str
+
+    IO.puts "\n‘‘‘‘‘‘‘‘‘‘‘‘‘’’’’’’’’’’’’’\nget_hex #{elem(result, 0)}"
+
     case result do
       {:ok, hex } -> hex
       _ -> Utils.error result

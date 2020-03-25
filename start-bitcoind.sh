@@ -16,7 +16,7 @@ if [[ "regtest" == "$1" ]] ; then
   if [[ ! -d $DATADIR ]] ; then
     mkdir -p $DATADIR
   fi
-  bitcoind -server -listen -port=$PORT -rpcuser=$2 -rpcpassword=$3 -rpcport=$RPCPORT -datadir=$DATADIR -connect=$CONNECT -regtest -daemon
+  bitcoind -server -listen -port=$PORT -rpcuser=$2 -rpcpassword=$3 -rpcport=$RPCPORT -datadir=$DATADIR -connect=$CONNECT -regtest -daemon -txindex=1
 else
-  bitcoind -server -listen -port=17591 -rpcuser=$2 -rpcpassword=$3 -rpcport=16591 -$1 -daemon 
+  bitcoind -server -listen -port=17591 -rpcuser=$2 -rpcpassword=$3 -rpcport=16591 -$1 -daemon -txindex=1
 fi
