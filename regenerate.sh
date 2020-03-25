@@ -8,6 +8,7 @@ fi
 
 RPCPORT=1659$3
 echo Generating blocks:
-bitcoin-cli -regtest -rpcuser=$1 -rpcpassword=$2 -datadir=$HOME/.bitcoin/regtest$3 -rpcport=$RPCPORT generate 201
+address=`bitcoin-cli -rpcuser=$1 -rpcpassword=$2 -rpcport=$RPCPORT getnewaddress`
+bitcoin-cli -regtest -rpcuser=$1 -rpcpassword=$2 -datadir=$HOME/.bitcoin/regtest$3 -rpcport=$RPCPORT generatetoaddress 201 $address
 echo Balance:
 bitcoin-cli -regtest -rpcuser=$1 -rpcpassword=$2 -datadir=$HOME/.bitcoin/regtest$3 -rpcport=$RPCPORT getbalance
