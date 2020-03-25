@@ -61,7 +61,7 @@ To start Phoenix:
   * `cd ..`
   * Start Phoenix with `mix phx.server`
 
-Now visit [`localhost:4000`](http://localhost:4000) in a browser
+Wait a few minutes, then visit [`localhost:4000`](http://localhost:4000) in a browser
 
 On a Mac, your data is written in ~/Library/Application Support/Bitcoin,
 unless you've specified a datadir (see start-bitcoind.sh). On Linux, ~/.bitcoin.

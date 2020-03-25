@@ -37,20 +37,11 @@ defmodule BlockChainExplorer.Blockchain do
         insertable_block = Block.convert_to_struct block_map
         tuple = Db.insert insertable_block
         result = Db.get_db_result_from_tuple tuple
-
-IO.puts "\n>>>>>>>>>>>>>>>>>>>>>>>>>>\nget_from_db_or_bitcoind_by_hash #{hash} #{Utils.typeof result}"
-
         result
       else
-IO.puts "\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\nget_from_db_or_bitcoind_by_hash #{hash} #{Utils.typeof result}"
-
         Utils.error result
       end
     else
-IO.puts "\n()()()()()()()()()()()()()\nget_from_db_or_bitcoind_by_hash #{hash} #{Utils.typeof result}"
-IO.puts "\n[][][][][][][][][][][][][]\nget_from_db_or_bitcoind_by_hash #{hash} #{(List.first result).hash}"
-
-
       List.first( result )
     end
   end
