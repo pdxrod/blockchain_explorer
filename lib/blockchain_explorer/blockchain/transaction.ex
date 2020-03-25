@@ -86,6 +86,8 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   def get_transaction_with_txid( txid, block_id \\ nil ) do
+    IO.puts "\n\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\nget_transaction_with_txid #{txid}"
+
     result = if block_id == nil do
       Db.all(
         from t in BlockChainExplorer.Transaction,
@@ -99,13 +101,27 @@ defmodule BlockChainExplorer.Transaction do
         where: t.txid == ^txid and t.block_id == ^block_id
       )
     end
+
+    IO.puts "\n®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®\n101 get_transaction_with_txid #{Utils.typeof result} "
+
+
     if length( result ) == 0 do
+
+      IO.puts "\n∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑∑\n107 get_transaction_with_txid #{Utils.typeof result} "
+
       hex = get_hex txid
       tuple = Rpc.decoderawtransaction hex
+
+      IO.puts "\n††††††††††††††††††††††††††††††\n107 get_transaction_with_txid #{Utils.typeof tuple} "
+
       if elem( tuple, 0 ) == :ok do
         transaction = elem( tuple, 1 )
+        IO.puts "\nπππππππππππππππππππππππππ\n115 get_transaction_with_txid #{Utils.typeof transaction} "
+
         save_transaction transaction, block_id
       else
+        IO.puts "\nççççççççççççççççççççççççç\n119 get_transaction_with_txid #{elem(tuple, 0)} "
+
         Utils.error tuple
       end
     else
@@ -115,7 +131,12 @@ defmodule BlockChainExplorer.Transaction do
 
   def get_tx_ids( block_struct ) do
     block_string = block_struct.block
+
     map = Block.convert_block_str_to_map block_string
+    IO.puts "\n\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\nget_tx_ids #{Utils.typeof map}"
+    IO.puts "\n\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\nget_tx_ids #{Utils.typeof map[:tx]}"
+    IO.puts "\n\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\nget_tx_ids #{String.split( map[ :tx ], " " )}"
+
     String.split( map[ :tx ], " " )
   end
 
@@ -160,6 +181,9 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   def get_addresses( address_str, output_id ) do
+
+IO.puts "\n-------------------\nget_addresses '#{address_str}'"
+
     if address_str == nil do
       Db.all(
         from a in BlockChainExplorer.Address,
@@ -229,24 +253,48 @@ defmodule BlockChainExplorer.Transaction do
   end
 
   defp transaction_with_everything_in_it_from_transactions( list_of_tx_ids, block_id ) do
+    IO.puts "\n≥≥≥≥≥≥≥≥≥≥≥≥≥≥≥≥≥≥≥≥≥\ntransaction_with_everything_in_it_from_transactions #{list_of_tx_ids} #{block_id}"
+
     case list_of_tx_ids do
       [] ->
+  IO.puts "\n©©©©©©©©©©©©©©©©©©©©©©©©©©\ntransaction_with_everything_in_it_from_transactions #{list_of_tx_ids}"
+
         %{}
       _ ->
         [hd | tl] = list_of_tx_ids
         cond do
-          has_everything?( hd, block_id ) -> get_transaction_with_txid( hd, block_id )
-          true -> transaction_with_everything_in_it_from_transactions( tl, block_id )
+
+
+
+          has_everything?( hd, block_id ) ->
+            IO.puts "\nœœœœœœœœœœœœœœœœœœœœœœœœœ\ntransaction_with_everything_in_it_from_transactions #{hd}"
+            get_transaction_with_txid( hd, block_id )
+          true ->
+            IO.puts "\nˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆˆ\ntransaction_with_everything_in_it_from_transactions #{hd}"
+            transaction_with_everything_in_it_from_transactions( tl, block_id )
         end
     end
   end
 
   defp transaction_with_everything_in_it_from_block( block_map ) do
+    IO.puts "\n@@@@@@@@@@@@@@@@@@@@@@@@@@\ntransaction_with_everything_in_it_from_block #{Utils.typeof block_map}"
     case block_map do
-      %{error: _} -> block_map
+      %{error: _} ->
+  IO.puts "\n{}{}{}{}{}{}\ntransaction_with_everything_in_it_from_block #{Utils.typeof block_map[:error]}"
+
+        block_map
       _ ->
         db_block =  Blockchain.get_from_db_or_bitcoind_by_hash( block_map.hash ) # inserts it in db if it's not there
+
+        type_of = Utils.typeof db_block
+
+  IO.puts "\n``````````````````````````\ntransaction_with_everything_in_it_from_block #{type_of}"
+  if( 'map' == type_of && db_block.error ) do
+    IO.puts "\n;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\ntransaction_with_everything_in_it_from_block #{db_block.error}"
+  end
         list_of_tx_ids = get_tx_ids( block_map )
+  IO.puts "\n::::::::::::::::::::::::::::\ntransaction_with_everything_in_it_from_block #{Utils.typeof list_of_tx_ids}"
+
         transaction_with_everything_in_it_from_transactions( list_of_tx_ids, db_block.id )
     end
   end
@@ -256,17 +304,35 @@ defmodule BlockChainExplorer.Transaction do
       [] -> nil
       _ ->
         [hd | tl] = blocks_list
+
+IO.puts "\n???????????????????????????\ntransaction_with_everything_in_it_from_list #{Utils.typeof blocks_list}"
+IO.puts "\n|||||||||||||||||||||||||||\ntransaction_with_everything_in_it_from_list #{Utils.typeof hd}"
+
+
         transaction = transaction_with_everything_in_it_from_block( hd )
+
+IO.puts "\n///////////////////////////\ntransaction_with_everything_in_it_from_list #{Utils.typeof transaction}"
+if( transaction[:error] ) do
+  IO.puts "\n;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\ntransaction_with_everything_in_it_from_list #{transaction[:error]}"
+end
          case transaction do
-           nil -> transaction_with_everything_in_it_from_list( tl )
-           _ -> transaction
+           nil ->
+             transaction_with_everything_in_it_from_list( tl )
+           %{error: _} ->
+             transaction
+           _ ->
+             transaction
          end
     end
   end
 
   def seed_db_and_get_a_useful_transaction do
-    Blockchain.get_n_blocks( nil, 100 )
-    |> transaction_with_everything_in_it_from_list()
+    n_blocks = Blockchain.get_n_blocks( nil, 100 )
+IO.puts "\n%%%%%%%%%%%%%%%%%%%%%%%%\nseed_db_and_get_a_useful_transaction #{Utils.typeof n_blocks}"
+    result = transaction_with_everything_in_it_from_list(n_blocks)
+IO.puts "\n&&&&&&&&&&&&&&&&&&&&&&&&\nseed_db_and_get_a_useful_transaction #{Utils.typeof result}"
+   if result[:error], do: IO.puts "\n!!!!!!!!!!!!!!!!!!!!!!!\ntransaction_with_everything_in_it_from_list returned error #{result[:error]}"
+   result
   end
 
   defp make_struct( transaction, block_id ) do

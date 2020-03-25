@@ -23,7 +23,10 @@ defmodule BlockChainExplorer.AddressTest do
 
     defp block_list( blocks ) do
       case blocks do
-        [] -> []
+        %{error: _} ->
+          Utils.error blocks
+        [] ->
+          []
         _ ->
           [head | tail] = blocks
           tx_hash = head.tx
@@ -39,7 +42,8 @@ defmodule BlockChainExplorer.AddressTest do
         block = Blockchain.get_highest_block_from_db_or_bitcoind()
   #      blocks = Enum.map( blocks, &Blockchain.get_from_db_or_bitcoind_by_hash(&1.hash) )
         blocks = Blockchain.get_n_blocks( block, num )
-        uniq = Enum.uniq( block_list( blocks ))
+        list = block_list( blocks )
+        uniq = Enum.uniq( list )
         assert length( uniq ) > 0
         for address <- uniq do
           amount = :rand.uniform( 3 ) + 1

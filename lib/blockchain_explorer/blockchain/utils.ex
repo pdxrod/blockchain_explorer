@@ -135,6 +135,8 @@ defmodule BlockChainExplorer.Utils do
   end
 
   def error( tuple ) do
+    IO.puts "\n-------------------\nUtils.error '#{find_message tuple}'"
+
     case typeof( tuple ) do
       "tuple" ->
         if elem( tuple, 0 ) == :ok, do: raise "Utils.error should not be used with tuples beginning with :ok"

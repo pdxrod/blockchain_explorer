@@ -74,7 +74,7 @@ defmodule BlockChainExplorer.BlockchainTest do
 
     test "fail to return the block with a completely invalid id" do
       result = Blockchain.get_from_db_or_bitcoind_by_hash "Foo bar"
-      assert result == %{error: "Block not found in this blockchain"}
+      assert result == %{error: "blockhash must be of length 64 (not 7, for 'Foo bar')"}
     end
 
     test "get n blocks backward works" do

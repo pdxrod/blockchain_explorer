@@ -19,6 +19,13 @@ defmodule BlockChainExplorer.TransactionFinderTest do
     @tag timeout: :infinity
     test "two simultaneous puts and finds" do
       a_transaction = Transaction.seed_db_and_get_a_useful_transaction()
+      a_transaction = case a_transaction do
+        %{error: _} ->
+          "seed_db_and_get_a_useful_transaction returned '#{ a_transaction[:error] }'"
+        _ ->
+          a_transaction
+      end
+      if ("binary" == Utils.typeof a_transaction), do: raise a_transaction
       if (Utils.mt? a_transaction), do: raise "Unable to find a transaction with inputs and outputs"
       addresses = Transaction.get_addresses a_transaction.id
       address = List.first addresses
