@@ -143,7 +143,7 @@ defmodule BlockChainExplorerWeb.BlockController do
       _ ->
         a_transaction = Transaction.seed_db_and_get_a_useful_transaction()
         case a_transaction do
-          %{} -> show_error conn, "show.html", %{error: "No blocks"}
+          %{} -> show_error conn, "show.html", %{error: "No transactions"}
           %{error: _} -> show_error conn, "show.html", a_transaction
           _ ->
             addresses = Transaction.get_addresses a_transaction.id
