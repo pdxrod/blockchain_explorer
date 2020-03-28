@@ -169,6 +169,14 @@ defmodule BlockChainExplorer.BlockchainTest do
       assert a_block == a_nother_block
     end
 
+# Sometimes you get two blocks identical except one has updated_at: ~N[2020-03-28 15:08:50.000000]
+# and the other                                         updated_at: ~N[2020-03-28 15:08:50.489414]
+    def equal_except_db_specific_keys( a_block, a_nother ) do
+      first = Block.remove_db_specific_keys a_block
+      second = Block.remove_db_specific_keys a_nother
+      first == second
+    end
+
     test "get next n blocks forward works" do
       original_block = Blockchain.get_highest_block_from_db_or_bitcoind()
       blocks = Blockchain.get_next_or_previous_n_blocks(original_block, 5, "previousblockhash", [original_block])
@@ -181,7 +189,7 @@ defmodule BlockChainExplorer.BlockchainTest do
       assert new_block.hash == first_block.hash
       blocks = Blockchain.get_next_or_previous_n_blocks( new_block, 5, "nextblockhash", [new_block] )
       another_block = Enum.at( blocks, 0 )
-      assert another_block == original_block
+      assert equal_except_db_specific_keys(another_block, original_block)
       blocks = Blockchain.get_next_or_previous_n_blocks( another_block, 5, "nextblockhash", [another_block] )
       assert length( blocks ) == 5
       assert List.first(blocks).hash == another_block.hash

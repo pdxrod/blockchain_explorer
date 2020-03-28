@@ -32,6 +32,20 @@ defmodule BlockChainExplorer.Transaction do
     field :hash, :string
   end
 
+  def get_transaction do
+    transactions =
+        Db.all(
+          from t in Transaction,
+          select: t
+        )
+
+    if length( transactions ) == 0 do
+      %{ error: "No transactions" }
+    else
+      List.first transactions
+    end
+  end
+
   def get_transactions do
     Db.all(
       from t in Transaction,
@@ -280,7 +294,11 @@ defmodule BlockChainExplorer.Transaction do
   def seed_db_and_get_a_useful_transaction do
     n_blocks = Blockchain.get_n_blocks( nil, 100 )
     result = transaction_with_everything_in_it_from_list(n_blocks)
-   result
+    case result do
+      nil -> get_transaction
+      %{} -> get_transaction
+      _   -> result
+    end
   end
 
   defp make_struct( transaction, block_id ) do

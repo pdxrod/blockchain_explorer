@@ -23,7 +23,7 @@ defmodule BlockChainExplorer.TransactionTest do
         assert output.value >= 0.0
         assert Utils.notmt? output.hex
         assert Utils.notmt? output.asm
-        assert String.contains?( output.asm, "OP_" )
+        assert (String.contains?( output.asm, "0 " ) || String.contains?( output.asm, "OP_" ))
         assert output.n > -1
       end
     end
