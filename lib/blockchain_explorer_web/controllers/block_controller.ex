@@ -139,9 +139,10 @@ defmodule BlockChainExplorerWeb.BlockController do
     case list do
       [] -> address_str
       [ hd | tl ] ->
-        case hd do
-          address_str -> find_a_different_address( address_str, tl )
-          _ -> hd
+        if hd == address_str do
+          find_a_different_address( address_str, tl )
+        else
+          hd
         end
     end
   end
