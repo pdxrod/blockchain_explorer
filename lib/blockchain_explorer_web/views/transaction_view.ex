@@ -14,15 +14,16 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   def mark_up_transaction( transaction ) do
     """
-    <div style='margin-left: 3px; border-style: solid; border-width: thin'>
-      <b>Txid:</b> #{ trans_link transaction.txid } <br />
-      Vsize:       #{ transaction.vsize }      <br />
-      Version:     #{ transaction.version}    <br />
-      Size:        #{ transaction.size }      <br />
-      Hash:        #{ transaction.hash }      <br /><br />
+    <div style='border-style: solid; border-width: thin'>
+      <div style='margin-left: 3px'>
+        <b>Txid:</b> #{ trans_link transaction.txid } <br />
+        Vsize:       #{ transaction.vsize }     <br />
+        Version:     #{ transaction.version}    <br />
+        Size:        #{ transaction.size }      <br />
+        Hash:        #{ transaction.hash }      <br /><br />
     """ <> "Outputs:<br/>\n" <> mark_up_outputs( transaction, Transaction.get_outputs( transaction.id )) <>
            "Inputs:<br/>\n"  <> mark_up_inputs( transaction, Transaction.get_inputs( transaction.id )) <>
-    "\n</div>"
+    "\n    </div>\n  </div>"
   end
 
   defp mark_up_outputs( transaction, outputs ) do
