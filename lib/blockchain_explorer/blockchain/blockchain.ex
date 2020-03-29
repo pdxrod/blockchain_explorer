@@ -158,7 +158,7 @@ defmodule BlockChainExplorer.Blockchain do
         last  = List.last(result)
         one = String.slice( first.address, 0..Utils.env :truncated_address_str_len )
         two = String.slice( last.address,  0..Utils.env :truncated_address_str_len )
-        [two, one]
+        [one, two]
     end
   end
 

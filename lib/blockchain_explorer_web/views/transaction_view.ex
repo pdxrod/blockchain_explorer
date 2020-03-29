@@ -14,13 +14,15 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   def mark_up_transaction( transaction ) do
     """
-    <b>Txid:</b> #{ trans_link transaction.txid }   <br />
-    Vsize:       #{ transaction.vsize }  <br />
-    Version:     #{ transaction.version} <br />
-    Size:        #{ transaction.size }   <br />
-    Hash:        #{ transaction.hash }   <br /><br />
+    <div style='margin-left: 3px'>
+      <b>Txid:</b> #{ trans_link transaction.txid } <br />
+      Vsize:       #{ transaction.vsize }      <br />
+      Version:     #{ transaction.version}    <br />
+      Size:        #{ transaction.size }      <br />
+      Hash:        #{ transaction.hash }      <br /><br />
     """ <> "Outputs:<br/>\n" <> mark_up_outputs( transaction, Transaction.get_outputs( transaction.id )) <>
-           "Inputs:<br/>\n"  <> mark_up_inputs( transaction, Transaction.get_inputs( transaction.id ))
+           "Inputs:<br/>\n"  <> mark_up_inputs( transaction, Transaction.get_inputs( transaction.id )) <>
+    "\n</div>"
   end
 
   defp mark_up_outputs( transaction, outputs ) do
@@ -43,13 +45,15 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   defp mark_output( transaction, output ) do
     """
+    <div style='margin-left: 3px'>
         #{ output.n }<br />
         Value: #{ output.value }<br />
         Asm:
         <span id="#{ transaction.txid }_output_asm" style="display :none">#{ output.asm }</span>
         &nbsp;&nbsp;#{ asm_truncate output.asm }<br />
         Addresses: <br />
-    """ <> mark_up_addresses( Transaction.get_address_strs transaction.id )
+    """ <> mark_up_addresses( Transaction.get_address_strs transaction.id ) <>
+    "\n</div>"
   end
 
   defp mark_up_addresses( addresses_list ) do
@@ -61,15 +65,17 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   defp mark_input( transaction, input ) do
     """
-    Sequence: #{ input.sequence           }<br />
-    Coinbase: #{ input.coinbase           }<br />
-    Txid:     #{ transaction.txid         }<br />
-    Asm:
-    <span id="#{ transaction.txid }_input_asm" style="display: none">#{ input.asm }</span>
-    &nbsp;&nbsp;#{ asm_truncate input.asm }<br />
-    Hex:
-    <span id-"#{ transaction.txid }_input_hex" style="display :none">#{ input.hex }</span>
-    &nbsp;&nbsp;#{ asm_truncate input.hex }<br /><br />
+    <div style='margin-left: 3px'>
+      Sequence: #{ input.sequence           }<br />
+      Coinbase: #{ input.coinbase           }<br />
+      Txid:     #{ transaction.txid         }<br />
+      Asm:
+      <span id="#{ transaction.txid }_input_asm" style="display: none">#{ input.asm }</span>
+      &nbsp;&nbsp;#{ asm_truncate input.asm }<br />
+      Hex:
+      <span id-"#{ transaction.txid }_input_hex" style="display :none">#{ input.hex }</span>
+      &nbsp;&nbsp;#{ asm_truncate input.hex }<br /><br />
+    </div>
     """
   end
 end

@@ -139,13 +139,18 @@ defmodule BlockChainExplorerWeb.BlockController do
     first = String.slice( List.first( addresses ).address, 0..Utils.env :truncated_address_str_len )
     last = String.slice(  List.last(  addresses ).address, 0..Utils.env :truncated_address_str_len )
     address_strs = Blockchain.get_address_strs
-    if first == last do # Hope this is clear - the point is to do everything you can to find two different addresses to show on the /blocks page
-      first = if first == List.first(address_strs), do: first = List.last(address_strs), else: first
-      first = if first == List.last(address_strs), do: first = List.first(address_strs), else: first
-      [first, last]
-    else
-      [first, last]
+
+# Hope this is clear - the point is to do everything you can to find two different addresses to show on the /blocks page
+
+    first = if first == last do
+      if first == List.first(address_strs), do: List.last(address_strs), else: first
+      else first
     end
+    last = if first == last do
+      if last == List.last(address_strs), do: List.first(address_strs), else: last
+      else last
+    end
+    [first, last]
   end
 
   def show( conn, params ) do
