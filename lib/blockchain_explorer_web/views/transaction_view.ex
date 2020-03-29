@@ -14,7 +14,7 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   def mark_up_transaction( transaction ) do
     """
-    <div style='margin-left: 3px'>
+    <div style='margin-left: 3px; border-style: solid; border-width: thin'>
       <b>Txid:</b> #{ trans_link transaction.txid } <br />
       Vsize:       #{ transaction.vsize }      <br />
       Version:     #{ transaction.version}    <br />

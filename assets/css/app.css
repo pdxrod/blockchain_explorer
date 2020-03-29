@@ -33,11 +33,6 @@ form {
   text-decoration: underline;
 }
 
-.transaction_block {
-  border-style: solid;
-  border-width: thin;
-}
-
 code {
   display: inline-block !important;
   color: #666;
