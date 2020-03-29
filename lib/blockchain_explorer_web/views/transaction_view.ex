@@ -45,15 +45,13 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   defp mark_output( transaction, output ) do
     """
-    <div style='margin-left: 3px'>
-        #{ output.n }<br />
-        Value: #{ output.value }<br />
-        Asm:
-        <span id="#{ transaction.txid }_output_asm" style="display :none">#{ output.asm }</span>
-        &nbsp;&nbsp;#{ asm_truncate output.asm }<br />
-        Addresses: <br />
-    """ <> mark_up_addresses( Transaction.get_address_strs transaction.id ) <>
-    "\n</div>"
+      #{ output.n }<br />
+      Value: #{ output.value }<br />
+      Asm:
+      <span id="#{ transaction.txid }_output_asm" style="display :none">#{ output.asm }</span>
+      &nbsp;&nbsp;#{ asm_truncate output.asm }<br />
+      Addresses: <br />
+    """ <> mark_up_addresses( Transaction.get_address_strs transaction.id )
   end
 
   defp mark_up_addresses( addresses_list ) do
@@ -65,7 +63,6 @@ defmodule BlockChainExplorerWeb.TransactionView do
 
   defp mark_input( transaction, input ) do
     """
-    <div style='margin-left: 3px'>
       Sequence: #{ input.sequence           }<br />
       Coinbase: #{ input.coinbase           }<br />
       Txid:     #{ transaction.txid         }<br />
@@ -75,7 +72,6 @@ defmodule BlockChainExplorerWeb.TransactionView do
       Hex:
       <span id-"#{ transaction.txid }_input_hex" style="display :none">#{ input.hex }</span>
       &nbsp;&nbsp;#{ asm_truncate input.hex }<br /><br />
-    </div>
     """
   end
 end
