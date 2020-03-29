@@ -84,21 +84,27 @@ defmodule BlockChainExplorerWeb.BlockController do
 
   defp show_block_by_height( conn, height ) do
     block = Blockchain.get_from_db_or_bitcoind_by_height height
+    address_strs = Blockchain.get_address_strs()
+    first = List.first address_strs
+    last  = List.last  address_strs
     case block do
       %{error: _} ->
         show_error conn, "show.html", block
       _ ->
-        render(conn, "show.html", block: block, address_str: Blockchain.get_address_str() )
+        render(conn, "show.html", block: block, address_str: last, other_address_str: first )
     end
   end
 
   defp show_block_by_hash( conn, hash ) do
     block = Blockchain.get_from_db_or_bitcoind_by_hash hash
+    address_strs = Blockchain.get_address_strs()
+    first = List.first address_strs
+    last  = List.last  address_strs
     case block do
       %{error: _} ->
         show_error conn, "show.html", block
       _ ->
-        render(conn, "show.html", block: block, address_str: Blockchain.get_address_str() )
+        render(conn, "show.html", block: block, address_str: last, other_address_str: first )
     end
   end
 
@@ -128,6 +134,20 @@ defmodule BlockChainExplorerWeb.BlockController do
     show_n_hashes( conn, direction )
   end
 
+  defp get_2_address_strs( transaction_id ) do
+    addresses = Transaction.get_addresses transaction_id
+    first = String.slice( List.first( addresses ).address, 0..Utils.env :truncated_address_str_len )
+    last = String.slice(  List.last(  addresses ).address, 0..Utils.env :truncated_address_str_len )
+    address_strs = Blockchain.get_address_strs
+    if first == last do # Hope this is clear - the point is to do everything you can to find two different addresses to show on the /blocks page
+      first = if first == List.first(address_strs), do: first = List.last(address_strs), else: first
+      first = if first == List.last(address_strs), do: first = List.first(address_strs), else: first
+      [first, last]
+    else
+      [first, last]
+    end
+  end
+
   def show( conn, params ) do
     status = analyse_params params
     conn = assign(conn, :error, "")
@@ -145,12 +165,11 @@ defmodule BlockChainExplorerWeb.BlockController do
         case a_transaction do
           %{error: _} -> show_error conn, "show.html", a_transaction
           _ ->
-            addresses = Transaction.get_addresses a_transaction.id
-            address = List.first addresses
-            address_str = address.address
-            address_str = String.slice address_str, 0..4
+            address_strs = get_2_address_strs a_transaction.id
+            first = List.first address_strs
+            last  = List.last  address_strs
             decoded = Blockchain.get_highest_block_from_db_or_bitcoind()
-            render( conn, "show.html", block: decoded, address_str: address_str )
+            render( conn, "show.html", block: decoded, address_str: last, other_address_str: first )
         end
     end
   end

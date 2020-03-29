@@ -160,7 +160,7 @@ defmodule BlockChainExplorer.Transaction do
     Utils.recurse( false, true, outputs_list_of_maps, fn(output) ->
                    output_has_addresses?( output ) && output.value > 0.0
                    && output.hex && output.asm
-                   && String.contains?( output.asm, "OP_" ) end)
+                   && (String.contains?( output.asm, "0 " ) || String.contains?( output.asm, "OP_" )) end)
   end
 
   defp useful_input?( input ) do

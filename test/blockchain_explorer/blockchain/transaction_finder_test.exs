@@ -30,7 +30,7 @@ defmodule BlockChainExplorer.TransactionFinderTest do
       addresses = Transaction.get_addresses a_transaction.id
       address = List.first addresses
       address_str = address.address
-      address_str = String.slice address_str, 0..4
+      address_str = String.slice address_str, 0..Utils.env :truncated_address_str_len
 
       TransactionFinder.put address_str, a_transaction
       transactions = Transaction.get_transactions

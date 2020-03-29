@@ -143,16 +143,22 @@ defmodule BlockChainExplorer.Blockchain do
     end
   end
 
-  def get_address_str do
+  def get_address_strs do
     result = Db.all(
       from a in Address,
       select: a,
       where: a.output_id > 0
     )
-    if length( result ) == 0 do
-      "n4ME4"
-    else
-      String.slice( List.first( result ).address, 0..4 )
+    case length( result ) do
+      0 ->
+        str = String.slice( "bcrt1qntv7qltu7n3", 0..Utils.env :truncated_address_str_len )
+        [str, str]
+      _ ->
+        first = List.first(result)
+        last  = List.last(result)
+        one = String.slice( first.address, 0..Utils.env :truncated_address_str_len )
+        two = String.slice( last.address,  0..Utils.env :truncated_address_str_len )
+        [two, one]
     end
   end
 
