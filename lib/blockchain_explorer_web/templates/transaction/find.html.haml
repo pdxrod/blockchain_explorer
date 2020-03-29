@@ -3,6 +3,6 @@
   %div{ id: "transactions_block" }
     - if @transactions != nil && @transactions != [] do
       - for transaction <- @transactions do
-        #transaction_block{ class: "transaction_block" }
+        #transaction_block{style: 'margin-left: 3px; border-style: solid; border-width: thin'}
           - decoded = Transaction.convert_to_struct transaction, 1
           = decoded |> mark_up_transaction |> raw
