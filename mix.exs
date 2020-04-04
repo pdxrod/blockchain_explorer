@@ -44,7 +44,8 @@ defmodule BlockChainExplorer.Mixfile do
       {:httpoison, "~> 0.13"},
       {:distillery, "~> 1.0.0"},
       {:phoenix_haml, "~> 0.2"},
-      {:mariaex, "~> 0.8.2"}
+      {:mariaex, "~> 0.8.2"},
+      {:bitcoin, "~> 0.0.2"}
     ]
   end
 
