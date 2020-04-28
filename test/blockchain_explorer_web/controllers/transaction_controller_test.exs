@@ -17,9 +17,9 @@ defmodule BlockChainExplorerWeb.TransactionControllerTest do
       transaction = Transaction.seed_db_and_get_a_useful_transaction()
       conn = build_conn()
       conn = get conn, transaction_path(conn, :show, transaction.txid)
-      # page = html_response(conn, 200) # This has stopped working for some reason, but it works IRL
-      # assert page =~ ~r/Txid:.*href/
-      # assert page =~ "/trans/#{ transaction.txid }"
+      page = html_response(conn, 200) # This sometimes stops working for some reason, but it works IRL
+      assert page =~ ~r/Txid:.*href/
+      assert page =~ "/trans/#{ transaction.txid }"
     end
 
     test "ajax" do
