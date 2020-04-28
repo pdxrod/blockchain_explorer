@@ -10,7 +10,7 @@ config :blockchain_explorer, bitcoin_url: "http://rpcuser:rpcpass@127.0.0.1:1659
 config :blockchain_explorer, base_16_regex:         ~r/^([A-Fa-f0-9]+)$/
 config :blockchain_explorer, base_16_hash_regex:    ~r/^([A-Fa-f0-9]{64})$/
 # Note that base 58 is really base 60 - some addresses include 0 or l
-config :blockchain_explorer, base_58_partial_regex: ~r/^([1-9a-km-zA-HJ-NP-Z]{3,})$/
+config :blockchain_explorer, base_58_partial_regex: ~r/^([0-9a-km-zA-HJ-NP-Z]{3,})$/
 config :blockchain_explorer, base_58_address_regex: ~r/^([0-9a-zA-HJ-NP-Z]{20,})$/
 config :blockchain_explorer, base_10_integer_regex: ~r/^([0-9]+)$/
 config :blockchain_explorer, truncated_address_str_len: 8

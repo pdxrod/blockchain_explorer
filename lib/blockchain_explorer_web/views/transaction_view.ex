@@ -41,7 +41,7 @@ defmodule BlockChainExplorerWeb.TransactionView do
   end
 
   defp asm_truncate( long_str ) do
-    long_str # String.slice( long_str, 0..31 ) <> "..."
+    String.slice( long_str, 0..31 ) <> "..."
   end
 
   defp mark_output( transaction, output ) do

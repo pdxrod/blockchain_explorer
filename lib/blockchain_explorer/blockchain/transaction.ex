@@ -295,8 +295,8 @@ defmodule BlockChainExplorer.Transaction do
     n_blocks = Blockchain.get_n_blocks( nil, 100 )
     result = transaction_with_everything_in_it_from_list(n_blocks)
     case result do
-      nil -> get_transaction
-      %{} -> get_transaction
+      nil -> get_transaction()
+      %{} -> get_transaction()
       _   -> result
     end
   end
