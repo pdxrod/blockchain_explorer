@@ -5,6 +5,7 @@ defmodule BlockChainExplorer.BitcoinTest do
 
   alias BlockChainExplorer.Transaction
   alias BlockChainExplorer.Utils
+  alias BlockChainExplorer.BitcoinUtils
 
   describe "bitcoin" do
 
@@ -27,7 +28,12 @@ defmodule BlockChainExplorer.BitcoinTest do
     test "outputs" do
       trans = Transaction.seed_db_and_get_a_useful_transaction()
       op_asm = get_op Transaction.get_outputs( trans.id )
-      assert true == String.starts_with?( op_asm, "OP_" ) 
+      assert true == String.starts_with?( op_asm, "OP_" )
+      parts = String.split( op_asm, " " )
+      operator = Enum.at parts, 0
+      content = Enum.at parts, 1
+      hex_list = BitcoinUtils.make_hex_list content
+      assert (String.size content) * 2 == length hex_list
     end
 
   end
