@@ -20,18 +20,27 @@ defmodule BlockChainExplorer.UtilsTest do
     end
 
     test "bitcoin utils bad" do
-      try do
+      err = try do
         BitcoinUtils.hex_list "a"
         assert true == false
       rescue
-        RuntimeError -> ""
+        r in RuntimeError -> r
       end
-      try do
+      assert err.message =~ ~r/even number of characters/
+      err = try do
         BitcoinUtils.hex_list "a12"
         assert true == false
       rescue
-        RuntimeError -> ""
+        r in RuntimeError -> r
       end
+      assert err.message =~ ~r/even number of characters/
+      err = try do
+        BitcoinUtils.hex_list "g12f"
+        assert true == false
+      rescue
+        r in RuntimeError -> r
+      end
+      assert err.message =~ ~r/not a valid hex string/
     end
 
     test "index" do
