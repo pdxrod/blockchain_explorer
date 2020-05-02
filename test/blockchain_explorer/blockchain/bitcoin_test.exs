@@ -33,7 +33,7 @@ defmodule BlockChainExplorer.BitcoinTest do
       operator = Enum.at parts, 0
       content = Enum.at parts, 1
       hex_list = BitcoinUtils.make_hex_list content
-      assert (String.size content) * 2 == length hex_list
+      assert (String.length content) * 2 == length hex_list
     end
 
   end

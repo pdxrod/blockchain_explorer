@@ -12,10 +12,10 @@ defmodule BlockChainExplorer.BitcoinUtils do
   end
 
   def make_hex_list( str ) do
-    chars = String.split str, ''
-    list_of_lists = Enum.chunk_every( chars, 2 )
-    num_list = combine_chunks( list_of_lists )
-    num_list
+    str
+    |> String.codepoints
+    |> Enum.chunk(2)
+    |> Enum.map(&Enum.join/1)
   end
 
 
