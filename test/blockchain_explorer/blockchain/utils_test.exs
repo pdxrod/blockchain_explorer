@@ -11,9 +11,9 @@ defmodule BlockChainExplorer.UtilsTest do
     @list_with_foo_map_set_to_0 [ %{}, %{hello: "world", foo: 0}, %{bar: 1} ]
 
     test "bitcoin utils" do
-      str = "a0110f"
+      str = "a0110f00"
       list = BitcoinUtils.hex_list str
-      assert [10, 16, 15] == list
+      assert [160, 17, 15, 0] == list
     end
 
     test "index" do
