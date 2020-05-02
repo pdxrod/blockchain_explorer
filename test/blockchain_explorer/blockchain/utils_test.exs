@@ -10,10 +10,28 @@ defmodule BlockChainExplorer.UtilsTest do
     @list_with_foo_map_not_0 [ %{bar: 0}, %{hello: "world", foo: 1} ]
     @list_with_foo_map_set_to_0 [ %{}, %{hello: "world", foo: 0}, %{bar: 1} ]
 
-    test "bitcoin utils" do
+    test "bitcoin utils good" do
       str = "a0110f00"
       list = BitcoinUtils.hex_list str
       assert [160, 17, 15, 0] == list
+      str = ""
+      list = BitcoinUtils.hex_list str
+      assert [] == list
+    end
+
+    test "bitcoin utils bad" do
+      try do
+        BitcoinUtils.hex_list "a"
+        raise "The line above should have raised an exception"
+      rescue
+        RuntimeError -> ""
+      end
+      try do
+        BitcoinUtils.hex_list "a12"
+        raise "The line above should have raised an exception"
+      rescue
+        RuntimeError -> ""
+      end
     end
 
     test "index" do
