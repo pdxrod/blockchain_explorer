@@ -9,6 +9,13 @@ defmodule BlockChainExplorer.UtilsTest do
     @list_with_foo_map_not_0 [ %{bar: 0}, %{hello: "world", foo: 1} ]
     @list_with_foo_map_set_to_0 [ %{}, %{hello: "world", foo: 0}, %{bar: 1} ]
 
+    test "index" do
+      assert nil == Utils.index( "Hello", "XYZ" )
+      assert nil == Utils.index( "Hello", "h" )
+      assert 0 == Utils.index( "Hello", "He" )
+      assert 2 == Utils.index( "Hello", "l" )
+    end
+
     test "typeof" do
       assert "binary" == Utils.typeof( "Hello" )
       assert "list" == Utils.typeof( 'Hello' )

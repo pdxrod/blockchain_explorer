@@ -161,4 +161,13 @@ defmodule BlockChainExplorer.Utils do
       "<span class='error'>#{ msg }</span>"
     end
   end
+
+  def index( mainstring, searchstring ) do
+    tuple = (:binary.match mainstring, searchstring)
+    if tuple === :nomatch do
+       nil
+    else
+       elem(tuple, 0)
+    end
+  end
 end
