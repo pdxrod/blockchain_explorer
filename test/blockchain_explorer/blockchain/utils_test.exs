@@ -22,13 +22,13 @@ defmodule BlockChainExplorer.UtilsTest do
     test "bitcoin utils bad" do
       try do
         BitcoinUtils.hex_list "a"
-        raise "The line above should have raised an exception"
+        assert true == false
       rescue
         RuntimeError -> ""
       end
       try do
         BitcoinUtils.hex_list "a12"
-        raise "The line above should have raised an exception"
+        assert true == false
       rescue
         RuntimeError -> ""
       end
