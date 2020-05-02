@@ -1,6 +1,7 @@
 defmodule BlockChainExplorer.UtilsTest do
   use BlockChainExplorerWeb.ConnCase
   alias BlockChainExplorer.Utils
+  alias BlockChainExplorer.BitcoinUtils
 
   describe "utils" do
 
@@ -8,6 +9,12 @@ defmodule BlockChainExplorer.UtilsTest do
     @list_with_no_foo_map [ %{bar: 0}, %{hello: "world"} ]
     @list_with_foo_map_not_0 [ %{bar: 0}, %{hello: "world", foo: 1} ]
     @list_with_foo_map_set_to_0 [ %{}, %{hello: "world", foo: 0}, %{bar: 1} ]
+
+    test "bitcoin utils" do
+      str = "a0110f"
+      list = BitcoinUtils.hex_list str
+      assert [10, 16, 15] == list
+    end
 
     test "index" do
       assert nil == Utils.index( "Hello", "XYZ" )

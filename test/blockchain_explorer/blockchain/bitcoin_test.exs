@@ -32,11 +32,7 @@ defmodule BlockChainExplorer.BitcoinTest do
       parts = String.split( op_asm, " " )
       operator = Enum.at parts, 0
       content = Enum.at parts, 1
-      hex_list = BitcoinUtils.make_hex_list content
-
-# content is like 'aa21...'
-# hex_list is like ['aa', '21'...]
-
+      hex_list = BitcoinUtils.hex_list content
       assert (String.length content) == 2 * (length hex_list)
     end
 
