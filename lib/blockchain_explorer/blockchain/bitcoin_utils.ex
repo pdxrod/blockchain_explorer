@@ -2,7 +2,7 @@ defmodule BlockChainExplorer.BitcoinUtils do
   alias BlockChainExplorer.Utils
 
   def hex_list( str ) do
-    if String.length( str ) == 0 do
+    if Utils.mt?( str ) do
       []
     else
       if rem( String.length( str ), 2 ) != 0 do
