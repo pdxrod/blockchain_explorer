@@ -1,14 +1,8 @@
 defmodule BlockChainExplorer.BitcoinUtilsTest do
   use BlockChainExplorerWeb.ConnCase
-  alias BlockChainExplorer.Utils
   alias BlockChainExplorer.BitcoinUtils
 
   describe "utils" do
-
-    @empty_list []
-    @list_with_no_foo_map [ %{bar: 0}, %{hello: "world"} ]
-    @list_with_foo_map_not_0 [ %{bar: 0}, %{hello: "world", foo: 1} ]
-    @list_with_foo_map_set_to_0 [ %{}, %{hello: "world", foo: 0}, %{bar: 1} ]
 
     test "bitcoin utils good" do
       list = BitcoinUtils.hex_list nil
@@ -22,7 +16,7 @@ defmodule BlockChainExplorer.BitcoinUtilsTest do
     test "bitcoin utils bad" do
       err = try do
         BitcoinUtils.hex_list "a"
-        assert true == false
+        assert true == false # If this line is ever reached, the test fails
       rescue
         r in RuntimeError -> r
       end
