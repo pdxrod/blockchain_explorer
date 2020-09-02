@@ -104,7 +104,7 @@ defmodule BlockChainExplorer.Utils do
   end
 
   defp translate_message msg do
-    case msg do
+    result = case msg do
       "econnrefused" ->
         "Unable to connect to Bitcoin"
       "timeout" ->
@@ -115,8 +115,11 @@ defmodule BlockChainExplorer.Utils do
         "Block not found in this blockchain"
       "JSON integer out of range" ->
         "Invalid value for block"
+      "0" ->
+        "Security issue"
       _ -> msg
     end
+    result
   end
 
 # Various functions produce a range of not-ok results - this reduces them to one simple form - %{error: "message"}
@@ -135,15 +138,17 @@ defmodule BlockChainExplorer.Utils do
   end
 
   def error( tuple ) do
-    case typeof( tuple ) do
+    err = case typeof( tuple ) do
       "tuple" ->
         if elem( tuple, 0 ) == :ok, do: raise "Utils.error should not be used with tuples beginning with :ok"
         atom = elem( tuple, 0 )
         tail = Tuple.delete_at tuple, 0
         result = Map.new [ {:error, find_message( tail )} ]
+
         if atom != :error, do: %{error: "#{ atom } " <> result[:error]}, else: result
       _ -> %{error: find_message( tuple )}
     end
+    err
   end
 
   def message do

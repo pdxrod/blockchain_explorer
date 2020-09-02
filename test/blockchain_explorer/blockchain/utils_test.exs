@@ -104,7 +104,8 @@ defmodule BlockChainExplorer.UtilsTest do
 # Some of these are IRL errors
     @tests [ {  {:message, %{message: {:message, "message"}}},                       %{error: "message message"}                    },
              {  {:invalid, "1"},                                                     %{error: "invalid 1"}                          },
-             {  {:error, :invalid, 0},                                               %{error: "0"}                                  },
+             {  {:error, "0"},                                                       %{error: "Security issue"}                     },
+             {  {:error, :invalid, 0},                                               %{error: "Security issue"}                     },
              {  {:error, %HTTPoison.Error{id: nil, reason: :timeout}} ,              %{error: "Timed out connecting to Bitcoin"}    },
              {  {:error, %HTTPoison.Error{id: nil, reason: :econnrefused}},          %{error: "Unable to connect to Bitcoin"}       },
              {  {:error, %{"code" => -28, "message" => "Loading block index..."}},   %{error: "Bitcoin is not up and running yet"}  },
@@ -127,7 +128,8 @@ defmodule BlockChainExplorer.UtilsTest do
       assert err.message == "Utils.error should not be used with tuples beginning with :ok"
 
       for pair <- @tests do
-        reality = Utils.error elem( pair, 0 )
+        one = elem(pair, 0)
+        reality = Utils.error one
         desire = elem( pair, 1 )
         assert reality == desire
       end
