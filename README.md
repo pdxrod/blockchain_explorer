@@ -74,8 +74,15 @@ as the blockchain just keeps getting bigger.
 
 To run this app in production mode, look at `start-phoenix-in-background.sh`
 
-You need to enter a 'secret key base' and a mysql username and password in config/prod.exs. DO NOT
-check this file into Git after you've changed it, as it contains critical production data -
+You need to enter a 'secret key base' and a mysql username and password in config/prod.exs.
+
+You should also add this line to the end of prod.exs. This overrides the RPC username and password in
+config.exs. Replace RPC_USERNAME and RPC_PASSWORD with the username and password with which you started
+bitcoind. They should not be the same as in config.exs, and they should not be RPC_USERNAME and RPC_PASSWORD!
+
+`config :blockchain_explorer, bitcoin_url: "http://RPC_USERNAME:RPC_PASSWORD@127.0.0.1:16591"`
+
+Do not check this file into Git after you've changed it -
 do `git reset --hard` to undo your changes to prod.exs.
 
 `mix phx.gen.secret` will generate a new 'secret key base'.
