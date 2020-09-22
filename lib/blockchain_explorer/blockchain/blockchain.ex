@@ -112,7 +112,7 @@ defmodule BlockChainExplorer.Blockchain do
     end
   end
 
-  defp get_next_or_previous_n_blocks_empty( block, n, direction, blocks ) do
+  defp get_next_or_previous_n_blocks_recursive( block, n, direction, blocks ) do
     block = if block == nil, do: get_highest_block_from_db_or_bitcoind(), else: block
     blocks = if length( blocks ) < 1, do: [ block ], else: blocks
     if n <= 1 || List.last( blocks ).height == 0 do
@@ -125,7 +125,7 @@ defmodule BlockChainExplorer.Blockchain do
           "previousblockhash" -> blocks ++ [ new_block ]
           "nextblockhash"     -> [ new_block ] ++ blocks
         end
-        get_next_or_previous_n_blocks_empty( new_block, n - 1, direction, blocks )
+        get_next_or_previous_n_blocks_recursive( new_block, n - 1, direction, blocks )
       else
         blocks
       end
@@ -135,11 +135,11 @@ defmodule BlockChainExplorer.Blockchain do
   def get_next_or_previous_n_blocks( block, n, direction \\ "previousblockhash", blocks \\ [] ) do
     size = length( blocks )
     if size == 0 do
-      get_next_or_previous_n_blocks_empty( block, n, direction, blocks )
+      get_next_or_previous_n_blocks_recursive( block, n, direction, blocks )
     else
       num = if direction == "previousblockhash", do: size - 1, else: 0
       new_block = Enum.at( blocks, num )
-      get_next_or_previous_n_blocks_empty( new_block, n, direction, [new_block] )
+      get_next_or_previous_n_blocks_recursive( new_block, n, direction, [new_block] )
     end
   end
 
