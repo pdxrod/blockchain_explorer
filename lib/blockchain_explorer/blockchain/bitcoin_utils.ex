@@ -13,7 +13,7 @@ defmodule BlockChainExplorer.BitcoinUtils do
       end
       str
         |> String.codepoints
-        |> Enum.chunk(2)
+        |> Enum.chunk_every(2)
         |> Enum.map(&Enum.join/1)
         |> Enum.map(&String.to_integer &1, 16)
     end
